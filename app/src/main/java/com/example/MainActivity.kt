@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val app = application as AuraApplication
-        val factory = CycleViewModelFactory(app.repository, app.securityManager, app.shortcutHelper)
+        val factory = CycleViewModelFactory(app.repository, app.securityManager, app.shortcutHelper, app.updateManager)
         viewModel = ViewModelProvider(this, factory)[CycleViewModel::class.java]
 
         handleIntent(intent)

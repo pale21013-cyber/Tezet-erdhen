@@ -25,11 +25,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoGraph
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.GridOn
-import androidx.compose.material.icons.filled.Security
-import androidx.compose.material.icons.filled.Today
+import androidx.compose.material.icons.filled.SelfImprovement
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Spa
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -54,7 +54,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import android.app.Activity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -78,6 +80,7 @@ fun AuraApp(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val strings = getAppStrings(uiState.language)
+    val context = LocalContext.current
 
     LaunchedEffect(uiState.saveNotification) {
         uiState.saveNotification?.let {
@@ -119,7 +122,7 @@ fun AuraApp(
                         NavigationRailItem(
                             selected = uiState.currentTab == AppTab.TODAY,
                             onClick = { viewModel.selectTab(AppTab.TODAY) },
-                            icon = { Icon(Icons.Default.Today, contentDescription = strings.tabToday) },
+                            icon = { Icon(Icons.Default.Spa, contentDescription = strings.tabToday) },
                             label = { Text(strings.tabToday) }
                         )
                         NavigationRailItem(
@@ -131,20 +134,20 @@ fun AuraApp(
                         NavigationRailItem(
                             selected = uiState.currentTab == AppTab.PIXELS,
                             onClick = { viewModel.selectTab(AppTab.PIXELS) },
-                            icon = { Icon(Icons.Default.GridOn, contentDescription = strings.tabPixels) },
+                            icon = { Icon(Icons.Default.AutoAwesome, contentDescription = strings.tabPixels) },
                             label = { Text(strings.tabPixels) }
                         )
                         NavigationRailItem(
                             selected = uiState.currentTab == AppTab.INSIGHTS,
                             onClick = { viewModel.selectTab(AppTab.INSIGHTS) },
-                            icon = { Icon(Icons.Default.AutoGraph, contentDescription = strings.tabInsights) },
+                            icon = { Icon(Icons.Default.SelfImprovement, contentDescription = strings.tabInsights) },
                             label = { Text(strings.tabInsights) }
                         )
                         NavigationRailItem(
                             selected = uiState.currentTab == AppTab.SETTINGS,
                             onClick = { viewModel.selectTab(AppTab.SETTINGS) },
-                            icon = { Icon(Icons.Default.Security, contentDescription = strings.tabSecurity) },
-                            label = { Text(strings.tabSecurity) }
+                            icon = { Icon(Icons.Default.Settings, contentDescription = strings.tabSettings) },
+                            label = { Text(strings.tabSettings) }
                         )
                     }
 
@@ -248,7 +251,10 @@ fun AuraApp(
                                         onToggleBiometric = { viewModel.setBiometricEnabled(it) },
                                         onLockApp = { viewModel.lockApp() },
                                         onFastMoodLog = { viewModel.logFastMood(it) },
-                                        onResetDemoData = { viewModel.resetDemoData() }
+                                        onResetDemoData = { viewModel.resetDemoData() },
+                                        updateStatus = uiState.updateStatus,
+                                        onCheckForUpdates = { viewModel.checkForUpdates() },
+                                        onDownloadAndInstallUpdate = { viewModel.downloadAndInstallUpdate(context as? Activity) }
                                     )
                                 }
                             }
@@ -313,7 +319,7 @@ fun AuraApp(
                             NavigationBarItem(
                                 selected = uiState.currentTab == AppTab.TODAY,
                                 onClick = { viewModel.selectTab(AppTab.TODAY) },
-                                icon = { Icon(Icons.Default.Today, contentDescription = strings.tabToday) },
+                                icon = { Icon(Icons.Default.Spa, contentDescription = strings.tabToday) },
                                 label = { Text(strings.tabToday) },
                                 colors = NavigationBarItemDefaults.colors(selectedIconColor = RosePrimary)
                             )
@@ -327,22 +333,22 @@ fun AuraApp(
                             NavigationBarItem(
                                 selected = uiState.currentTab == AppTab.PIXELS,
                                 onClick = { viewModel.selectTab(AppTab.PIXELS) },
-                                icon = { Icon(Icons.Default.GridOn, contentDescription = strings.tabPixels) },
+                                icon = { Icon(Icons.Default.AutoAwesome, contentDescription = strings.tabPixels) },
                                 label = { Text(strings.tabPixels) },
                                 colors = NavigationBarItemDefaults.colors(selectedIconColor = RosePrimary)
                             )
                             NavigationBarItem(
                                 selected = uiState.currentTab == AppTab.INSIGHTS,
                                 onClick = { viewModel.selectTab(AppTab.INSIGHTS) },
-                                icon = { Icon(Icons.Default.AutoGraph, contentDescription = strings.tabInsights) },
+                                icon = { Icon(Icons.Default.SelfImprovement, contentDescription = strings.tabInsights) },
                                 label = { Text(strings.tabInsights) },
                                 colors = NavigationBarItemDefaults.colors(selectedIconColor = RosePrimary)
                             )
                             NavigationBarItem(
                                 selected = uiState.currentTab == AppTab.SETTINGS,
                                 onClick = { viewModel.selectTab(AppTab.SETTINGS) },
-                                icon = { Icon(Icons.Default.Security, contentDescription = strings.tabSecurity) },
-                                label = { Text(strings.tabSecurity) },
+                                icon = { Icon(Icons.Default.Settings, contentDescription = strings.tabSettings) },
+                                label = { Text(strings.tabSettings) },
                                 colors = NavigationBarItemDefaults.colors(selectedIconColor = RosePrimary)
                             )
                         }
@@ -451,6 +457,9 @@ fun AuraApp(
                                     onLockApp = { viewModel.lockApp() },
                                     onFastMoodLog = { viewModel.logFastMood(it) },
                                     onResetDemoData = { viewModel.resetDemoData() },
+                                    updateStatus = uiState.updateStatus,
+                                    onCheckForUpdates = { viewModel.checkForUpdates() },
+                                    onDownloadAndInstallUpdate = { viewModel.downloadAndInstallUpdate(context as? Activity) },
                                     modifier = Modifier.padding(top = 8.dp)
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))

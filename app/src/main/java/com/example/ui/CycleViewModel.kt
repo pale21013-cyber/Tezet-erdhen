@@ -27,6 +27,10 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+import android.app.Activity
+import com.example.updater.UpdateManager
+import com.example.updater.UpdateStatus
+
 enum class AppTab {
     TODAY,
     CALENDAR,
@@ -51,13 +55,15 @@ data class CycleUiState(
     val pinError: String? = null,
     val saveNotification: String? = null,
     val language: AppLanguage = AppLanguage.GERMAN,
-    val themeSetting: ThemeSetting = ThemeSetting.SYSTEM
+    val themeSetting: ThemeSetting = ThemeSetting.SYSTEM,
+    val updateStatus: UpdateStatus = UpdateStatus.Idle
 )
 
 class CycleViewModel(
     private val repository: CycleRepository,
     private val securityManager: SecurityManager,
-    private val shortcutHelper: AppShortcutHelper
+    private val shortcutHelper: AppShortcutHelper,
+    private val updateManager: UpdateManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CycleUiState())
@@ -67,6 +73,12 @@ class CycleViewModel(
     private val featurePipeline = CycleFeaturePipeline()
 
     init {
+        // Observe updater status
+        viewModelScope.launch {
+            updateManager.updateStatus.collectLatest { status ->
+                _uiState.update { it.copy(updateStatus = status) }
+            }
+        }
         // Observe security lock state
         viewModelScope.launch {
             securityManager.isLocked.collectLatest { locked ->
@@ -334,15 +346,38 @@ class CycleViewModel(
             shortcutHelper.updateDynamicShortcuts("${strings.cycleDayPrefix} ${stats.currentCycleDay} • $localizedPhase")
         }
     }
+
+    fun checkForUpdates() {
+        viewModelScope.launch {
+            updateManager.checkForUpdates()
+        }
+    }
+
+    fun downloadAndInstallUpdate(activity: Activity? = null) {
+        val currentStatus = _uiState.value.updateStatus
+        val downloadUrl = if (currentStatus is UpdateStatus.UpdateAvailable) {
+            currentStatus.info.downloadUrl
+        } else {
+            "https://github.com/aistudio/aura-cycle/releases/latest/download/AuraCycle-latest.apk"
+        }
+        viewModelScope.launch {
+            updateManager.downloadAndInstallApk(downloadUrl, activity)
+        }
+    }
+
+    fun resetUpdateStatus() {
+        updateManager.resetStatus()
+    }
 }
 
 class CycleViewModelFactory(
     private val repository: CycleRepository,
     private val securityManager: SecurityManager,
-    private val shortcutHelper: AppShortcutHelper
+    private val shortcutHelper: AppShortcutHelper,
+    private val updateManager: UpdateManager
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return CycleViewModel(repository, securityManager, shortcutHelper) as T
+        return CycleViewModel(repository, securityManager, shortcutHelper, updateManager) as T
     }
 }

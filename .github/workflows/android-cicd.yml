@@ -1,0 +1,140 @@
+name: Android CI/CD Pipeline & In-App APK Release
+
+on:
+  push:
+    branches: [ main, master ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      versionBump:
+        description: 'Version bump type (patch, minor, major)'
+        required: false
+        default: 'patch'
+      customVersionName:
+        description: 'Custom version name (e.g. 1.1.0). Leave empty to use auto-increment'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build:
+    name: Build & Package Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: false
+
+      - name: Calculate & Increment Version Number
+        id: versioning
+        run: |
+          # Base offset + GitHub Actions run number ensures strictly ascending, unique versionCode
+          BASE_OFFSET=100
+          VERSION_CODE=$(( GITHUB_RUN_NUMBER + BASE_OFFSET ))
+          
+          if [ -n "${{ github.event.inputs.customVersionName }}" ]; then
+            VERSION_NAME="${{ github.event.inputs.customVersionName }}"
+          else
+            VERSION_NAME="1.0.${{ github.run_number }}"
+          fi
+          
+          echo "Calculated Version Code: $VERSION_CODE"
+          echo "Calculated Version Name: $VERSION_NAME"
+          echo "VERSION_CODE=$VERSION_CODE" >> $GITHUB_ENV
+          echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
+          echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+
+      - name: Grant Execute Permission to Gradlew
+        run: chmod +x gradlew || true
+
+      - name: Run Unit & Robolectric Tests
+        run: |
+          if [ -f "./gradlew" ]; then
+            ./gradlew :app:testDebugUnitTest -PversionCode=${{ env.VERSION_CODE }} -PversionName=${{ env.VERSION_NAME }}
+          else
+            gradle :app:testDebugUnitTest -PversionCode=${{ env.VERSION_CODE }} -PversionName=${{ env.VERSION_NAME }}
+          fi
+
+      - name: Assemble Debug APK
+        run: |
+          if [ -f "./gradlew" ]; then
+            ./gradlew :app:assembleDebug -PversionCode=${{ env.VERSION_CODE }} -PversionName=${{ env.VERSION_NAME }}
+          else
+            gradle :app:assembleDebug -PversionCode=${{ env.VERSION_CODE }} -PversionName=${{ env.VERSION_NAME }}
+          fi
+
+      - name: Prepare APK Outputs & Rename
+        run: |
+          mkdir -p output_artifacts
+          APK_PATH=$(find app/build/outputs/apk/debug/ -name "*.apk" | head -n 1)
+          if [ -n "$APK_PATH" ]; then
+            TARGET_APK="output_artifacts/AuraCycle-v${{ env.VERSION_NAME }}-build${{ env.VERSION_CODE }}.apk"
+            cp "$APK_PATH" "$TARGET_APK"
+            cp "$APK_PATH" "output_artifacts/AuraCycle-latest.apk"
+            echo "Copied APK to $TARGET_APK"
+          else
+            echo "APK not found!" && exit 1
+          fi
+
+      - name: Generate In-App Update Manifest (JSON)
+        run: |
+          cat <<EOF > output_artifacts/update_manifest.json
+          {
+            "versionCode": ${{ env.VERSION_CODE }},
+            "versionName": "${{ env.VERSION_NAME }}",
+            "releaseNotes": "🌸 Aura Cycle Update v${{ env.VERSION_NAME }}: Neues feminines Design, verbesserte Zyklus-Vorhersagen und optimierte System-Installation.",
+            "downloadUrl": "https://github.com/${{ github.repository }}/releases/download/v${{ env.VERSION_NAME }}/AuraCycle-v${{ env.VERSION_NAME }}-build${{ env.VERSION_CODE }}.apk",
+            "fallbackUrl": "https://github.com/${{ github.repository }}/releases/latest/download/AuraCycle-latest.apk",
+            "mandatory": false,
+            "publishedAt": "$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          }
+          EOF
+          cat output_artifacts/update_manifest.json
+
+      - name: Upload APK & Manifest Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: AuraCycle-APK-v${{ env.VERSION_NAME }}
+          path: output_artifacts/*
+          retention-days: 30
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "v${{ env.VERSION_NAME }}"
+          name: "🌸 Aura Cycle v${{ env.VERSION_NAME }} (Build ${{ env.VERSION_CODE }})"
+          body: |
+            ### 🌸 Aura Cycle Update v${{ env.VERSION_NAME }}
+            
+            - **Version:** `${{ env.VERSION_NAME }}` (Build code: `${{ env.VERSION_CODE }}`)
+            - **In-App Updater:** Das APK wird heruntergeladen und nahtlos über den Android-Systeminstaller installiert.
+            - **Neuerungen:**
+              - 🌸 Feminines Design mit bezaubernden Icons
+              - ⚙️ Umfassender Einstellungs-Tab mit Sprache, Design, Schnellaktionen & Updater
+              - 100% Offline-First & Biometrisch geschützt
+          files: |
+            output_artifacts/*.apk
+            output_artifacts/update_manifest.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

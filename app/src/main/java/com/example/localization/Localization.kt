@@ -20,7 +20,7 @@ data class StringsBundle(
     val tabCalendar: String,
     val tabPixels: String,
     val tabInsights: String,
-    val tabSecurity: String,
+    val tabSettings: String,
     val topBarStatus: String,
 
     // Cycle Wheel
@@ -131,7 +131,17 @@ data class StringsBundle(
     val fastMoodSensitive: String,
     val fastMoodEnergetic: String,
     val fastMoodTired: String,
-    val fastModeLoggedMsg: String
+    val fastModeLoggedMsg: String,
+
+    // In-App Updater & CI/CD
+    val updaterTitle: String,
+    val updaterSubtitle: String,
+    val checkUpdatesBtn: String,
+    val downloadInstallBtn: String,
+    val downloadingProgress: String,
+    val systemInstallerPrompt: String,
+    val cicdInfoTitle: String,
+    val cicdInfoDesc: String
 )
 
 val GermanStrings = StringsBundle(
@@ -140,7 +150,7 @@ val GermanStrings = StringsBundle(
     tabCalendar = "Kalender",
     tabPixels = "Jahr in Pixeln",
     tabInsights = "ML-Erkenntnisse",
-    tabSecurity = "Sicherheit",
+    tabSettings = "Einstellungen",
     topBarStatus = "Offline • Verschlüsselt",
 
     cycleDayPrefix = "Tag",
@@ -244,7 +254,16 @@ val GermanStrings = StringsBundle(
     fastMoodSensitive = "Sensibel",
     fastMoodEnergetic = "Energiegeladen",
     fastMoodTired = "Erschöpft",
-    fastModeLoggedMsg = "Modus '%s' sofort erfasst!"
+    fastModeLoggedMsg = "Modus '%s' sofort erfasst!",
+
+    updaterTitle = "In-App System-Updates & Version",
+    updaterSubtitle = "Lädt das APK herunter, beendet die App sauber und übergibt an den Android-Systeminstaller",
+    checkUpdatesBtn = "Auf Updates prüfen",
+    downloadInstallBtn = "Neueste APK herunterladen & installieren",
+    downloadingProgress = "Herunterladen: %d%%",
+    systemInstallerPrompt = "App wird beendet und Systeminstaller gestartet...",
+    cicdInfoTitle = "GitHub Actions CI/CD Pipeline",
+    cicdInfoDesc = "Automatische Versionserhöhung (VersionCode & VersionName) bei jedem Build, APK-Generierung & GitHub Release Veröffentlichung."
 )
 
 val AlbanianStrings = StringsBundle(
@@ -253,7 +272,7 @@ val AlbanianStrings = StringsBundle(
     tabCalendar = "Kalendari",
     tabPixels = "Viti në Piksela",
     tabInsights = "Statistikat ML",
-    tabSecurity = "Siguria",
+    tabSettings = "Cilësimet",
     topBarStatus = "Offline • E Kriptuar",
 
     cycleDayPrefix = "Dita",
@@ -357,7 +376,16 @@ val AlbanianStrings = StringsBundle(
     fastMoodSensitive = "E ndjeshme",
     fastMoodEnergetic = "Energjike",
     fastMoodTired = "E lodhur",
-    fastModeLoggedMsg = "Gjendja '%s' u regjistrua me sukses!"
+    fastModeLoggedMsg = "Gjendja '%s' u regjistrua me sukses!",
+
+    updaterTitle = "Përditësimet e Sistemit & Versioni",
+    updaterSubtitle = "Shkarkon skedarin APK, mbyll aplikacionin dhe e instalon përmes instaluesit të sistemit Android",
+    checkUpdatesBtn = "Kontrollo për përditësime",
+    downloadInstallBtn = "Shkarko APK-në & Instalo me Sistem",
+    downloadingProgress = "Duke shkarkuar: %d%%",
+    systemInstallerPrompt = "Aplikacioni po mbyllet dhe instaluesi i sistemit po hapet...",
+    cicdInfoTitle = "GitHub Actions CI/CD Pipeline",
+    cicdInfoDesc = "Inkrementim automatik i numrit të versionit në çdo iteracion, krijim i paketës APK & publikim automatik."
 )
 
 val EnglishStrings = StringsBundle(
@@ -366,7 +394,7 @@ val EnglishStrings = StringsBundle(
     tabCalendar = "Calendar",
     tabPixels = "Year in Pixels",
     tabInsights = "ML Insights",
-    tabSecurity = "Security",
+    tabSettings = "Settings",
     topBarStatus = "Offline • Encrypted",
 
     cycleDayPrefix = "Day",
@@ -470,7 +498,16 @@ val EnglishStrings = StringsBundle(
     fastMoodSensitive = "Sensitive",
     fastMoodEnergetic = "Energetic",
     fastMoodTired = "Exhausted",
-    fastModeLoggedMsg = "Mode '%s' logged instantly!"
+    fastModeLoggedMsg = "Mode '%s' logged instantly!",
+
+    updaterTitle = "In-App System Updates & Version",
+    updaterSubtitle = "Downloads APK, cleanly closes the app, and invokes the Android System Package Installer",
+    checkUpdatesBtn = "Check for Updates",
+    downloadInstallBtn = "Download APK & Install via System",
+    downloadingProgress = "Downloading: %d%%",
+    systemInstallerPrompt = "Closing app and starting System Package Installer...",
+    cicdInfoTitle = "GitHub Actions CI/CD Pipeline",
+    cicdInfoDesc = "Automated version code & name incrementing on every workflow run, APK packaging, and GitHub Releases."
 )
 
 fun getAppStrings(language: AppLanguage): StringsBundle {
