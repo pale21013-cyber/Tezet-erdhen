@@ -2,8 +2,10 @@ package com.example.ui.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +21,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Spa
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -31,8 +34,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -49,6 +54,7 @@ import com.example.ml.CycleStats
 import com.example.ui.theme.FollicularPurple
 import com.example.ui.theme.LutealAmber
 import com.example.ui.theme.MenstrualRed
+import com.example.ui.theme.OutfitDisplayFamily
 import com.example.ui.theme.OvulationTeal
 import com.example.ui.theme.RosePrimary
 import kotlin.math.cos
@@ -81,18 +87,19 @@ fun CycleWheel(
         )
     }
 
-    val trackBgColor = MaterialTheme.colorScheme.outlineVariant
+    val trackBgColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
     val primaryColor = MaterialTheme.colorScheme.primary
     val surfaceColor = MaterialTheme.colorScheme.surface
+    val phaseColor = Color(phase.colorHex)
 
     Box(
         modifier = modifier
-            .size(310.dp)
+            .size(315.dp)
             .testTag("cycle_wheel_container"),
         contentAlignment = Alignment.Center
     ) {
         // Outer Circular Arc Track
-        Canvas(modifier = Modifier.fillMaxSize().padding(14.dp)) {
+        Canvas(modifier = Modifier.fillMaxSize().padding(12.dp)) {
             val strokeWidth = 16.dp.toPx()
             val diameter = size.minDimension - strokeWidth
             val arcSize = Size(diameter, diameter)
@@ -128,7 +135,7 @@ fun CycleWheel(
 
             // 2. Follicular phase arc (Purple)
             drawArc(
-                color = FollicularPurple.copy(alpha = 0.85f),
+                color = FollicularPurple.copy(alpha = 0.9f),
                 startAngle = -90f + menstrualAngle,
                 sweepAngle = follicularAngle,
                 useCenter = false,
@@ -150,7 +157,7 @@ fun CycleWheel(
 
             // 4. Luteal phase arc (Amber)
             drawArc(
-                color = LutealAmber.copy(alpha = 0.85f),
+                color = LutealAmber.copy(alpha = 0.9f),
                 startAngle = -90f + menstrualAngle + follicularAngle + ovulationAngle,
                 sweepAngle = lutealAngle,
                 useCenter = false,
@@ -178,54 +185,77 @@ fun CycleWheel(
                 radius = 11.dp.toPx(),
                 center = Offset(indicatorX, indicatorY)
             )
+            // Center mini white dot
+            drawCircle(
+                color = Color.White,
+                radius = 3.5.dp.toPx(),
+                center = Offset(indicatorX, indicatorY)
+            )
         }
 
         // Center card with Phase & Days Countdown
         Surface(
             modifier = Modifier
-                .size(232.dp)
+                .size(236.dp)
                 .clip(CircleShape)
+                .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)), CircleShape)
                 .testTag("cycle_wheel_center"),
             color = MaterialTheme.colorScheme.surface,
-            tonalElevation = 4.dp,
-            shadowElevation = 6.dp
+            tonalElevation = 6.dp,
+            shadowElevation = 10.dp
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(16.dp),
+                    .padding(18.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                // Phase badge
+                // Phase badge with high contrast
                 Surface(
-                    color = Color(phase.colorHex).copy(alpha = 0.15f),
-                    shape = RoundedCornerShape(12.dp)
+                    color = phaseColor.copy(alpha = 0.14f),
+                    shape = RoundedCornerShape(14.dp),
+                    border = BorderStroke(1.dp, phaseColor.copy(alpha = 0.35f))
                 ) {
-                    Text(
-                        text = "${strings.cycleDayPrefix} $currentDay • $localizedPhase",
-                        color = Color(phase.colorHex),
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(6.dp)
+                                .clip(CircleShape)
+                                .background(phaseColor)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "${strings.cycleDayPrefix} $currentDay • $localizedPhase",
+                            color = phaseColor,
+                            fontSize = 11.5.sp,
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 0.1.sp
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(6.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
-                // Days countdown (Clue style)
+                // Days countdown (Apple Health / Clue luxury style)
                 Text(
                     text = "$daysUntil",
-                    fontSize = 38.sp,
+                    fontFamily = OutfitDisplayFamily,
+                    fontSize = 44.sp,
                     fontWeight = FontWeight.ExtraBold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
+                    lineHeight = 48.sp
                 )
 
                 Text(
                     text = strings.daysUntilNextPeriod,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    letterSpacing = 0.2.sp
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -241,11 +271,12 @@ fun CycleWheel(
                             .clip(CircleShape)
                             .background(if (pregnancyChance == "Peak" || pregnancyChance == "High") OvulationTeal else MaterialTheme.colorScheme.onSurfaceVariant)
                     )
+                    Spacer(modifier = Modifier.width(5.dp))
                     Text(
-                        text = " ${strings.chancePrefix}: $localizedChance",
-                        fontSize = 11.sp,
+                        text = "${strings.chancePrefix}: $localizedChance",
+                        fontSize = 11.5.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.Bold
                     )
                 }
 
@@ -258,7 +289,8 @@ fun CycleWheel(
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary
                     ),
-                    shape = RoundedCornerShape(20.dp),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 3.dp),
+                    shape = RoundedCornerShape(22.dp),
                     modifier = Modifier
                         .height(36.dp)
                         .testTag("track_button")
@@ -268,11 +300,12 @@ fun CycleWheel(
                         contentDescription = strings.trackButton,
                         modifier = Modifier.size(16.dp)
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(5.dp))
                     Text(
                         text = strings.trackButton,
                         fontSize = 12.5.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.ExtraBold,
+                        letterSpacing = 0.2.sp
                     )
                 }
             }

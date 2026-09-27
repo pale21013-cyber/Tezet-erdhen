@@ -2,18 +2,18 @@ package com.example.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Primary brand colors
+// Primary Brand Colors (Luxury Velvet Rose & Radiant Coral)
 val RosePrimary = Color(0xFFE11D48)
 val RoseDark = Color(0xFFBE123C)
 val RoseLight = Color(0xFFFB7185)
 val RoseSubtleLight = Color(0xFFFFF1F2)
-val RoseSubtleDark = Color(0xFF2D151D)
+val RoseSubtleDark = Color(0xFF241017)
 val RoseContainerLight = Color(0xFFFFE4E6)
-val RoseContainerDark = Color(0xFF5C1024)
-val OnRoseContainerLight = Color(0xFF9F1239)
+val RoseContainerDark = Color(0xFF551022)
+val OnRoseContainerLight = Color(0xFF881337)
 val OnRoseContainerDark = Color(0xFFFFD9E0)
 
-// Cycle phase colors (Flo / Clue inspired)
+// Cycle Phase Palette (Flo / Oura / Apple Health Caliber)
 val MenstrualRed = Color(0xFFF43F5E)
 val MenstrualSoftLight = Color(0xFFFFE4E6)
 val MenstrualSoftDark = Color(0xFF4C101D)
@@ -30,31 +30,33 @@ val LutealAmber = Color(0xFFF59E0B)
 val LutealSoftLight = Color(0xFFFEF3C7)
 val LutealSoftDark = Color(0xFF4D3305)
 
-// Neutral surfaces - Light
-val LightBackground = Color(0xFFFFF7F8)
+// Neutral Surfaces - Light (Crisp Porcelain & Pristine White)
+val LightBackground = Color(0xFFFAFAFC)
 val LightSurface = Color(0xFFFFFFFF)
-val LightSurfaceElevated = Color(0xFFFFF0F3)
-val LightBorder = Color(0xFFEADBDE)
-val LightBorderSubtle = Color(0xFFF3E4E7)
+val LightSurfaceElevated = Color(0xFFFFF5F7)
+val LightBorder = Color(0xFFE6D6DA)
+val LightBorderSubtle = Color(0xFFF2E6E9)
 
-// Neutral surfaces - Dark
-val DarkBackground = Color(0xFF140D10)
-val DarkSurface = Color(0xFF1E1418)
-val DarkSurfaceElevated = Color(0xFF2C1E24)
-val DarkBorder = Color(0xFF4D3640)
-val DarkBorderSubtle = Color(0xFF3B2831)
+// Neutral Surfaces - Dark (Obsidian Velvet & Rich Titanium)
+val DarkBackground = Color(0xFF0D080A)
+val DarkSurface = Color(0xFF191014)
+val DarkSurfaceElevated = Color(0xFF261820)
+val DarkBorder = Color(0xFF422C36)
+val DarkBorderSubtle = Color(0xFF311F28)
 
-// High-contrast text tokens - Light
-val LightTextPrimary = Color(0xFF1C1316)       // Ultra-deep charcoal rose (contrast > 14:1)
-val LightTextSecondary = Color(0xFF5E4950)     // Deep slate rose (contrast > 6:1)
-val LightTextMuted = Color(0xFF7A646C)         // Medium slate (contrast > 4.5:1)
+// High-Contrast Distinguishable Typography Tokens - Light Mode
+// Crisp, ultra-deep dark charcoal rose with contrast ratio > 16:1
+val LightTextPrimary = Color(0xFF140B0F)
+val LightTextSecondary = Color(0xFF47333B)     // Rich slate plum (> 7.5:1)
+val LightTextMuted = Color(0xFF6E565F)         // Heather slate (> 4.8:1)
 
-// High-contrast text tokens - Dark
-val DarkTextPrimary = Color(0xFFFDF2F4)        // Crisp soft snow rose (contrast > 15:1)
-val DarkTextSecondary = Color(0xFFD6C0C7)      // Soft rose mist (contrast > 8:1)
-val DarkTextMuted = Color(0xFFA68F97)          // Luminous slate (contrast > 4.5:1)
+// High-Contrast Distinguishable Typography Tokens - Dark Mode
+// Luminous pearl white with contrast ratio > 17:1
+val DarkTextPrimary = Color(0xFFFFF2F5)
+val DarkTextSecondary = Color(0xFFD6C2C9)      // Radiant soft rose mist (> 8.5:1)
+val DarkTextMuted = Color(0xFFA8919A)          // Crisp frosted slate (> 5:1)
 
-// Flow colors
+// Flow Intensity Colors
 val FlowPink = Color(0xFFF472B6)
 val FlowBigRed = Color(0xFFE11D48)
 val FlowDarkRed = Color(0xFF991B1B)

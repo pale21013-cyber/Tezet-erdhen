@@ -274,83 +274,138 @@ fun AuraApp(
                             ),
                             title = {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(28.dp)
-                                            .clip(CircleShape)
-                                            .background(MaterialTheme.colorScheme.primaryContainer),
-                                        contentAlignment = Alignment.Center
+                                    Surface(
+                                        shape = CircleShape,
+                                        color = MaterialTheme.colorScheme.primaryContainer,
+                                        modifier = Modifier.size(34.dp)
                                     ) {
-                                        Text(text = "🌸", fontSize = 14.sp)
+                                        Box(contentAlignment = Alignment.Center) {
+                                            Text(text = "🌸", fontSize = 17.sp)
+                                        }
                                     }
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = strings.appName,
-                                        fontWeight = FontWeight.Bold,
-                                        fontSize = 18.sp,
-                                        color = MaterialTheme.colorScheme.onBackground
-                                    )
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Column {
+                                        Text(
+                                            text = strings.appName,
+                                            fontWeight = FontWeight.ExtraBold,
+                                            fontSize = 19.sp,
+                                            color = MaterialTheme.colorScheme.onBackground,
+                                            letterSpacing = (-0.3).sp
+                                        )
+                                    }
                                 }
                             },
                             actions = {
                                 Surface(
                                     color = Color(0xFFDCFCE7),
-                                    shape = RoundedCornerShape(12.dp),
-                                    modifier = Modifier.padding(end = 12.dp)
+                                    shape = RoundedCornerShape(16.dp),
+                                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF86EFAC)),
+                                    modifier = Modifier.padding(end = 14.dp)
                                 ) {
-                                    Text(
-                                        text = strings.topBarStatus,
-                                        fontSize = 10.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = Color(0xFF15803D),
-                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                                    )
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(6.dp)
+                                                .clip(CircleShape)
+                                                .background(Color(0xFF16A34A))
+                                        )
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text(
+                                            text = strings.topBarStatus,
+                                            fontSize = 10.5.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color(0xFF15803D)
+                                        )
+                                    }
                                 }
                             }
                         )
                     },
                     bottomBar = {
-                        NavigationBar(
-                            containerColor = MaterialTheme.colorScheme.surface,
-                            modifier = Modifier
-                                .windowInsetsPadding(WindowInsets.navigationBars)
-                                .testTag("bottom_nav")
+                        Surface(
+                            color = MaterialTheme.colorScheme.surface,
+                            tonalElevation = 6.dp,
+                            shadowElevation = 8.dp,
+                            border = androidx.compose.foundation.BorderStroke(
+                                width = 1.dp,
+                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                            )
                         ) {
-                            NavigationBarItem(
-                                selected = uiState.currentTab == AppTab.TODAY,
-                                onClick = { viewModel.selectTab(AppTab.TODAY) },
-                                icon = { Icon(Icons.Default.Spa, contentDescription = strings.tabToday) },
-                                label = { Text(strings.tabToday) },
-                                colors = NavigationBarItemDefaults.colors(selectedIconColor = RosePrimary)
-                            )
-                            NavigationBarItem(
-                                selected = uiState.currentTab == AppTab.CALENDAR,
-                                onClick = { viewModel.selectTab(AppTab.CALENDAR) },
-                                icon = { Icon(Icons.Default.CalendarMonth, contentDescription = strings.tabCalendar) },
-                                label = { Text(strings.tabCalendar) },
-                                colors = NavigationBarItemDefaults.colors(selectedIconColor = RosePrimary)
-                            )
-                            NavigationBarItem(
-                                selected = uiState.currentTab == AppTab.PIXELS,
-                                onClick = { viewModel.selectTab(AppTab.PIXELS) },
-                                icon = { Icon(Icons.Default.AutoAwesome, contentDescription = strings.tabPixels) },
-                                label = { Text(strings.tabPixels) },
-                                colors = NavigationBarItemDefaults.colors(selectedIconColor = RosePrimary)
-                            )
-                            NavigationBarItem(
-                                selected = uiState.currentTab == AppTab.INSIGHTS,
-                                onClick = { viewModel.selectTab(AppTab.INSIGHTS) },
-                                icon = { Icon(Icons.Default.SelfImprovement, contentDescription = strings.tabInsights) },
-                                label = { Text(strings.tabInsights) },
-                                colors = NavigationBarItemDefaults.colors(selectedIconColor = RosePrimary)
-                            )
-                            NavigationBarItem(
-                                selected = uiState.currentTab == AppTab.SETTINGS,
-                                onClick = { viewModel.selectTab(AppTab.SETTINGS) },
-                                icon = { Icon(Icons.Default.Settings, contentDescription = strings.tabSettings) },
-                                label = { Text(strings.tabSettings) },
-                                colors = NavigationBarItemDefaults.colors(selectedIconColor = RosePrimary)
-                            )
+                            NavigationBar(
+                                containerColor = MaterialTheme.colorScheme.surface,
+                                modifier = Modifier
+                                    .windowInsetsPadding(WindowInsets.navigationBars)
+                                    .testTag("bottom_nav")
+                            ) {
+                                NavigationBarItem(
+                                    selected = uiState.currentTab == AppTab.TODAY,
+                                    onClick = { viewModel.selectTab(AppTab.TODAY) },
+                                    icon = { Icon(Icons.Default.Spa, contentDescription = strings.tabToday, modifier = Modifier.size(22.dp)) },
+                                    label = { Text(strings.tabToday, fontWeight = if (uiState.currentTab == AppTab.TODAY) FontWeight.Bold else FontWeight.Medium) },
+                                    colors = NavigationBarItemDefaults.colors(
+                                        selectedIconColor = RosePrimary,
+                                        selectedTextColor = RosePrimary,
+                                        indicatorColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
+                                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                )
+                                NavigationBarItem(
+                                    selected = uiState.currentTab == AppTab.CALENDAR,
+                                    onClick = { viewModel.selectTab(AppTab.CALENDAR) },
+                                    icon = { Icon(Icons.Default.CalendarMonth, contentDescription = strings.tabCalendar, modifier = Modifier.size(22.dp)) },
+                                    label = { Text(strings.tabCalendar, fontWeight = if (uiState.currentTab == AppTab.CALENDAR) FontWeight.Bold else FontWeight.Medium) },
+                                    colors = NavigationBarItemDefaults.colors(
+                                        selectedIconColor = RosePrimary,
+                                        selectedTextColor = RosePrimary,
+                                        indicatorColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
+                                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                )
+                                NavigationBarItem(
+                                    selected = uiState.currentTab == AppTab.PIXELS,
+                                    onClick = { viewModel.selectTab(AppTab.PIXELS) },
+                                    icon = { Icon(Icons.Default.AutoAwesome, contentDescription = strings.tabPixels, modifier = Modifier.size(22.dp)) },
+                                    label = { Text(strings.tabPixels, fontWeight = if (uiState.currentTab == AppTab.PIXELS) FontWeight.Bold else FontWeight.Medium) },
+                                    colors = NavigationBarItemDefaults.colors(
+                                        selectedIconColor = RosePrimary,
+                                        selectedTextColor = RosePrimary,
+                                        indicatorColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
+                                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                )
+                                NavigationBarItem(
+                                    selected = uiState.currentTab == AppTab.INSIGHTS,
+                                    onClick = { viewModel.selectTab(AppTab.INSIGHTS) },
+                                    icon = { Icon(Icons.Default.SelfImprovement, contentDescription = strings.tabInsights, modifier = Modifier.size(22.dp)) },
+                                    label = { Text(strings.tabInsights, fontWeight = if (uiState.currentTab == AppTab.INSIGHTS) FontWeight.Bold else FontWeight.Medium) },
+                                    colors = NavigationBarItemDefaults.colors(
+                                        selectedIconColor = RosePrimary,
+                                        selectedTextColor = RosePrimary,
+                                        indicatorColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
+                                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                )
+                                NavigationBarItem(
+                                    selected = uiState.currentTab == AppTab.SETTINGS,
+                                    onClick = { viewModel.selectTab(AppTab.SETTINGS) },
+                                    icon = { Icon(Icons.Default.Settings, contentDescription = strings.tabSettings, modifier = Modifier.size(22.dp)) },
+                                    label = { Text(strings.tabSettings, fontWeight = if (uiState.currentTab == AppTab.SETTINGS) FontWeight.Bold else FontWeight.Medium) },
+                                    colors = NavigationBarItemDefaults.colors(
+                                        selectedIconColor = RosePrimary,
+                                        selectedTextColor = RosePrimary,
+                                        indicatorColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
+                                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                )
+                            }
                         }
                     }
                 ) { innerPadding ->

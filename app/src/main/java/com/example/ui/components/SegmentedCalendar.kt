@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -45,6 +46,7 @@ import com.example.localization.AppLanguage
 import com.example.localization.getAppStrings
 import com.example.ui.theme.FollicularPurple
 import com.example.ui.theme.MenstrualRed
+import com.example.ui.theme.OutfitDisplayFamily
 import com.example.ui.theme.RosePrimary
 import java.time.LocalDate
 import java.time.YearMonth
@@ -99,13 +101,14 @@ fun SegmentedCalendar(
 
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(20.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = RoundedCornerShape(24.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
         modifier = modifier
             .fillMaxWidth()
             .testTag("segmented_calendar")
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(18.dp)) {
             // Month Header with Prev / Next Navigation
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -114,38 +117,54 @@ fun SegmentedCalendar(
             ) {
                 Text(
                     text = "$monthName ${currentYearMonth.year}",
+                    fontFamily = OutfitDisplayFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    color = MaterialTheme.colorScheme.onSurface
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    letterSpacing = (-0.2).sp
                 )
 
-                Row {
-                    IconButton(
-                        onClick = { currentYearMonth = currentYearMonth.minusMonths(1) },
-                        modifier = Modifier.size(36.dp)
+                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Surface(
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        modifier = Modifier.size(34.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Previous Month",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                        IconButton(
+                            onClick = { currentYearMonth = currentYearMonth.minusMonths(1) },
+                            modifier = Modifier.size(34.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Previous Month",
+                                tint = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
                     }
-                    IconButton(
-                        onClick = { currentYearMonth = currentYearMonth.plusMonths(1) },
-                        modifier = Modifier.size(36.dp)
+                    Surface(
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        modifier = Modifier.size(34.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = "Next Month",
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                        IconButton(
+                            onClick = { currentYearMonth = currentYearMonth.plusMonths(1) },
+                            modifier = Modifier.size(34.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                                contentDescription = "Next Month",
+                                tint = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(14.dp))
 
-            // Weekday labels
+            // Weekday labels with crisp contrast
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceAround
@@ -153,8 +172,8 @@ fun SegmentedCalendar(
                 for (wd in weekDays) {
                     Text(
                         text = wd,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 11.5.sp,
+                        fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.weight(1f),
                         textAlign = TextAlign.Center
@@ -162,7 +181,7 @@ fun SegmentedCalendar(
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
             // Days Grid
             val totalCells = ((firstDayOfWeek + daysInMonth + 6) / 7) * 7
@@ -205,14 +224,27 @@ fun SegmentedCalendar(
                                 Box(
                                     modifier = Modifier
                                         .weight(1f)
-                                        .height(44.dp)
+                                        .height(46.dp)
                                         .padding(2.dp)
-                                        .clip(RoundedCornerShape(12.dp))
+                                        .clip(RoundedCornerShape(13.dp))
                                         .background(cellBgColor)
                                         .border(
-                                            width = if (isToday && !isSelected) 1.5.dp else if (isHighProbFuture && !isSelected) 1.dp else 0.dp,
-                                            color = if (isToday && !isSelected) MaterialTheme.colorScheme.primary else if (isHighProbFuture) MenstrualRed else Color.Transparent,
-                                            shape = RoundedCornerShape(12.dp)
+                                            width = if (isSelected) {
+                                                0.dp
+                                            } else if (isToday) {
+                                                1.5.dp
+                                            } else if (isHighProbFuture) {
+                                                1.dp
+                                            } else {
+                                                0.5.dp
+                                            },
+                                            color = when {
+                                                isSelected -> Color.Transparent
+                                                isToday -> MaterialTheme.colorScheme.primary
+                                                isHighProbFuture -> MenstrualRed.copy(alpha = 0.5f)
+                                                else -> MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)
+                                            },
+                                            shape = RoundedCornerShape(13.dp)
                                         )
                                         .clickable { onDateSelect(dateStr) }
                                         .testTag("cal_cell_$dateStr"),
@@ -224,8 +256,8 @@ fun SegmentedCalendar(
                                     ) {
                                         Text(
                                             text = "$dayNum",
-                                            fontSize = 12.sp,
-                                            fontWeight = if (isSelected || isToday || hasPeriodFlow) FontWeight.Bold else FontWeight.Normal,
+                                            fontSize = 13.sp,
+                                            fontWeight = if (isSelected || isToday || hasPeriodFlow) FontWeight.ExtraBold else FontWeight.Medium,
                                             color = textColor
                                         )
 
@@ -237,7 +269,7 @@ fun SegmentedCalendar(
                                             if (hasPeriodFlow) {
                                                 Box(
                                                     modifier = Modifier
-                                                        .size(4.dp)
+                                                        .size(4.5.dp)
                                                         .clip(CircleShape)
                                                         .background(if (isSelected) Color.White else MenstrualRed)
                                                 )
@@ -245,7 +277,7 @@ fun SegmentedCalendar(
                                             if (log != null && log.isLogged == 1 && !hasPeriodFlow) {
                                                 Box(
                                                     modifier = Modifier
-                                                        .size(4.dp)
+                                                        .size(4.5.dp)
                                                         .clip(CircleShape)
                                                         .background(if (isSelected) Color.White else FollicularPurple)
                                                 )
@@ -253,7 +285,7 @@ fun SegmentedCalendar(
                                             if (isHighProbFuture && !hasPeriodFlow) {
                                                 Box(
                                                     modifier = Modifier
-                                                        .size(4.dp)
+                                                        .size(4.5.dp)
                                                         .clip(CircleShape)
                                                         .background(if (isSelected) Color.White else Color(0xFFF43F5E))
                                                 )
@@ -269,16 +301,16 @@ fun SegmentedCalendar(
                 }
             }
 
-            Spacer(modifier = Modifier.height(14.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // Calendar Legend
+            // Calendar Legend with high contrast labels
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 LegendItem(color = MenstrualRed, label = strings.legendPeriod)
-                LegendItem(color = MenstrualRed.copy(alpha = 0.35f), label = strings.legendPredicted)
+                LegendItem(color = MenstrualRed.copy(alpha = 0.4f), label = strings.legendPredicted)
                 LegendItem(color = FollicularPurple, label = strings.legendLogged)
                 LegendItem(color = RosePrimary, label = strings.legendSelected)
             }
@@ -291,13 +323,15 @@ private fun LegendItem(color: Color, label: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Box(
             modifier = Modifier
-                .size(8.dp)
+                .size(9.dp)
                 .clip(CircleShape)
                 .background(color)
         )
+        Spacer(modifier = Modifier.size(4.dp))
         Text(
-            text = " $label",
-            fontSize = 9.5.sp,
+            text = label,
+            fontSize = 10.sp,
+            fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }

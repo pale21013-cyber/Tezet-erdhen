@@ -1,7 +1,9 @@
 package com.example.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -45,6 +48,7 @@ import com.example.ml.CyclePhase
 import com.example.ml.CycleStats
 import com.example.ui.theme.FollicularPurple
 import com.example.ui.theme.MenstrualRed
+import com.example.ui.theme.OutfitDisplayFamily
 import com.example.ui.theme.OvulationTeal
 import com.example.ui.theme.RosePrimary
 
@@ -72,11 +76,12 @@ fun MlInsightsCard(
         // ML Engine Status Header
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            shape = RoundedCornerShape(24.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(18.dp)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -84,29 +89,31 @@ fun MlInsightsCard(
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Surface(
-                            color = Color(0xFFF3E8FF),
+                            color = FollicularPurple.copy(alpha = 0.15f),
                             shape = CircleShape,
-                            modifier = Modifier.size(36.dp)
+                            modifier = Modifier.size(40.dp)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
                                     imageVector = Icons.Default.Psychology,
                                     contentDescription = "ML",
                                     tint = FollicularPurple,
-                                    modifier = Modifier.size(20.dp)
+                                    modifier = Modifier.size(22.dp)
                                 )
                             }
                         }
-                        Spacer(modifier = Modifier.width(10.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
                         Column {
                             Text(
                                 text = strings.mlTitle,
+                                fontFamily = OutfitDisplayFamily,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 15.sp
+                                fontSize = 17.sp,
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
                                 text = strings.mlSubtitle,
-                                fontSize = 10.5.sp,
+                                fontSize = 11.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -114,21 +121,22 @@ fun MlInsightsCard(
 
                     Surface(
                         color = Color(0xFFDCFCE7),
-                        shape = RoundedCornerShape(12.dp)
+                        shape = RoundedCornerShape(14.dp),
+                        border = BorderStroke(1.dp, Color(0xFF86EFAC))
                     ) {
                         Text(
                             text = "$confidencePct% ${strings.confidenceLabel}",
                             color = Color(0xFF15803D),
-                            fontSize = 11.sp,
+                            fontSize = 11.5.sp,
                             fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-                // Stats Row
+                // Stats Row with high contrast & clean typography
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -140,7 +148,7 @@ fun MlInsightsCard(
                     )
                     MetricPill(
                         label = strings.varianceLabel,
-                        value = "$stdDev ${strings.daysUnit}",
+                        value = "±$stdDev ${strings.daysUnit}",
                         modifier = Modifier.weight(1f)
                     )
                     MetricPill(
@@ -155,32 +163,43 @@ fun MlInsightsCard(
         // Probability Curve Chart
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            shape = RoundedCornerShape(24.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(18.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.AutoGraph,
-                        contentDescription = "Chart",
-                        tint = RosePrimary,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = strings.probCurveTitle,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 15.sp
-                    )
+                    Surface(
+                        color = RosePrimary.copy(alpha = 0.12f),
+                        shape = CircleShape,
+                        modifier = Modifier.size(34.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Default.AutoGraph,
+                                contentDescription = "Chart",
+                                tint = RosePrimary,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Column {
+                        Text(
+                            text = strings.probCurveTitle,
+                            fontFamily = OutfitDisplayFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = strings.probCurveSubtitle,
+                            fontSize = 11.5.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
-
-                Spacer(modifier = Modifier.height(6.dp))
-                Text(
-                    text = strings.probCurveSubtitle,
-                    fontSize = 11.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
 
                 Spacer(modifier = Modifier.height(14.dp))
 
@@ -189,11 +208,13 @@ fun MlInsightsCard(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(120.dp)
-                        .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(14.dp))
-                        .padding(horizontal = 12.dp, vertical = 8.dp)
+                        .height(130.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)), RoundedCornerShape(16.dp))
+                        .padding(horizontal = 14.dp, vertical = 10.dp)
                 ) {
-                    Canvas(modifier = Modifier.fillMaxWidth().height(100.dp)) {
+                    Canvas(modifier = Modifier.fillMaxWidth().height(110.dp)) {
                         if (displayPredictions.size < 2) return@Canvas
 
                         val w = size.width
@@ -206,7 +227,7 @@ fun MlInsightsCard(
                         for (i in displayPredictions.indices) {
                             val prob = displayPredictions[i].predictedNextPeriodProbability.toFloat()
                             val x = i * stepX
-                            val y = h - (prob * h * 0.9f)
+                            val y = h - (prob * h * 0.88f)
 
                             if (i == 0) {
                                 path.moveTo(x, y)
@@ -214,7 +235,6 @@ fun MlInsightsCard(
                                 fillPath.lineTo(x, y)
                             } else {
                                 path.lineTo(x, y)
-                                fillPath.lineTo(x, y)
                             }
                         }
 
@@ -225,7 +245,7 @@ fun MlInsightsCard(
                         drawPath(
                             path = fillPath,
                             brush = Brush.verticalGradient(
-                                colors = listOf(MenstrualRed.copy(alpha = 0.35f), Color.Transparent)
+                                colors = listOf(MenstrualRed.copy(alpha = 0.4f), Color.Transparent)
                             )
                         )
 
@@ -233,7 +253,7 @@ fun MlInsightsCard(
                         drawPath(
                             path = path,
                             color = MenstrualRed,
-                            style = Stroke(width = 3.dp.toPx(), cap = StrokeCap.Round)
+                            style = Stroke(width = 3.5.dp.toPx(), cap = StrokeCap.Round)
                         )
 
                         // Draw peak indicator point
@@ -241,29 +261,29 @@ fun MlInsightsCard(
                             displayPredictions[it].predictedNextPeriodProbability
                         } ?: 0
                         val peakX = maxIdx * stepX
-                        val peakY = h - (displayPredictions[maxIdx].predictedNextPeriodProbability.toFloat() * h * 0.9f)
+                        val peakY = h - (displayPredictions[maxIdx].predictedNextPeriodProbability.toFloat() * h * 0.88f)
 
                         drawCircle(
                             color = Color.White,
-                            radius = 6.dp.toPx(),
+                            radius = 6.5.dp.toPx(),
                             center = Offset(peakX, peakY)
                         )
                         drawCircle(
                             color = MenstrualRed,
-                            radius = 4.dp.toPx(),
+                            radius = 4.5.dp.toPx(),
                             center = Offset(peakX, peakY)
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(10.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(text = strings.todayLabel, fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    Text(text = strings.peakOnsetLabel, fontSize = 10.sp, color = MenstrualRed, fontWeight = FontWeight.Bold)
-                    Text(text = strings.daysFutureLabel, fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(text = strings.todayLabel, fontSize = 10.5.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(text = strings.peakOnsetLabel, fontSize = 10.5.sp, color = MenstrualRed, fontWeight = FontWeight.Bold)
+                    Text(text = strings.daysFutureLabel, fontSize = 10.5.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         }
@@ -271,27 +291,38 @@ fun MlInsightsCard(
         // Phase Health & Wellness Insights
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            shape = RoundedCornerShape(24.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(18.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.Spa,
-                        contentDescription = "Tips",
-                        tint = OvulationTeal,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Surface(
+                        color = OvulationTeal.copy(alpha = 0.15f),
+                        shape = CircleShape,
+                        modifier = Modifier.size(34.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Default.Spa,
+                                contentDescription = "Tips",
+                                tint = OvulationTeal,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
                     Text(
                         text = strings.guideTitle,
+                        fontFamily = OutfitDisplayFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 15.sp
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
                 GuideItem(strings.nutritionLabel, phaseAdvice.nutrition, "🥗")
                 GuideItem(strings.workoutLabel, phaseAdvice.workout, "🧘")
@@ -305,17 +336,27 @@ fun MlInsightsCard(
 private fun MetricPill(label: String, value: String, modifier: Modifier = Modifier) {
     Surface(
         color = MaterialTheme.colorScheme.surfaceVariant,
-        shape = RoundedCornerShape(12.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+        shape = RoundedCornerShape(14.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)),
         modifier = modifier
     ) {
         Column(
-            modifier = Modifier.padding(vertical = 10.dp, horizontal = 6.dp),
+            modifier = Modifier.padding(vertical = 12.dp, horizontal = 6.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = label, fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(text = value, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+            Text(
+                text = label,
+                fontSize = 10.5.sp,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = value,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
     }
 }
@@ -328,11 +369,29 @@ private fun GuideItem(category: String, text: String, emoji: String) {
             .padding(vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = emoji, fontSize = 18.sp)
-        Spacer(modifier = Modifier.width(10.dp))
+        Surface(
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.surfaceVariant,
+            modifier = Modifier.size(36.dp)
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Text(text = emoji, fontSize = 17.sp)
+            }
+        }
+        Spacer(modifier = Modifier.width(12.dp))
         Column {
-            Text(text = category, fontWeight = FontWeight.Bold, fontSize = 12.sp)
-            Text(text = text, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                text = category,
+                fontWeight = FontWeight.Bold,
+                fontSize = 13.sp,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Text(
+                text = text,
+                fontSize = 12.sp,
+                lineHeight = 16.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }

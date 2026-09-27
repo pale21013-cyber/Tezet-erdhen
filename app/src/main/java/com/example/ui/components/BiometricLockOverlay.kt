@@ -5,6 +5,7 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -47,6 +48,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.localization.AppLanguage
 import com.example.localization.getAppStrings
+import com.example.ui.theme.OutfitDisplayFamily
+import com.example.ui.theme.RosePrimary
 
 @Composable
 fun BiometricLockOverlay(
@@ -62,9 +65,9 @@ fun BiometricLockOverlay(
 
     LaunchedEffect(Unit) {
         pulseScale.animateTo(
-            targetValue = 1.12f,
+            targetValue = 1.08f,
             animationSpec = infiniteRepeatable(
-                animation = tween(1200, easing = FastOutSlowInEasing),
+                animation = tween(1400, easing = FastOutSlowInEasing),
                 repeatMode = RepeatMode.Reverse
             )
         )
@@ -84,29 +87,34 @@ fun BiometricLockOverlay(
             verticalArrangement = Arrangement.Center
         ) {
             // App Branding & Lock Icon with glowing container
-            Box(
+            Surface(
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.primaryContainer,
+                border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)),
+                shadowElevation = 8.dp,
                 modifier = Modifier
-                    .size(76.dp)
+                    .size(82.dp)
                     .scale(pulseScale.value)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primaryContainer),
-                contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    imageVector = Icons.Default.Lock,
-                    contentDescription = "Locked",
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(38.dp)
-                )
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = "Locked",
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(38.dp)
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(18.dp))
 
             Text(
                 text = strings.lockScreenTitle,
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
+                fontFamily = OutfitDisplayFamily,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.onBackground,
+                letterSpacing = (-0.3).sp
             )
 
             Spacer(modifier = Modifier.height(4.dp))
@@ -117,18 +125,19 @@ fun BiometricLockOverlay(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Spacer(modifier = Modifier.height(22.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-            // Biometric Unlock Instant Button
+            // Biometric Unlock Instant Button with luxury styling
             Button(
                 onClick = onBiometricUnlock,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
                 ),
-                shape = RoundedCornerShape(24.dp),
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
+                shape = RoundedCornerShape(26.dp),
                 modifier = Modifier
-                    .height(50.dp)
+                    .height(52.dp)
                     .testTag("biometric_unlock_button")
             ) {
                 Icon(
@@ -136,15 +145,16 @@ fun BiometricLockOverlay(
                     contentDescription = "Fingerprint",
                     modifier = Modifier.size(24.dp)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(10.dp))
                 Text(
                     text = strings.unlockBiometricBtn,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold
+                    fontSize = 14.5.sp,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 0.2.sp
                 )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(26.dp))
 
             // PIN Fallback header
             Text(
@@ -154,7 +164,7 @@ fun BiometricLockOverlay(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Spacer(modifier = Modifier.height(14.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             // PIN Indicator Dots with crisp border and fill
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -171,7 +181,7 @@ fun BiometricLockOverlay(
                             .border(
                                 width = 1.5.dp,
                                 color = if (isFilled) MaterialTheme.colorScheme.primary
-                                else MaterialTheme.colorScheme.outline,
+                                else MaterialTheme.colorScheme.outlineVariant,
                                 shape = CircleShape
                             )
                     )
@@ -179,16 +189,16 @@ fun BiometricLockOverlay(
             }
 
             if (errorMessage != null) {
-                Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = errorMessage,
                     color = MaterialTheme.colorScheme.error,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.SemiBold
+                    fontSize = 12.5.sp,
+                    fontWeight = FontWeight.Bold
                 )
             }
 
-            Spacer(modifier = Modifier.height(22.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             // Numeric Keypad: High-contrast, tactile circular keys with theme-aware colors
             val keys = listOf(
@@ -198,24 +208,19 @@ fun BiometricLockOverlay(
                 listOf("C", "0", "DEL")
             )
 
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
                 for (row in keys) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(22.dp)) {
                         for (key in row) {
                             val isAction = key == "C" || key == "DEL"
-                            Box(
+                            Surface(
+                                shape = CircleShape,
+                                color = if (isAction) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f) else MaterialTheme.colorScheme.surfaceVariant,
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.7f)),
+                                shadowElevation = if (isAction) 1.dp else 2.dp,
                                 modifier = Modifier
-                                    .size(64.dp)
+                                    .size(66.dp)
                                     .clip(CircleShape)
-                                    .background(
-                                        if (isAction) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
-                                        else MaterialTheme.colorScheme.surfaceVariant
-                                    )
-                                    .border(
-                                        width = 1.5.dp,
-                                        color = MaterialTheme.colorScheme.outline,
-                                        shape = CircleShape
-                                    )
                                     .clickable {
                                         when (key) {
                                             "C" -> enteredPin = ""
@@ -230,30 +235,33 @@ fun BiometricLockOverlay(
                                             }
                                         }
                                     }
-                                    .testTag("pin_key_$key"),
-                                contentAlignment = Alignment.Center
+                                    .testTag("pin_key_$key")
                             ) {
-                                if (key == "DEL") {
-                                    Icon(
-                                        imageVector = Icons.AutoMirrored.Filled.Backspace,
-                                        contentDescription = "Backspace",
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.size(22.dp)
-                                    )
-                                } else if (key == "C") {
-                                    Text(
-                                        text = key,
-                                        fontSize = 18.sp,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
-                                } else {
-                                    Text(
-                                        text = key,
-                                        fontSize = 22.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    )
+                                Box(contentAlignment = Alignment.Center) {
+                                    if (key == "DEL") {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Filled.Backspace,
+                                            contentDescription = "Backspace",
+                                            tint = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.size(24.dp)
+                                        )
+                                    } else if (key == "C") {
+                                        Text(
+                                            text = key,
+                                            fontFamily = OutfitDisplayFamily,
+                                            fontSize = 19.sp,
+                                            fontWeight = FontWeight.ExtraBold,
+                                            color = MaterialTheme.colorScheme.primary
+                                        )
+                                    } else {
+                                        Text(
+                                            text = key,
+                                            fontFamily = OutfitDisplayFamily,
+                                            fontSize = 25.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                    }
                                 }
                             }
                         }

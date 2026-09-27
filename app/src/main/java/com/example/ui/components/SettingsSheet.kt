@@ -1,5 +1,6 @@
 package com.example.ui.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -56,6 +57,7 @@ import com.example.BuildConfig
 import com.example.localization.AppLanguage
 import com.example.localization.getAppStrings
 import com.example.ui.theme.FollicularPurple
+import com.example.ui.theme.OutfitDisplayFamily
 import com.example.ui.theme.RosePrimary
 import com.example.ui.theme.ThemeSetting
 import com.example.updater.UpdateStatus
@@ -87,23 +89,24 @@ fun SettingsSheet(
         // 1. Language Selector Card
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            shape = RoundedCornerShape(24.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             modifier = Modifier.fillMaxWidth().testTag("language_selector_card")
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(18.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Surface(
                         color = MaterialTheme.colorScheme.primaryContainer,
                         shape = CircleShape,
-                        modifier = Modifier.size(38.dp)
+                        modifier = Modifier.size(40.dp)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
                                 imageVector = Icons.Default.Language,
                                 contentDescription = "Language",
                                 tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(22.dp)
                             )
                         }
                     }
@@ -111,8 +114,9 @@ fun SettingsSheet(
                     Column {
                         Text(
                             text = strings.languageSectionTitle,
+                            fontFamily = OutfitDisplayFamily,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
+                            fontSize = 17.sp,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
@@ -123,7 +127,7 @@ fun SettingsSheet(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -132,15 +136,15 @@ fun SettingsSheet(
                     for (lang in AppLanguage.entries) {
                         val isSelected = lang == currentLanguage
                         Surface(
-                            shape = RoundedCornerShape(14.dp),
+                            shape = RoundedCornerShape(16.dp),
                             color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
                             modifier = Modifier
                                 .weight(1f)
-                                .clip(RoundedCornerShape(14.dp))
+                                .clip(RoundedCornerShape(16.dp))
                                 .border(
                                     width = if (isSelected) 2.dp else 1.dp,
-                                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-                                    shape = RoundedCornerShape(14.dp)
+                                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f),
+                                    shape = RoundedCornerShape(16.dp)
                                 )
                                 .clickable { onLanguageChange(lang) }
                                 .testTag("language_option_${lang.code}")
@@ -150,12 +154,12 @@ fun SettingsSheet(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center
                             ) {
-                                Text(text = lang.flag, fontSize = 22.sp)
+                                Text(text = lang.flag, fontSize = 24.sp)
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Text(
                                         text = lang.displayName,
-                                        fontSize = 12.sp,
+                                        fontSize = 12.5.sp,
                                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                                         color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                                     )
@@ -165,7 +169,7 @@ fun SettingsSheet(
                                             imageVector = Icons.Default.Check,
                                             contentDescription = null,
                                             tint = MaterialTheme.colorScheme.primary,
-                                            modifier = Modifier.size(13.dp)
+                                            modifier = Modifier.size(14.dp)
                                         )
                                     }
                                 }
@@ -179,23 +183,24 @@ fun SettingsSheet(
         // 2. Theme & Appearance Card (High Contrast Light / Dark / System)
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            shape = RoundedCornerShape(24.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             modifier = Modifier.fillMaxWidth().testTag("theme_selector_card")
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(18.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Surface(
                         color = MaterialTheme.colorScheme.primaryContainer,
                         shape = CircleShape,
-                        modifier = Modifier.size(38.dp)
+                        modifier = Modifier.size(40.dp)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
                                 imageVector = Icons.Default.Palette,
                                 contentDescription = "Theme",
                                 tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(22.dp)
                             )
                         }
                     }
@@ -203,8 +208,9 @@ fun SettingsSheet(
                     Column {
                         Text(
                             text = strings.themeSectionTitle,
+                            fontFamily = OutfitDisplayFamily,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
+                            fontSize = 17.sp,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
@@ -215,7 +221,7 @@ fun SettingsSheet(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -230,15 +236,15 @@ fun SettingsSheet(
                     for ((themeOpt, label, icon) in themeOptions) {
                         val isSelected = themeOpt == currentThemeSetting
                         Surface(
-                            shape = RoundedCornerShape(14.dp),
+                            shape = RoundedCornerShape(16.dp),
                             color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
                             modifier = Modifier
                                 .weight(1f)
-                                .clip(RoundedCornerShape(14.dp))
+                                .clip(RoundedCornerShape(16.dp))
                                 .border(
                                     width = if (isSelected) 2.dp else 1.dp,
-                                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-                                    shape = RoundedCornerShape(14.dp)
+                                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f),
+                                    shape = RoundedCornerShape(16.dp)
                                 )
                                 .clickable { onThemeSettingChange(themeOpt) }
                                 .testTag("theme_option_${themeOpt.code}")
@@ -258,7 +264,7 @@ fun SettingsSheet(
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Text(
                                         text = label,
-                                        fontSize = 12.sp,
+                                        fontSize = 12.5.sp,
                                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                                         color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                                     )
@@ -282,23 +288,24 @@ fun SettingsSheet(
         // 3. Fast Actions (Modes of Person / App Icon & Widget Shortcuts)
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            shape = RoundedCornerShape(24.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             modifier = Modifier.fillMaxWidth().testTag("fast_actions_card")
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(18.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Surface(
                         color = MaterialTheme.colorScheme.primaryContainer,
                         shape = CircleShape,
-                        modifier = Modifier.size(38.dp)
+                        modifier = Modifier.size(40.dp)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
                                 imageVector = Icons.Default.TouchApp,
                                 contentDescription = "Fast Actions",
                                 tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(22.dp)
                             )
                         }
                     }
@@ -306,8 +313,9 @@ fun SettingsSheet(
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = strings.fastActionsTitle,
+                            fontFamily = OutfitDisplayFamily,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
+                            fontSize = 17.sp,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
@@ -334,21 +342,21 @@ fun SettingsSheet(
 
                     for ((moodKey, moodLabel) in fastMoods) {
                         Surface(
-                            shape = RoundedCornerShape(12.dp),
+                            shape = RoundedCornerShape(14.dp),
                             color = MaterialTheme.colorScheme.surfaceVariant,
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)),
                             modifier = Modifier
                                 .weight(1f)
-                                .clip(RoundedCornerShape(12.dp))
-                                .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
+                                .clip(RoundedCornerShape(14.dp))
                                 .clickable { onFastMoodLog(moodKey) }
                         ) {
                             Column(
-                                modifier = Modifier.padding(vertical = 10.dp, horizontal = 2.dp),
+                                modifier = Modifier.padding(vertical = 11.dp, horizontal = 2.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
                                     text = moodLabel,
-                                    fontSize = 10.5.sp,
+                                    fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface,
                                     maxLines = 1
@@ -363,23 +371,24 @@ fun SettingsSheet(
         // 4. In-App Updates & CI/CD Pipeline Card
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            shape = RoundedCornerShape(24.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             modifier = Modifier.fillMaxWidth().testTag("updater_card")
         ) {
-            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Surface(
                         color = MaterialTheme.colorScheme.primaryContainer,
                         shape = CircleShape,
-                        modifier = Modifier.size(38.dp)
+                        modifier = Modifier.size(40.dp)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
                                 imageVector = Icons.Default.SystemUpdate,
                                 contentDescription = "Updater",
                                 tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(22.dp)
                             )
                         }
                     }
@@ -387,8 +396,9 @@ fun SettingsSheet(
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = strings.updaterTitle,
+                            fontFamily = OutfitDisplayFamily,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
+                            fontSize = 17.sp,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
@@ -411,7 +421,8 @@ fun SettingsSheet(
                     is UpdateStatus.Idle -> {
                         Button(
                             onClick = onCheckForUpdates,
-                            shape = RoundedCornerShape(12.dp),
+                            shape = RoundedCornerShape(14.dp),
+                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 3.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                             modifier = Modifier.fillMaxWidth().testTag("check_updates_btn")
                         ) {
@@ -424,7 +435,7 @@ fun SettingsSheet(
                             Text(
                                 text = strings.checkUpdatesBtn,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 13.sp
+                                fontSize = 13.5.sp
                             )
                         }
                     }
@@ -436,24 +447,26 @@ fun SettingsSheet(
                         ) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(20.dp),
-                                strokeWidth = 2.dp,
+                                strokeWidth = 2.5.dp,
                                 color = MaterialTheme.colorScheme.primary
                             )
                             Spacer(modifier = Modifier.width(12.dp))
                             Text(
                                 text = strings.checkUpdatesBtn + "...",
                                 fontSize = 13.sp,
+                                fontWeight = FontWeight.Medium,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
                     is UpdateStatus.UpdateAvailable -> {
                         Surface(
-                            shape = RoundedCornerShape(12.dp),
+                            shape = RoundedCornerShape(14.dp),
                             color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)),
                             modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
                         ) {
-                            Column(modifier = Modifier.padding(12.dp)) {
+                            Column(modifier = Modifier.padding(14.dp)) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Icon(
                                         imageVector = Icons.Default.AutoAwesome,
@@ -465,7 +478,7 @@ fun SettingsSheet(
                                     Text(
                                         text = "v${status.info.latestVersionName} (Build ${status.info.latestVersionCode})",
                                         fontWeight = FontWeight.Bold,
-                                        fontSize = 13.sp,
+                                        fontSize = 13.5.sp,
                                         color = MaterialTheme.colorScheme.primary
                                     )
                                 }
@@ -473,7 +486,7 @@ fun SettingsSheet(
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
                                         text = status.info.releaseNotes,
-                                        fontSize = 11.5.sp,
+                                        fontSize = 12.sp,
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
                                 }
@@ -482,7 +495,8 @@ fun SettingsSheet(
 
                         Button(
                             onClick = onDownloadAndInstallUpdate,
-                            shape = RoundedCornerShape(12.dp),
+                            shape = RoundedCornerShape(14.dp),
+                            elevation = ButtonDefaults.buttonElevation(defaultElevation = 3.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                             modifier = Modifier.fillMaxWidth().testTag("download_install_btn")
                         ) {
@@ -495,7 +509,7 @@ fun SettingsSheet(
                             Text(
                                 text = strings.downloadInstallBtn,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 13.sp
+                                fontSize = 13.5.sp
                             )
                         }
                     }
@@ -530,7 +544,7 @@ fun SettingsSheet(
                     is UpdateStatus.ReadyToInstall -> {
                         Text(
                             text = strings.systemInstallerPrompt,
-                            fontSize = 12.5.sp,
+                            fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary
                         )
@@ -543,7 +557,7 @@ fun SettingsSheet(
                         )
                         OutlinedButton(
                             onClick = onCheckForUpdates,
-                            shape = RoundedCornerShape(12.dp),
+                            shape = RoundedCornerShape(14.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(strings.checkUpdatesBtn)
@@ -552,7 +566,8 @@ fun SettingsSheet(
                     is UpdateStatus.UpToDate -> {
                         Text(
                             text = "✓ App ist auf dem neuesten Stand!",
-                            fontSize = 12.5.sp,
+                            fontSize = 13.sp,
+                            fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -560,22 +575,23 @@ fun SettingsSheet(
 
                 // CI/CD Description box
                 Surface(
-                    shape = RoundedCornerShape(12.dp),
+                    shape = RoundedCornerShape(14.dp),
                     color = MaterialTheme.colorScheme.surfaceVariant,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Column(modifier = Modifier.padding(10.dp)) {
+                    Column(modifier = Modifier.padding(12.dp)) {
                         Text(
                             text = "⚙️ ${strings.cicdInfoTitle}",
-                            fontSize = 11.5.sp,
+                            fontSize = 12.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
-                        Spacer(modifier = Modifier.height(2.dp))
+                        Spacer(modifier = Modifier.height(3.dp))
                         Text(
                             text = strings.cicdInfoDesc,
-                            fontSize = 10.5.sp,
-                            lineHeight = 14.sp,
+                            fontSize = 11.sp,
+                            lineHeight = 15.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -586,23 +602,24 @@ fun SettingsSheet(
         // 5. Privacy & Offline Architecture Card
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            shape = RoundedCornerShape(24.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(18.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Surface(
                         color = Color(0xFFDCFCE7),
                         shape = CircleShape,
-                        modifier = Modifier.size(38.dp)
+                        modifier = Modifier.size(40.dp)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
                                 imageVector = Icons.Default.Shield,
                                 contentDescription = "Security",
                                 tint = Color(0xFF15803D),
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier.size(22.dp)
                             )
                         }
                     }
@@ -610,8 +627,9 @@ fun SettingsSheet(
                     Column {
                         Text(
                             text = strings.privacyTitle,
+                            fontFamily = OutfitDisplayFamily,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
+                            fontSize = 17.sp,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
@@ -622,7 +640,7 @@ fun SettingsSheet(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(14.dp))
 
                 Text(
                     text = strings.privacyBulletPoints,
@@ -636,15 +654,17 @@ fun SettingsSheet(
         // 6. Biometric Security Controls
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            shape = RoundedCornerShape(24.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+            Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text(
                     text = strings.biometricGateTitle,
+                    fontFamily = OutfitDisplayFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
+                    fontSize = 17.sp,
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
@@ -652,13 +672,21 @@ fun SettingsSheet(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Fingerprint,
-                        contentDescription = "Biometric Gate",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
+                    Surface(
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        modifier = Modifier.size(38.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Default.Fingerprint,
+                                contentDescription = "Biometric Gate",
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = strings.biometricToggleTitle,
@@ -689,8 +717,8 @@ fun SettingsSheet(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant,
                         contentColor = MaterialTheme.colorScheme.primary
                     ),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+                    shape = RoundedCornerShape(14.dp),
                     modifier = Modifier.fillMaxWidth().testTag("lock_now_button")
                 ) {
                     Icon(
@@ -703,7 +731,7 @@ fun SettingsSheet(
                     Text(
                         text = strings.lockNowBtn,
                         color = MaterialTheme.colorScheme.primary,
-                        fontSize = 12.5.sp,
+                        fontSize = 13.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -713,22 +741,24 @@ fun SettingsSheet(
         // 7. Database & Data Management
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            shape = RoundedCornerShape(24.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
                 Text(
                     text = strings.dataMgmtTitle,
+                    fontFamily = OutfitDisplayFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
+                    fontSize = 17.sp,
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
                 OutlinedButton(
                     onClick = onResetDemoData,
-                    shape = RoundedCornerShape(12.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, FollicularPurple.copy(alpha = 0.5f)),
+                    shape = RoundedCornerShape(14.dp),
+                    border = BorderStroke(1.dp, FollicularPurple.copy(alpha = 0.5f)),
                     modifier = Modifier.fillMaxWidth().testTag("reset_demo_button")
                 ) {
                     Icon(
@@ -741,7 +771,7 @@ fun SettingsSheet(
                     Text(
                         text = strings.resetDemoBtn,
                         color = FollicularPurple,
-                        fontSize = 12.5.sp,
+                        fontSize = 13.sp,
                         fontWeight = FontWeight.Bold
                     )
                 }

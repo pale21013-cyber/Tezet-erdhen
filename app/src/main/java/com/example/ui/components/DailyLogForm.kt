@@ -1,6 +1,7 @@
 package com.example.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -37,6 +38,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -66,6 +68,7 @@ import com.example.ui.theme.FlowDarkRed
 import com.example.ui.theme.FlowOrange
 import com.example.ui.theme.FlowPink
 import com.example.ui.theme.FollicularPurple
+import com.example.ui.theme.OutfitDisplayFamily
 import com.example.ui.theme.RosePrimary
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -112,9 +115,9 @@ fun DailyLogForm(
         // Smart Defaults Banner
         if (smartDefaults != null && currentLog == null) {
             Card(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
-                shape = RoundedCornerShape(16.dp),
-                border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)),
+                shape = RoundedCornerShape(20.dp),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)),
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("smart_defaults_card")
@@ -122,21 +125,29 @@ fun DailyLogForm(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(14.dp),
+                        .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.AutoAwesome,
-                        contentDescription = "Smart Defaults",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
+                    Surface(
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        modifier = Modifier.size(38.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Default.AutoAwesome,
+                                contentDescription = "Smart Defaults",
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = strings.smartDefaultsTitle,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 13.sp,
+                            fontSize = 13.5.sp,
                             color = MaterialTheme.colorScheme.primary
                         )
                         val actDesc = if (smartDefaults.activityLevel == 0) strings.actRest else strings.actModerate
@@ -153,12 +164,12 @@ fun DailyLogForm(
                             containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = MaterialTheme.colorScheme.onPrimary
                         ),
-                        shape = RoundedCornerShape(12.dp),
+                        shape = RoundedCornerShape(14.dp),
                         modifier = Modifier
-                            .height(34.dp)
+                            .height(36.dp)
                             .testTag("apply_defaults_button")
                     ) {
-                        Text(strings.applyBtn, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Text(strings.applyBtn, fontSize = 11.5.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -167,30 +178,41 @@ fun DailyLogForm(
         // 1. Menstruation Flow Section
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            shape = RoundedCornerShape(24.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(18.dp)) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.WaterDrop,
-                        contentDescription = "Flow",
-                        tint = FlowBigRed,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Surface(
+                        shape = CircleShape,
+                        color = FlowBigRed.copy(alpha = 0.15f),
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Default.WaterDrop,
+                                contentDescription = "Flow",
+                                tint = FlowBigRed,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
                     Text(
                         text = strings.flowTitle,
+                        fontFamily = OutfitDisplayFamily,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
+                        fontSize = 17.sp,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(14.dp))
 
                 // Flow Intensity Cards: None, Light, Medium, Heavy, Spotting
                 Row(
@@ -213,7 +235,7 @@ fun DailyLogForm(
                                 .clip(RoundedCornerShape(14.dp))
                                 .border(
                                     width = if (isSelected) 2.dp else 1.dp,
-                                    color = if (isSelected) FlowBigRed else MaterialTheme.colorScheme.outline,
+                                    color = if (isSelected) FlowBigRed else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f),
                                     shape = RoundedCornerShape(14.dp)
                                 )
                                 .clickable {
@@ -223,7 +245,7 @@ fun DailyLogForm(
                             color = if (isSelected) FlowBigRed.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceVariant
                         ) {
                             Column(
-                                modifier = Modifier.padding(vertical = 10.dp, horizontal = 2.dp),
+                                modifier = Modifier.padding(vertical = 12.dp, horizontal = 2.dp),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
@@ -239,8 +261,8 @@ fun DailyLogForm(
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text(
                                     text = label,
-                                    fontSize = 10.sp,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                                    fontSize = 10.5.sp,
+                                    fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Medium,
                                     color = if (isSelected) FlowBigRed else MaterialTheme.colorScheme.onSurface,
                                     maxLines = 1
                                 )
@@ -251,14 +273,14 @@ fun DailyLogForm(
 
                 // If flow is active, show blood color & clots picker
                 AnimatedVisibility(visible = flow > 0) {
-                    Column(modifier = Modifier.padding(top = 14.dp)) {
+                    Column(modifier = Modifier.padding(top = 16.dp)) {
                         Text(
                             text = strings.flowColorTitle,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            fontSize = 12.5.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
 
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -281,7 +303,7 @@ fun DailyLogForm(
                                         .background(col)
                                         .border(
                                             width = if (isSelected) 3.dp else 1.dp,
-                                            color = if (isSelected) Color.Black else Color.White,
+                                            color = if (isSelected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.outlineVariant,
                                             shape = CircleShape
                                         )
                                         .clickable {
@@ -304,18 +326,19 @@ fun DailyLogForm(
 
                             // Clots Toggle
                             Surface(
-                                shape = RoundedCornerShape(12.dp),
+                                shape = RoundedCornerShape(14.dp),
                                 color = if (hasClots == 1) FlowBigRed.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceVariant,
+                                border = BorderStroke(1.dp, if (hasClots == 1) FlowBigRed else MaterialTheme.colorScheme.outlineVariant),
                                 modifier = Modifier
-                                    .clip(RoundedCornerShape(12.dp))
+                                    .clip(RoundedCornerShape(14.dp))
                                     .clickable {
                                         onFlowIntensityChange(flow, flowColor, if (hasClots == 1) 0 else 1)
                                     }
-                                    .padding(horizontal = 8.dp, vertical = 6.dp)
+                                    .padding(horizontal = 10.dp, vertical = 7.dp)
                             ) {
                                 Text(
                                     text = if (hasClots == 1) strings.clotsChecked else strings.clotsAdd,
-                                    fontSize = 11.sp,
+                                    fontSize = 11.5.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = if (hasClots == 1) FlowBigRed else MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -326,18 +349,20 @@ fun DailyLogForm(
             }
         }
 
-        // 2. Multi-Tagging: Emotional Nuances (core requested feature)
+        // 2. Multi-Tagging: Emotional Nuances
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            shape = RoundedCornerShape(24.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(18.dp)) {
                 Text(
                     text = strings.emotionsTitle,
+                    fontFamily = OutfitDisplayFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
+                    fontSize = 17.sp,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
@@ -346,7 +371,7 @@ fun DailyLogForm(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(14.dp))
 
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -359,39 +384,36 @@ fun DailyLogForm(
                         val translatedName = getLocalizedTagName(tag.tagName, language)
 
                         Surface(
-                            shape = RoundedCornerShape(16.dp),
+                            shape = RoundedCornerShape(14.dp),
                             color = if (isSelected) chipColor.copy(alpha = 0.18f) else MaterialTheme.colorScheme.surfaceVariant,
+                            border = BorderStroke(
+                                width = if (isSelected) 1.8.dp else 1.dp,
+                                color = if (isSelected) chipColor else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)
+                            ),
                             modifier = Modifier
-                                .clip(RoundedCornerShape(16.dp))
-                                .border(
-                                    width = if (isSelected) 2.dp else 1.dp,
-                                    color = if (isSelected) chipColor else MaterialTheme.colorScheme.outline,
-                                    shape = RoundedCornerShape(16.dp)
-                                )
+                                .clip(RoundedCornerShape(14.dp))
                                 .clickable { onTagToggle(tag.tagId) }
-                                .testTag("tag_emotion_${tag.tagName}")
+                                .testTag("tag_${tag.tagName}")
                         ) {
                             Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(text = tag.emoji, fontSize = 14.sp)
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(
-                                    text = translatedName,
-                                    fontSize = 12.sp,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                    color = if (isSelected) chipColor else MaterialTheme.colorScheme.onSurface
-                                )
                                 if (isSelected) {
-                                    Spacer(modifier = Modifier.width(4.dp))
                                     Icon(
                                         imageVector = Icons.Default.CheckCircle,
                                         contentDescription = null,
                                         tint = chipColor,
                                         modifier = Modifier.size(14.dp)
                                     )
+                                    Spacer(modifier = Modifier.width(5.dp))
                                 }
+                                Text(
+                                    text = translatedName,
+                                    fontSize = 12.5.sp,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                    color = if (isSelected) chipColor else MaterialTheme.colorScheme.onSurface
+                                )
                             }
                         }
                     }
@@ -399,18 +421,20 @@ fun DailyLogForm(
             }
         }
 
-        // 3. Physical Symptoms Multi-Tagging
+        // 3. Physical Symptoms
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            shape = RoundedCornerShape(24.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.padding(18.dp)) {
                 Text(
                     text = strings.symptomsTitle,
+                    fontFamily = OutfitDisplayFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
+                    fontSize = 17.sp,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
@@ -419,7 +443,7 @@ fun DailyLogForm(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(14.dp))
 
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -432,39 +456,36 @@ fun DailyLogForm(
                         val translatedName = getLocalizedTagName(tag.tagName, language)
 
                         Surface(
-                            shape = RoundedCornerShape(16.dp),
+                            shape = RoundedCornerShape(14.dp),
                             color = if (isSelected) chipColor.copy(alpha = 0.18f) else MaterialTheme.colorScheme.surfaceVariant,
+                            border = BorderStroke(
+                                width = if (isSelected) 1.8.dp else 1.dp,
+                                color = if (isSelected) chipColor else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)
+                            ),
                             modifier = Modifier
-                                .clip(RoundedCornerShape(16.dp))
-                                .border(
-                                    width = if (isSelected) 2.dp else 1.dp,
-                                    color = if (isSelected) chipColor else MaterialTheme.colorScheme.outline,
-                                    shape = RoundedCornerShape(16.dp)
-                                )
+                                .clip(RoundedCornerShape(14.dp))
                                 .clickable { onTagToggle(tag.tagId) }
-                                .testTag("tag_symptom_${tag.tagName}")
+                                .testTag("tag_${tag.tagName}")
                         ) {
                             Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(text = tag.emoji, fontSize = 14.sp)
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(
-                                    text = translatedName,
-                                    fontSize = 12.sp,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                    color = if (isSelected) chipColor else MaterialTheme.colorScheme.onSurface
-                                )
                                 if (isSelected) {
-                                    Spacer(modifier = Modifier.width(4.dp))
                                     Icon(
                                         imageVector = Icons.Default.CheckCircle,
                                         contentDescription = null,
                                         tint = chipColor,
                                         modifier = Modifier.size(14.dp)
                                     )
+                                    Spacer(modifier = Modifier.width(5.dp))
                                 }
+                                Text(
+                                    text = translatedName,
+                                    fontSize = 12.5.sp,
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                    color = if (isSelected) chipColor else MaterialTheme.colorScheme.onSurface
+                                )
                             }
                         }
                     }
@@ -472,56 +493,86 @@ fun DailyLogForm(
             }
         }
 
-        // 4. Lifestyle & Medication (Tablet, Sleep, Activity)
+        // 4. Daily Habits & Wellness
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-            shape = RoundedCornerShape(20.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+            shape = RoundedCornerShape(24.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                // Tablet taken toggle
+            Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                // Pill / Supplement Switch
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Medication,
-                        contentDescription = "Medication",
-                        tint = FollicularPurple,
-                        modifier = Modifier.size(22.dp)
-                    )
+                    Surface(
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Default.Medication,
+                                contentDescription = "Pill",
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
                     Spacer(modifier = Modifier.width(10.dp))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(text = strings.pillTitle, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                        Text(text = strings.pillSubtitle, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(
+                            text = strings.pillTitle,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = strings.pillSubtitle,
+                            fontSize = 11.5.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                     Switch(
                         checked = tabletTaken,
                         onCheckedChange = onTabletToggle,
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = Color.White,
-                            checkedTrackColor = FollicularPurple
+                            checkedTrackColor = MaterialTheme.colorScheme.primary
                         ),
                         modifier = Modifier.testTag("pill_switch")
                     )
                 }
 
-                // Sleep Quality
+                // Sleep Quality Rating (Stars)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Hotel,
-                        contentDescription = "Sleep",
-                        tint = Color(0xFF6366F1),
-                        modifier = Modifier.size(22.dp)
-                    )
+                    Surface(
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Text(text = "🌙", fontSize = 16.sp)
+                        }
+                    }
                     Spacer(modifier = Modifier.width(10.dp))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(text = strings.sleepTitle, fontWeight = FontWeight.Bold, fontSize = 14.sp)
-                        Text(text = "$sleepQuality / 5 ${strings.sleepStars}", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(
+                            text = strings.sleepTitle,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = "$sleepQuality / 5 ${strings.sleepStars}",
+                            fontSize = 11.5.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
 
                     Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -529,9 +580,9 @@ fun DailyLogForm(
                             Icon(
                                 imageVector = Icons.Default.Star,
                                 contentDescription = "Star $s",
-                                tint = if (s <= sleepQuality) Color(0xFFF59E0B) else Color(0xFFE2D6D6),
+                                tint = if (s <= sleepQuality) Color(0xFFF59E0B) else MaterialTheme.colorScheme.outlineVariant,
                                 modifier = Modifier
-                                    .size(26.dp)
+                                    .size(28.dp)
                                     .clickable { onSleepQualityChange(s) }
                             )
                         }
@@ -540,7 +591,12 @@ fun DailyLogForm(
 
                 // Activity Level
                 Column {
-                    Text(text = strings.actTitle, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Text(
+                        text = strings.actTitle,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Row(
@@ -558,17 +614,17 @@ fun DailyLogForm(
                             Surface(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .clip(RoundedCornerShape(12.dp))
+                                    .clip(RoundedCornerShape(14.dp))
                                     .border(
                                         width = if (isSelected) 2.dp else 1.dp,
-                                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-                                        shape = RoundedCornerShape(12.dp)
+                                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f),
+                                        shape = RoundedCornerShape(14.dp)
                                     )
                                     .clickable { onActivityLevelChange(actLevel) },
                                 color = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceVariant
                             ) {
                                 Row(
-                                    modifier = Modifier.padding(vertical = 10.dp, horizontal = 6.dp),
+                                    modifier = Modifier.padding(vertical = 12.dp, horizontal = 6.dp),
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.Center
                                 ) {
@@ -578,10 +634,10 @@ fun DailyLogForm(
                                         tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier.size(16.dp)
                                     )
-                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Spacer(modifier = Modifier.width(5.dp))
                                     Text(
                                         text = actName,
-                                        fontSize = 11.5.sp,
+                                        fontSize = 12.sp,
                                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                                         color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                                     )
@@ -601,7 +657,11 @@ fun DailyLogForm(
                         .fillMaxWidth()
                         .focusRequester(notesFocusRequester)
                         .testTag("notes_input"),
-                    shape = RoundedCornerShape(14.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant
+                    ),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
                         focusManager.clearFocus()
@@ -611,30 +671,33 @@ fun DailyLogForm(
             }
         }
 
-        // Save Button (Thumb Reach)
+        // Save Button (Thumb Reach) with luxury multi-billion elevation & gradient
         Button(
             onClick = {
                 focusManager.clearFocus()
                 onSaveLog()
             },
             colors = ButtonDefaults.buttonColors(containerColor = RosePrimary),
-            shape = RoundedCornerShape(16.dp),
+            elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
+            shape = RoundedCornerShape(18.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(52.dp)
+                .height(54.dp)
                 .testTag("save_log_button")
         ) {
             Icon(
                 imageVector = Icons.Default.Check,
                 contentDescription = "Save",
-                tint = Color.White
+                tint = Color.White,
+                modifier = Modifier.size(20.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = strings.saveLogBtn,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
+                fontSize = 15.5.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = Color.White,
+                letterSpacing = 0.2.sp
             )
         }
     }
