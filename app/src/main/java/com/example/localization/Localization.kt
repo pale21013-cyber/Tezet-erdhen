@@ -148,8 +148,8 @@ val GermanStrings = StringsBundle(
     appName = "Aura Cycle",
     tabToday = "Heute",
     tabCalendar = "Kalender",
-    tabPixels = "Jahr in Pixeln",
-    tabInsights = "ML-Erkenntnisse",
+    tabPixels = "Pixel",
+    tabInsights = "Einblicke",
     tabSettings = "Einstellungen",
     topBarStatus = "Offline • Verschlüsselt",
 
@@ -270,8 +270,8 @@ val AlbanianStrings = StringsBundle(
     appName = "Aura Cycle",
     tabToday = "Sot",
     tabCalendar = "Kalendari",
-    tabPixels = "Viti në Piksela",
-    tabInsights = "Statistikat ML",
+    tabPixels = "Pikselat",
+    tabInsights = "Statistikat",
     tabSettings = "Cilësimet",
     topBarStatus = "Offline • E Kriptuar",
 
@@ -392,8 +392,8 @@ val EnglishStrings = StringsBundle(
     appName = "Aura Cycle",
     tabToday = "Today",
     tabCalendar = "Calendar",
-    tabPixels = "Year in Pixels",
-    tabInsights = "ML Insights",
+    tabPixels = "Pixels",
+    tabInsights = "Insights",
     tabSettings = "Settings",
     topBarStatus = "Offline • Encrypted",
 
