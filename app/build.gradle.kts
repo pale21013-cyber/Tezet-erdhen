@@ -44,12 +44,10 @@ android {
         } catch (_: Exception) {
         }
       }
-      if (rootDebugKeystore.exists()) {
-        storeFile = rootDebugKeystore
-        storePassword = "android"
-        keyAlias = "androiddebugkey"
-        keyPassword = "android"
-      }
+      storeFile = rootDebugKeystore
+      storePassword = "android"
+      keyAlias = "androiddebugkey"
+      keyPassword = "android"
     }
   }
 
