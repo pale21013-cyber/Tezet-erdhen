@@ -39,15 +39,24 @@ android {
       val base64Keystore = file("${rootDir}/debug.keystore.base64")
       if (!rootDebugKeystore.exists() && base64Keystore.exists()) {
         try {
-          val decoded = Base64.getDecoder().decode(base64Keystore.readText().trim())
+          val cleanB64 = base64Keystore.readText().replace("\\s".toRegex(), "")
+          val decoded = Base64.getDecoder().decode(cleanB64)
           rootDebugKeystore.writeBytes(decoded)
         } catch (_: Exception) {
         }
       }
-      storeFile = rootDebugKeystore
-      storePassword = "android"
-      keyAlias = "androiddebugkey"
-      keyPassword = "android"
+      if (rootDebugKeystore.exists()) {
+        storeFile = rootDebugKeystore
+        storePassword = "android"
+        keyAlias = "androiddebugkey"
+        keyPassword = "android"
+      } else {
+        val defaultDebug = signingConfigs.getByName("debug")
+        storeFile = defaultDebug.storeFile
+        storePassword = defaultDebug.storePassword
+        keyAlias = defaultDebug.keyAlias
+        keyPassword = defaultDebug.keyPassword
+      }
     }
   }
 

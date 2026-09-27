@@ -684,3 +684,35 @@ fun getLocalizedPhaseAdvice(phase: CyclePhase, language: AppLanguage): PhaseAdvi
         }
     }
 }
+
+fun getLocalizedCalmingBadge(language: AppLanguage): String {
+    return when (language) {
+        AppLanguage.GERMAN -> "🌸 Raum für Ruhe & Geborgenheit"
+        AppLanguage.ALBANIAN -> "🌸 Hapësirë për Qetësi & Siguri"
+        AppLanguage.ENGLISH -> "🌸 Safe Sanctuary & Calm"
+    }
+}
+
+fun getLocalizedCalmingAffirmations(language: AppLanguage): List<String> {
+    return when (language) {
+        AppLanguage.GERMAN -> listOf(
+            "Du bist im vollkommenen Einklang mit deinem Körper. Nimm dir einen tiefen, sanften Atemzug – du bist hier in Sicherheit. 🌸",
+            "Höre liebevoll auf die Weisheit deines Körpers. Schenke dir heute Ruhe, Wärme und Mitgefühl. ✨",
+            "Dein Wohlbefinden und deine Privatsphäre sind geschützt. Entspanne deine Schultern und lass los. 🤍",
+            "Jeder Tag deines Zyklus hat seine eigene Kraft. Sei sanft zu dir selbst und vertraue deinem Rhythmus. 🌷"
+        )
+        AppLanguage.ALBANIAN -> listOf(
+            "Je në harmoni të plotë me trupin tënd. Merr një frymëmarrje të thellë dhe të butë – këtu je e sigurt. 🌸",
+            "Dëgjo me dashuri mençurinë e trupit tënd. Fali vetes qetësi, ngrohtësi dhe mirëkuptim sot. ✨",
+            "Privatësia dhe shëndeti yt janë plotësisht të mbrojtura. Liro shpatullat dhe qetëso mendjen. 🤍",
+            "Çdo fazë e ciklit tënd mbart bukurinë dhe forcën e vet. Ji e butë me veten dhe beso ritmin tënd. 🌷"
+        )
+        AppLanguage.ENGLISH -> listOf(
+            "You are in tune with your body's rhythm. Take a gentle, deep breath — you are completely safe here. 🌸",
+            "Listen with kindness to your body's wisdom. Give yourself peace, warmth, and grace today. ✨",
+            "Your privacy and sacred space are protected. Relax your shoulders and exhale softly. 🤍",
+            "Every day of your cycle holds its own quiet strength. Be gentle with yourself and trust your journey. 🌷"
+        )
+    }
+}
+
