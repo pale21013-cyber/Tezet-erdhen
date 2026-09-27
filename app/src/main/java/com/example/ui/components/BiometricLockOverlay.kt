@@ -21,7 +21,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Backspace
+import androidx.compose.material.icons.automirrored.filled.Backspace
 import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
@@ -235,7 +235,7 @@ fun BiometricLockOverlay(
                             ) {
                                 if (key == "DEL") {
                                     Icon(
-                                        imageVector = Icons.Default.Backspace,
+                                        imageVector = Icons.AutoMirrored.Filled.Backspace,
                                         contentDescription = "Backspace",
                                         tint = MaterialTheme.colorScheme.primary,
                                         modifier = Modifier.size(22.dp)

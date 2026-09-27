@@ -21,11 +21,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.DirectionsRun
+import androidx.compose.material.icons.automirrored.filled.DirectionsWalk
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.DirectionsRun
-import androidx.compose.material.icons.filled.DirectionsWalk
 import androidx.compose.material.icons.filled.Hotel
 import androidx.compose.material.icons.filled.Medication
 import androidx.compose.material.icons.filled.Star
@@ -549,8 +549,8 @@ fun DailyLogForm(
                     ) {
                         val activityOptions = listOf(
                             Triple(0, strings.actRest, Icons.Default.Hotel),
-                            Triple(1, strings.actModerate, Icons.Default.DirectionsWalk),
-                            Triple(2, strings.actIntensive, Icons.Default.DirectionsRun)
+                            Triple(1, strings.actModerate, Icons.AutoMirrored.Filled.DirectionsWalk),
+                            Triple(2, strings.actIntensive, Icons.AutoMirrored.Filled.DirectionsRun)
                         )
 
                         for ((actLevel, actName, actIcon) in activityOptions) {

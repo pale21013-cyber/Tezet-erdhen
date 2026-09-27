@@ -48,7 +48,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "aura_cycle_secure.db"
                 )
-                    .fallbackToDestructiveMigration()
+                    .fallbackToDestructiveMigration(dropAllTables = true)
                     .addCallback(DatabaseCallback())
                     .build()
                 INSTANCE = instance
