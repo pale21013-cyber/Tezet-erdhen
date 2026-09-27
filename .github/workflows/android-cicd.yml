@@ -67,6 +67,13 @@ jobs:
       - name: Grant Execute Permission to Gradlew
         run: chmod +x gradlew || true
 
+      - name: Restore Debug Keystore
+        run: |
+          if [ -f "debug.keystore.base64" ]; then
+            echo "Restoring debug.keystore from base64..."
+            base64 -d debug.keystore.base64 > debug.keystore || true
+          fi
+
       - name: Run Unit & Robolectric Tests
         run: |
           if [ -f "./gradlew" ]; then
