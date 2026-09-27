@@ -94,10 +94,10 @@ fun BiometricLockOverlay(
         )
     }
 
-    // Auto-cycle through warm calming affirmations gently
+    // Auto-cycle through warm calming affirmations gently every 13 seconds
     LaunchedEffect(language) {
         while (true) {
-            delay(7000)
+            delay(13_000L)
             currentAffirmationIdx = (currentAffirmationIdx + 1) % affirmations.size
         }
     }
@@ -116,12 +116,12 @@ fun BiometricLockOverlay(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Warmth & Calming Banner for Women above the lock icon
+            // Warmth & Calming Banner for Women above the lock icon (Large, prominent typography)
             Surface(
-                shape = RoundedCornerShape(22.dp),
+                shape = RoundedCornerShape(26.dp),
                 color = MaterialTheme.colorScheme.surface,
-                border = BorderStroke(1.dp, RosePrimary.copy(alpha = 0.25f)),
-                shadowElevation = 4.dp,
+                border = BorderStroke(1.2.dp, RosePrimary.copy(alpha = 0.35f)),
+                shadowElevation = 6.dp,
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
@@ -135,12 +135,12 @@ fun BiometricLockOverlay(
                         .background(
                             Brush.verticalGradient(
                                 colors = listOf(
-                                    MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.45f),
+                                    MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.55f),
                                     MaterialTheme.colorScheme.surface
                                 )
                             )
                         )
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                        .padding(horizontal = 20.dp, vertical = 18.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Row(
@@ -150,43 +150,63 @@ fun BiometricLockOverlay(
                         Surface(
                             shape = CircleShape,
                             color = MaterialTheme.colorScheme.primaryContainer,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(28.dp)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
                                     imageVector = Icons.Default.Spa,
                                     contentDescription = null,
                                     tint = RosePrimary,
-                                    modifier = Modifier.size(13.dp)
+                                    modifier = Modifier.size(16.dp)
                                 )
                             }
                         }
-                        Spacer(modifier = Modifier.width(6.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = calmingBadge,
-                            fontSize = 11.5.sp,
-                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.5.sp,
+                            fontWeight = FontWeight.ExtraBold,
                             color = RosePrimary,
-                            letterSpacing = 0.1.sp
+                            letterSpacing = 0.15.sp
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(6.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
 
                     AnimatedContent(
                         targetState = affirmations[currentAffirmationIdx % affirmations.size],
-                        transitionSpec = { fadeIn(tween(600)) togetherWith fadeOut(tween(400)) },
+                        transitionSpec = { fadeIn(tween(800)) togetherWith fadeOut(tween(500)) },
                         label = "affirmation_text"
                     ) { text ->
                         Text(
                             text = text,
-                            fontSize = 12.5.sp,
-                            lineHeight = 17.sp,
-                            fontWeight = FontWeight.Medium,
+                            fontSize = 15.5.sp,
+                            lineHeight = 22.sp,
+                            fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.padding(horizontal = 4.dp)
+                            modifier = Modifier.padding(horizontal = 6.dp)
                         )
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    // Indicator dots for the 13-second carousel
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        for (i in affirmations.indices) {
+                            val isCurrent = i == (currentAffirmationIdx % affirmations.size)
+                            Box(
+                                modifier = Modifier
+                                    .size(if (isCurrent) 7.dp else 5.dp)
+                                    .clip(CircleShape)
+                                    .background(
+                                        if (isCurrent) RosePrimary else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.7f)
+                                    )
+                            )
+                        }
                     }
                 }
             }
