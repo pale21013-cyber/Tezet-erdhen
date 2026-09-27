@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/widget_bg"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingStart="14dp"
+    android:paddingEnd="14dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/widget_title_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Aura Cycle"
+            android:textStyle="bold"
+            android:textColor="#E11D48"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/widget_sub_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fast Actions • Mood"
+            android:textColor="#5E4950"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <!-- Quick action mood/feelings colored icons -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <!-- Happy / Good -->
+        <TextView
+            android:id="@+id/widget_btn_happy"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:background="#FFE4E6"
+            android:gravity="center"
+            android:text="🌸"
+            android:textSize="18sp"
+            android:layout_marginStart="4dp" />
+
+        <!-- Sensitive / Soft -->
+        <TextView
+            android:id="@+id/widget_btn_sensitive"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:background="#F3E8FF"
+            android:gravity="center"
+            android:text="🥺"
+            android:textSize="18sp"
+            android:layout_marginStart="6dp" />
+
+        <!-- Calm / Balanced -->
+        <TextView
+            android:id="@+id/widget_btn_tired"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:background="#CCFBF1"
+            android:gravity="center"
+            android:text="🧘"
+            android:textSize="18sp"
+            android:layout_marginStart="6dp" />
+
+        <!-- Period Flow -->
+        <TextView
+            android:id="@+id/widget_btn_flow"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:background="#FFE4E6"
+            android:gravity="center"
+            android:text="💧"
+            android:textSize="18sp"
+            android:layout_marginStart="6dp" />
+    </LinearLayout>
+
+</LinearLayout>

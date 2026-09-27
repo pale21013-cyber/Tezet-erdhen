@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#E11D48</color>
+    <color name="primary_variant">#BE123C</color>
+    <color name="surface_light">#FFF5F6</color>
+    <color name="surface_card">#FFFFFF</color>
+    <color name="text_primary">#1C1917</color>
+    <color name="text_secondary">#78716C</color>
+    <color name="phase_menstrual">#F43F5E</color>
+    <color name="phase_follicular">#A855F7</color>
+    <color name="phase_ovulation">#14B8A6</color>
+    <color name="phase_luteal">#F59E0B</color>
+    <color name="widget_bg">#FFF0F3</color>
+</resources>

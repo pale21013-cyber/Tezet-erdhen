@@ -1,0 +1,6 @@
+{
+  "name": "Aura Cycle",
+  "description": "Offline-first menstrual and cycle tracking with multi-tagging, predictive ML insights, interactive dashboard, and biometric security.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

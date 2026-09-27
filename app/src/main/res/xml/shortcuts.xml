@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="shortcut_mood_happy"
+        android:enabled="true"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:shortcutShortLabel="@string/shortcut_mood_happy"
+        android:shortcutLongLabel="@string/shortcut_mood_happy_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.aistudio.auracycle.wvxz"
+            android:targetClass="com.example.MainActivity">
+            <extra android:name="action_route" android:value="mood_happy" />
+        </intent>
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="shortcut_mood_calm"
+        android:enabled="true"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:shortcutShortLabel="@string/shortcut_mood_calm"
+        android:shortcutLongLabel="@string/shortcut_mood_calm_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.aistudio.auracycle.wvxz"
+            android:targetClass="com.example.MainActivity">
+            <extra android:name="action_route" android:value="mood_calm" />
+        </intent>
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="shortcut_flow"
+        android:enabled="true"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:shortcutShortLabel="@string/shortcut_flow"
+        android:shortcutLongLabel="@string/shortcut_flow_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.aistudio.auracycle.wvxz"
+            android:targetClass="com.example.MainActivity">
+            <extra android:name="action_route" android:value="quick_flow" />
+        </intent>
+    </shortcut>
+</shortcuts>

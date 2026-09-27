@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Aura Cycle</string>
+    <string name="tab_today">Today</string>
+    <string name="tab_calendar">Calendar</string>
+    <string name="tab_pixels">Year in Pixels</string>
+    <string name="tab_insights">ML Insights</string>
+    <string name="tab_settings">Security</string>
+    
+    <string name="widget_title">Aura Cycle</string>
+    <string name="widget_quick_log">Quick Log</string>
+    <string name="shortcut_mood">Log Mood</string>
+    <string name="shortcut_mood_long">Quick Log Mood and Emotions</string>
+    <string name="shortcut_mood_happy">🌸 Happy Mode</string>
+    <string name="shortcut_mood_happy_long">Fast Action: Log Happy Mode</string>
+    <string name="shortcut_mood_calm">🧘 Calm Mode</string>
+    <string name="shortcut_mood_calm_long">Fast Action: Log Calm Mode</string>
+    <string name="shortcut_flow">Record Flow</string>
+    <string name="shortcut_flow_long">Record Menstruation Flow</string>
+    <string name="shortcut_symptoms">Log Symptoms</string>
+    <string name="shortcut_symptoms_long">Quick Log Physical Symptoms</string>
+    <string name="shortcut_cycle">Cycle Status</string>
+    <string name="shortcut_cycle_long">Current Cycle Overview</string>
+</resources>

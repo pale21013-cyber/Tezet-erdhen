@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Aura Cycle</string>
+    <string name="tab_today">Heute</string>
+    <string name="tab_calendar">Kalender</string>
+    <string name="tab_pixels">Jahr in Pixeln</string>
+    <string name="tab_insights">ML-Erkenntnisse</string>
+    <string name="tab_settings">Sicherheit</string>
+    
+    <string name="widget_title">Aura Cycle</string>
+    <string name="widget_quick_log">Schnelleingabe</string>
+    <string name="shortcut_mood">Stimmung erfassen</string>
+    <string name="shortcut_mood_long">Emotionale Nuancen erfassen</string>
+    <string name="shortcut_mood_happy">🌸 Modus: Glücklich</string>
+    <string name="shortcut_mood_happy_long">Schnellaktion: Glücklichen Modus erfassen</string>
+    <string name="shortcut_mood_calm">🧘 Modus: Ruhig</string>
+    <string name="shortcut_mood_calm_long">Schnellaktion: Ruhigen &amp; ausgeglichenen Modus erfassen</string>
+    <string name="shortcut_flow">Blutung aufzeichnen</string>
+    <string name="shortcut_flow_long">Menstruationsfluss aufzeichnen</string>
+    <string name="shortcut_symptoms">Symptome erfassen</string>
+    <string name="shortcut_symptoms_long">Körperliche Symptome erfassen</string>
+    <string name="shortcut_cycle">Zyklus-Status</string>
+    <string name="shortcut_cycle_long">Aktuelle Zyklusübersicht</string>
+</resources>
