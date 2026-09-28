@@ -57,7 +57,8 @@ data class CycleUiState(
     val saveNotification: String? = null,
     val language: AppLanguage = AppLanguage.GERMAN,
     val themeSetting: ThemeSetting = ThemeSetting.SYSTEM,
-    val updateStatus: UpdateStatus = UpdateStatus.Idle
+    val updateStatus: UpdateStatus = UpdateStatus.Idle,
+    val jumpToTodayTrigger: Long = 0L
 )
 
 class CycleViewModel(
@@ -188,6 +189,17 @@ class CycleViewModel(
     fun selectDate(date: String) {
         _uiState.update { it.copy(selectedDate = date) }
         loadSelectedDateData(date)
+    }
+
+    fun jumpToToday() {
+        val todayStr = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
+        _uiState.update {
+            it.copy(
+                selectedDate = todayStr,
+                jumpToTodayTrigger = System.currentTimeMillis()
+            )
+        }
+        loadSelectedDateData(todayStr)
     }
 
     private fun loadSelectedDateData(date: String) {

@@ -98,6 +98,7 @@ fun YearInPixels(
     selectedYear: Int = LocalDate.now().year,
     onPixelClick: (String) -> Unit,
     language: AppLanguage = AppLanguage.GERMAN,
+    jumpToTodayTrigger: Long = 0L,
     modifier: Modifier = Modifier
 ) {
     val strings = getAppStrings(language)
@@ -116,6 +117,20 @@ fun YearInPixels(
 
     val todayStr = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
     val logMap = remember(logs) { logs.associateBy { it.logDate } }
+
+    androidx.compose.runtime.LaunchedEffect(jumpToTodayTrigger) {
+        if (jumpToTodayTrigger > 0L) {
+            val now = LocalDate.now()
+            currentYear = now.year
+            inspectedDate = todayStr
+            if (viewMode == PixelViewMode.MATRIX) {
+                val targetOffset = ((now.monthValue - 1) * 40).coerceAtLeast(0)
+                matrixScrollState.animateScrollTo(targetOffset)
+            } else {
+                monthRequesters[now.monthValue]?.bringIntoView()
+            }
+        }
+    }
 
     // Year-specific calculations
     val yearLogs = remember(logs, currentYear) {

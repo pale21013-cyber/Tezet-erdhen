@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -27,6 +28,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.SelfImprovement
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Spa
@@ -61,6 +63,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.localization.AppLanguage
 import com.example.localization.getAppStrings
 import com.example.ui.components.BiometricLockOverlay
 import com.example.ui.components.CycleWheel
@@ -82,6 +85,21 @@ fun AuraApp(
     val snackbarHostState = remember { SnackbarHostState() }
     val strings = getAppStrings(uiState.language)
     val context = LocalContext.current
+
+    val currentMonthName = remember(uiState.language) {
+        val currentMonthVal = java.time.LocalDate.now().monthValue
+        when (uiState.language) {
+            AppLanguage.GERMAN -> when (currentMonthVal) {
+                1 -> "Januar"; 2 -> "Februar"; 3 -> "März"; 4 -> "April"; 5 -> "Mai"; 6 -> "Juni"
+                7 -> "Juli"; 8 -> "August"; 9 -> "September"; 10 -> "Oktober"; 11 -> "November"; else -> "Dezember"
+            }
+            AppLanguage.ALBANIAN -> when (currentMonthVal) {
+                1 -> "Janar"; 2 -> "Shkurt"; 3 -> "Mars"; 4 -> "Prill"; 5 -> "Maj"; 6 -> "Qershor"
+                7 -> "Korrik"; 8 -> "Gusht"; 9 -> "Shtator"; 10 -> "Tetor"; 11 -> "Nëntor"; else -> "Dhjetor"
+            }
+            AppLanguage.ENGLISH -> java.time.LocalDate.now().month.name.lowercase().replaceFirstChar { it.uppercase() }
+        }
+    }
 
     LaunchedEffect(uiState.saveNotification) {
         uiState.saveNotification?.let {
@@ -230,7 +248,8 @@ fun AuraApp(
                                         logs = uiState.allLogs,
                                         predictions = uiState.predictions,
                                         onDateSelect = { viewModel.selectDate(it) },
-                                        language = uiState.language
+                                        language = uiState.language,
+                                        jumpToTodayTrigger = uiState.jumpToTodayTrigger
                                     )
                                     MlInsightsCard(
                                         stats = uiState.cycleStats,
@@ -245,14 +264,16 @@ fun AuraApp(
                                         logs = uiState.allLogs,
                                         predictions = uiState.predictions,
                                         onDateSelect = { viewModel.selectDate(it) },
-                                        language = uiState.language
+                                        language = uiState.language,
+                                        jumpToTodayTrigger = uiState.jumpToTodayTrigger
                                     )
                                 }
                                 AppTab.PIXELS -> {
                                     YearInPixels(
                                         logs = uiState.allLogs,
                                         onPixelClick = { viewModel.selectDate(it) },
-                                        language = uiState.language
+                                        language = uiState.language,
+                                        jumpToTodayTrigger = uiState.jumpToTodayTrigger
                                     )
                                 }
                                 AppTab.INSIGHTS -> {
@@ -318,29 +339,39 @@ fun AuraApp(
                                 }
                             },
                             actions = {
-                                Surface(
-                                    color = Color(0xFFDCFCE7),
-                                    shape = RoundedCornerShape(16.dp),
-                                    border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF86EFAC)),
-                                    modifier = Modifier.padding(end = 14.dp)
-                                ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+                                if (uiState.currentTab == AppTab.CALENDAR || uiState.currentTab == AppTab.PIXELS) {
+                                    // Today-Button showing current month
+                                    Surface(
+                                        color = MaterialTheme.colorScheme.primaryContainer,
+                                        shape = RoundedCornerShape(16.dp),
+                                        border = androidx.compose.foundation.BorderStroke(1.dp, RosePrimary.copy(alpha = 0.4f)),
+                                        shadowElevation = 2.dp,
+                                        modifier = Modifier
+                                            .padding(end = 14.dp)
+                                            .clip(RoundedCornerShape(16.dp))
+                                            .clickable {
+                                                viewModel.jumpToToday()
+                                            }
+                                            .testTag("top_bar_today_button")
                                     ) {
-                                        Box(
-                                            modifier = Modifier
-                                                .size(6.dp)
-                                                .clip(CircleShape)
-                                                .background(Color(0xFF16A34A))
-                                        )
-                                        Spacer(modifier = Modifier.width(6.dp))
-                                        Text(
-                                            text = strings.topBarStatus,
-                                            fontSize = 10.5.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = Color(0xFF15803D)
-                                        )
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.CalendarToday,
+                                                contentDescription = "Today",
+                                                tint = RosePrimary,
+                                                modifier = Modifier.size(15.dp)
+                                            )
+                                            Spacer(modifier = Modifier.width(6.dp))
+                                            Text(
+                                                text = "${strings.tabToday} • $currentMonthName",
+                                                fontSize = 11.5.sp,
+                                                fontWeight = FontWeight.ExtraBold,
+                                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -479,6 +510,7 @@ fun AuraApp(
                                     predictions = uiState.predictions,
                                     onDateSelect = { viewModel.selectDate(it) },
                                     language = uiState.language,
+                                    jumpToTodayTrigger = uiState.jumpToTodayTrigger,
                                     modifier = Modifier.padding(top = 8.dp)
                                 )
                                 // Also show the log form for the selected date!
@@ -510,6 +542,7 @@ fun AuraApp(
                                         viewModel.selectTab(AppTab.CALENDAR)
                                     },
                                     language = uiState.language,
+                                    jumpToTodayTrigger = uiState.jumpToTodayTrigger,
                                     modifier = Modifier.padding(top = 8.dp)
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
