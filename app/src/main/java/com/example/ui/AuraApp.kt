@@ -298,6 +298,8 @@ fun AuraApp(
                                         onReplayOnboarding = { viewModel.replayOnboarding() },
                                         onExportBackup = { viewModel.shareBackup() },
                                         onImportBackup = { viewModel.importData(it) },
+                                        targetRepository = uiState.targetRepository,
+                                        onTargetRepositoryChange = { viewModel.setUpdateTargetRepo(it) },
                                         updateStatus = uiState.updateStatus,
                                         onCheckForUpdates = { viewModel.checkForUpdates() },
                                         onDownloadAndInstallUpdate = { viewModel.downloadAndInstallUpdate(context as? Activity) }
@@ -548,6 +550,8 @@ fun AuraApp(
                                     onReplayOnboarding = { viewModel.replayOnboarding() },
                                     onExportBackup = { viewModel.shareBackup() },
                                     onImportBackup = { viewModel.importData(it) },
+                                    targetRepository = uiState.targetRepository,
+                                    onTargetRepositoryChange = { viewModel.setUpdateTargetRepo(it) },
                                     updateStatus = uiState.updateStatus,
                                     onCheckForUpdates = { viewModel.checkForUpdates() },
                                     onDownloadAndInstallUpdate = { viewModel.downloadAndInstallUpdate(context as? Activity) },

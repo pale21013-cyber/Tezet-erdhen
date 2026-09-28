@@ -58,6 +58,7 @@ data class CycleUiState(
     val language: AppLanguage = AppLanguage.GERMAN,
     val themeSetting: ThemeSetting = ThemeSetting.SYSTEM,
     val updateStatus: UpdateStatus = UpdateStatus.Idle,
+    val targetRepository: String = "pale21013-cyber/Tezet-erdhen",
     val jumpToTodayTrigger: Long = 0L,
     val isCalendarModalVisible: Boolean = false
 )
@@ -374,10 +375,15 @@ class CycleViewModel(
         }
     }
 
-    fun checkForUpdates() {
+    fun checkForUpdates(repo: String? = null) {
         viewModelScope.launch {
-            updateManager.checkForUpdates()
+            updateManager.checkForUpdates(repo ?: updateManager.targetRepository)
         }
+    }
+
+    fun setUpdateTargetRepo(repo: String) {
+        updateManager.targetRepository = repo
+        _uiState.update { it.copy(targetRepository = repo) }
     }
 
     fun downloadAndInstallUpdate(activity: Activity? = null) {
@@ -385,7 +391,7 @@ class CycleViewModel(
         val downloadUrl = if (currentStatus is UpdateStatus.UpdateAvailable) {
             currentStatus.info.downloadUrl
         } else {
-            "https://github.com/aistudio/aura-cycle/releases/latest/download/AuraCycle-latest.apk"
+            "https://github.com/${updateManager.targetRepository}/releases/latest/download/AuraCycle-latest.apk"
         }
         viewModelScope.launch {
             updateManager.downloadAndInstallApk(downloadUrl, activity)

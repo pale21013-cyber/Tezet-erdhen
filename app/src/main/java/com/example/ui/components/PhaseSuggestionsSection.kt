@@ -104,7 +104,7 @@ fun PhaseSuggestionsSection(
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = if (language == AppLanguage.GERMAN) "Gezielte Ernährungs- & Bewegungsvorschläge je Phase" else if (language == AppLanguage.ALBANIAN) "Këshilla për ushqimin dhe aktiviteting sipas fazës" else "Targeted nutrition & movement per cycle phase",
+                            text = if (language == AppLanguage.GERMAN) "Gezielte Ernährungs- & Bewegungsvorschläge je Phase" else if (language == AppLanguage.ALBANIAN) "Këshilla për ushqimin dhe aktivitetin sipas fazës" else "Targeted nutrition & movement per cycle phase",
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -226,7 +226,7 @@ fun PhaseSuggestionsSection(
                 }
 
                 // Scientific Detailed Items
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     for ((title, detail) in guide.nutritionDetails) {
                         Row(verticalAlignment = Alignment.Top) {
                             Box(
@@ -247,8 +247,8 @@ fun PhaseSuggestionsSection(
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
                                     text = detail,
-                                    fontSize = 12.sp,
-                                    lineHeight = 16.5.sp,
+                                    fontSize = 12.5.sp,
+                                    lineHeight = 17.5.sp,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
@@ -276,9 +276,9 @@ fun PhaseSuggestionsSection(
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = guide.metabolismFact,
-                            fontSize = 11.5.sp,
+                            fontSize = 12.sp,
                             fontWeight = FontWeight.Medium,
-                            lineHeight = 15.5.sp,
+                            lineHeight = 16.sp,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                     }
@@ -353,7 +353,7 @@ fun PhaseSuggestionsSection(
                 }
 
                 // Activity Details
-                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     for ((cat, desc) in guide.activityDetails) {
                         Row(verticalAlignment = Alignment.Top) {
                             Icon(
@@ -366,15 +366,15 @@ fun PhaseSuggestionsSection(
                             Column {
                                 Text(
                                     text = cat,
-                                    fontSize = 12.5.sp,
+                                    fontSize = 13.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Spacer(modifier = Modifier.height(2.dp))
                                 Text(
                                     text = desc,
-                                    fontSize = 12.sp,
-                                    lineHeight = 16.sp,
+                                    fontSize = 12.5.sp,
+                                    lineHeight = 17.5.sp,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
@@ -384,18 +384,18 @@ fun PhaseSuggestionsSection(
             }
         }
 
-        // Card 3: Hormones & Physiology Card
+        // Card 3: Hormones & Physiology Card (Beautified & Normalized)
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             shape = RoundedCornerShape(24.dp),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+            border = BorderStroke(1.dp, phaseColor.copy(alpha = 0.35f)),
             elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             modifier = Modifier.fillMaxWidth().testTag("hormone_physiology_card")
         ) {
-            Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Surface(
-                        color = MaterialTheme.colorScheme.primaryContainer,
+                        color = phaseColor.copy(alpha = 0.15f),
                         shape = CircleShape,
                         modifier = Modifier.size(38.dp)
                     ) {
@@ -403,7 +403,7 @@ fun PhaseSuggestionsSection(
                             Icon(
                                 imageVector = Icons.Default.Psychology,
                                 contentDescription = "Hormones",
-                                tint = MaterialTheme.colorScheme.primary,
+                                tint = phaseColor,
                                 modifier = Modifier.size(20.dp)
                             )
                         }
@@ -418,46 +418,73 @@ fun PhaseSuggestionsSection(
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = "Östrogen, Progesteron & Neurotransmitter",
-                            fontSize = 11.5.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            text = "${guide.emoji} ${guide.phaseTitle} • Hormonelle Steuerung",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = phaseColor
                         )
                     }
                 }
 
                 Surface(
-                    shape = RoundedCornerShape(14.dp),
+                    shape = RoundedCornerShape(16.dp),
                     color = MaterialTheme.colorScheme.surfaceVariant,
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Row(verticalAlignment = Alignment.Top) {
-                            Text(
-                                text = "🧪 Hormonstatus: ",
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary
-                            )
+                    Column(modifier = Modifier.padding(14.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        // Section 1: Hormonstatus
+                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Surface(
+                                color = phaseColor.copy(alpha = 0.18f),
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Text(
+                                    text = if (language == AppLanguage.GERMAN) "🧪 Hormonstatus & Physiologie" else if (language == AppLanguage.ALBANIAN) "🧪 Statusi Hormonal & Fiziologjia" else "🧪 Hormonal Status & Physiology",
+                                    fontSize = 11.5.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = phaseColor,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(2.dp))
                             Text(
                                 text = guide.hormonesAndPhysiology,
-                                fontSize = 12.sp,
-                                lineHeight = 16.sp,
+                                fontSize = 12.5.sp,
+                                lineHeight = 17.5.sp,
+                                fontWeight = FontWeight.Normal,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                         }
 
-                        Row(verticalAlignment = Alignment.Top) {
-                            Text(
-                                text = "✨ Stimmung & Psyche: ",
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary
-                            )
+                        // Divider line
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(1.dp)
+                                .background(MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
+                        )
+
+                        // Section 2: Stimmung & Psyche
+                        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Surface(
+                                color = phaseColor.copy(alpha = 0.18f),
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Text(
+                                    text = if (language == AppLanguage.GERMAN) "🧠 Stimmung, Psyche & Energie" else if (language == AppLanguage.ALBANIAN) "🧠 Humori, Psyche & Energjia" else "🧠 Mood, Psyche & Energy",
+                                    fontSize = 11.5.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = phaseColor,
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(2.dp))
                             Text(
                                 text = guide.moodAndEnergy,
-                                fontSize = 12.sp,
-                                lineHeight = 16.sp,
+                                fontSize = 12.5.sp,
+                                lineHeight = 17.5.sp,
+                                fontWeight = FontWeight.Normal,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                         }

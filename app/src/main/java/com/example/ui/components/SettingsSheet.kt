@@ -41,6 +41,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -89,6 +90,8 @@ fun SettingsSheet(
     onReplayOnboarding: () -> Unit = {},
     onExportBackup: () -> Unit = {},
     onImportBackup: (String) -> Unit = {},
+    targetRepository: String = "pale21013-cyber/Tezet-erdhen",
+    onTargetRepositoryChange: (String) -> Unit = {},
     updateStatus: UpdateStatus = UpdateStatus.Idle,
     onCheckForUpdates: () -> Unit = {},
     onDownloadAndInstallUpdate: () -> Unit = {},
@@ -532,6 +535,16 @@ fun SettingsSheet(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
+                OutlinedTextField(
+                    value = targetRepository,
+                    onValueChange = onTargetRepositoryChange,
+                    label = { Text("GitHub Repository", fontSize = 11.sp) },
+                    placeholder = { Text("owner/repo") },
+                    singleLine = true,
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.fillMaxWidth().testTag("github_repo_input")
+                )
+
                 when (val status = updateStatus) {
                     is UpdateStatus.Idle -> {
                         Button(
@@ -598,11 +611,12 @@ fun SettingsSheet(
                                     )
                                 }
                                 if (status.info.releaseNotes.isNotBlank()) {
-                                    Spacer(modifier = Modifier.height(4.dp))
-                                    Text(
-                                        text = status.info.releaseNotes,
-                                        fontSize = 12.sp,
-                                        color = MaterialTheme.colorScheme.onSurface
+                                    Spacer(modifier = Modifier.height(6.dp))
+                                    MarkdownText(
+                                        markdown = status.info.releaseNotes,
+                                        baseFontSize = 12.sp,
+                                        baseColor = MaterialTheme.colorScheme.onSurface,
+                                        accentColor = MaterialTheme.colorScheme.primary
                                     )
                                 }
                             }
