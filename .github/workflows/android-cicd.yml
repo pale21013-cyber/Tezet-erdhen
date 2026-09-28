@@ -114,7 +114,6 @@ jobs:
           if [ -n "$APK_PATH" ]; then
             TARGET_APK="output_artifacts/AuraCycle-v${{ env.VERSION_NAME }}-build${{ env.VERSION_CODE }}.apk"
             cp "$APK_PATH" "$TARGET_APK"
-            cp "$APK_PATH" "output_artifacts/AuraCycle-latest.apk"
             echo "Copied APK to $TARGET_APK"
           else
             echo "APK not found!" && exit 1
@@ -128,7 +127,7 @@ jobs:
             "versionName": "${{ env.VERSION_NAME }}",
             "releaseNotes": "🌸 Aura Cycle Update v${{ env.VERSION_NAME }}: Neues feminines Design, verbesserte Zyklus-Vorhersagen und optimierte System-Installation.",
             "downloadUrl": "https://github.com/${{ github.repository }}/releases/download/v${{ env.VERSION_NAME }}/AuraCycle-v${{ env.VERSION_NAME }}-build${{ env.VERSION_CODE }}.apk",
-            "fallbackUrl": "https://github.com/${{ github.repository }}/releases/latest/download/AuraCycle-latest.apk",
+            "fallbackUrl": "https://github.com/${{ github.repository }}/releases/download/v${{ env.VERSION_NAME }}/AuraCycle-v${{ env.VERSION_NAME }}-build${{ env.VERSION_CODE }}.apk",
             "mandatory": false,
             "publishedAt": "$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
           }

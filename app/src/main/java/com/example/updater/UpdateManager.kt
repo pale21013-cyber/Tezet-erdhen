@@ -3,6 +3,7 @@ package com.example.updater
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
@@ -41,12 +42,15 @@ class UpdateManager(private val context: Context) {
     private val _updateStatus = MutableStateFlow<UpdateStatus>(UpdateStatus.Idle)
     val updateStatus: StateFlow<UpdateStatus> = _updateStatus.asStateFlow()
 
+    var pendingApkFile: File? = null
+        private set
+
     val currentVersionName: String = BuildConfig.VERSION_NAME
     val currentVersionCode: Int = BuildConfig.VERSION_CODE
 
     companion object {
         const val GITHUB_REPO = "pale21013-cyber/Tezet-erdhen"
-        const val MANIFEST_URL = "https://github.com/pale21013-cyber/Tezet-erdhen/releases/latest/download/update_manifest.json"
+        const val MANIFEST_URL = "https://raw.githubusercontent.com/pale21013-cyber/Tezet-erdhen/main/update_manifest.json"
         const val API_LATEST_RELEASE = "https://api.github.com/repos/pale21013-cyber/Tezet-erdhen/releases/latest"
         const val FALLBACK_APK_URL = "https://github.com/pale21013-cyber/Tezet-erdhen/releases/latest/download/AuraCycle-latest.apk"
     }
@@ -54,54 +58,43 @@ class UpdateManager(private val context: Context) {
     suspend fun checkForUpdates(): UpdateInfo = withContext(Dispatchers.IO) {
         _updateStatus.value = UpdateStatus.Checking
         try {
-            // 1. Try to fetch the update_manifest.json produced by GitHub Actions CI/CD
             var manifestParsed = false
             var remoteVersionCode = currentVersionCode
             var remoteVersionName = currentVersionName
             var notes = ""
             var apkDownloadUrl = FALLBACK_APK_URL
 
+            // 1. Try manifest
             try {
-                val url = URL(MANIFEST_URL)
-                val conn = url.openConnection() as HttpURLConnection
-                conn.connectTimeout = 6000
-                conn.readTimeout = 6000
-                conn.instanceFollowRedirects = true
-                conn.setRequestProperty("User-Agent", "AuraCycle-Android")
-                conn.connect()
-
+                val conn = openConnectionWithRedirects(MANIFEST_URL)
                 if (conn.responseCode in 200..299) {
                     val content = conn.inputStream.bufferedReader().use { it.readText() }
+                    conn.disconnect()
                     val json = org.json.JSONObject(content)
                     remoteVersionCode = json.optInt("versionCode", currentVersionCode)
                     remoteVersionName = json.optString("versionName", currentVersionName)
                     notes = json.optString("releaseNotes", "")
                     apkDownloadUrl = json.optString("downloadUrl", FALLBACK_APK_URL)
                     manifestParsed = true
+                } else {
+                    conn.disconnect()
                 }
             } catch (e: Exception) {
-                // Manifest not yet available or offline
+                // Ignore manifest error, fallback to GitHub release API
             }
 
             if (!manifestParsed) {
-                // 2. Try GitHub Releases API
+                // 2. Try GitHub Release API
                 try {
-                    val url = URL(API_LATEST_RELEASE)
-                    val conn = url.openConnection() as HttpURLConnection
-                    conn.connectTimeout = 6000
-                    conn.readTimeout = 6000
-                    conn.setRequestProperty("User-Agent", "AuraCycle-Android")
-                    conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
-                    conn.connect()
-
+                    val conn = openConnectionWithRedirects(API_LATEST_RELEASE)
                     if (conn.responseCode in 200..299) {
                         val content = conn.inputStream.bufferedReader().use { it.readText() }
+                        conn.disconnect()
                         val json = org.json.JSONObject(content)
                         val tagName = json.optString("tag_name", "").removePrefix("v")
                         remoteVersionName = tagName.ifEmpty { currentVersionName }
-                        notes = json.optString("body", "Neueste Version via GitHub Actions Release.")
-                        
-                        // Parse assets for APK
+                        notes = json.optString("body", "Neueste Version via GitHub Release.")
+
                         val assets = json.optJSONArray("assets")
                         if (assets != null) {
                             for (i in 0 until assets.length()) {
@@ -114,9 +107,11 @@ class UpdateManager(private val context: Context) {
                             }
                         }
                         manifestParsed = true
+                    } else {
+                        conn.disconnect()
                     }
                 } catch (e: Exception) {
-                    // API query failed
+                    // Ignore
                 }
             }
 
@@ -142,13 +137,40 @@ class UpdateManager(private val context: Context) {
         }
     }
 
+    private fun openConnectionWithRedirects(initialUrl: String, maxRedirects: Int = 10): HttpURLConnection {
+        var urlStr = initialUrl
+        var redirects = 0
+        while (redirects < maxRedirects) {
+            val url = URL(urlStr)
+            val conn = url.openConnection() as HttpURLConnection
+            conn.connectTimeout = 12000
+            conn.readTimeout = 12000
+            conn.instanceFollowRedirects = false
+            conn.setRequestProperty("User-Agent", "AuraCycle-Android")
+            conn.setRequestProperty("Accept", "*/*")
+
+            val status = conn.responseCode
+            if (status in 301..308) {
+                val newUrl = conn.getHeaderField("Location")
+                conn.disconnect()
+                if (!newUrl.isNullOrEmpty()) {
+                    urlStr = if (newUrl.startsWith("http")) newUrl else URL(url, newUrl).toString()
+                    redirects++
+                    continue
+                }
+            }
+            return conn
+        }
+        throw java.io.IOException("Zu viele Umleitungen ($maxRedirects)")
+    }
+
     suspend fun downloadAndInstallApk(
         apkUrl: String,
         activity: Activity? = null
     ) = withContext(Dispatchers.IO) {
         _updateStatus.value = UpdateStatus.Downloading(0)
         try {
-            val updatesDir = File(context.cacheDir, "updates")
+            val updatesDir = File(context.getExternalCacheDir() ?: context.cacheDir, "updates")
             if (!updatesDir.exists()) {
                 updatesDir.mkdirs()
             }
@@ -158,64 +180,62 @@ class UpdateManager(private val context: Context) {
             }
 
             var downloadedBytes = 0L
-            val totalBytes = 15 * 1024 * 1024L // Simulated 15MB APK progress
+            val conn = openConnectionWithRedirects(apkUrl)
 
-            var connection: HttpURLConnection? = null
-            var downloadSuccess = false
+            if (conn.responseCode in 200..299) {
+                val serverLength = conn.contentLengthLong
+                val totalBytes = if (serverLength > 0) serverLength else (15 * 1024 * 1024L)
 
-            try {
-                val url = URL(apkUrl)
-                connection = url.openConnection() as HttpURLConnection
-                connection.connectTimeout = 8000
-                connection.readTimeout = 8000
-                connection.instanceFollowRedirects = true
-                connection.connect()
-
-                if (connection.responseCode in 200..299) {
-                    val serverLength = connection.contentLengthLong
-                    val expectedLength = if (serverLength > 0) serverLength else totalBytes
-
-                    connection.inputStream.use { input ->
-                        FileOutputStream(apkFile).use { output ->
-                            val buffer = ByteArray(8192)
-                            var read: Int
-                            while (input.read(buffer).also { read = it } != -1) {
-                                output.write(buffer, 0, read)
-                                downloadedBytes += read
-                                val progress = ((downloadedBytes * 100) / expectedLength).toInt().coerceIn(0, 99)
+                conn.inputStream.use { input ->
+                    FileOutputStream(apkFile).use { output ->
+                        val buffer = ByteArray(16384)
+                        var read: Int
+                        var lastReportTime = System.currentTimeMillis()
+                        while (input.read(buffer).also { read = it } != -1) {
+                            output.write(buffer, 0, read)
+                            downloadedBytes += read
+                            val now = System.currentTimeMillis()
+                            if (now - lastReportTime > 100) {
+                                lastReportTime = now
+                                val progress = ((downloadedBytes * 100) / totalBytes).toInt().coerceIn(0, 99)
                                 _updateStatus.value = UpdateStatus.Downloading(progress)
                             }
                         }
                     }
-                    downloadSuccess = apkFile.length() > 0
                 }
-            } catch (netEx: Exception) {
-                // If offline or test url is unreachable, simulate download for UI flow
-                for (p in 10..100 step 15) {
-                    kotlinx.coroutines.delay(200)
-                    _updateStatus.value = UpdateStatus.Downloading(p)
-                }
-                apkFile.writeText("AuraCycle APK payload placeholder")
-                downloadSuccess = true
-            } finally {
-                connection?.disconnect()
+                conn.disconnect()
+            } else {
+                val code = conn.responseCode
+                conn.disconnect()
+                throw java.io.IOException("HTTP-Fehler $code beim Herunterladen der APK.")
+            }
+
+            if (!apkFile.exists() || apkFile.length() < 100_000) {
+                apkFile.delete()
+                throw java.io.IOException("Unvollständige APK-Datei empfangen (${apkFile.length()} Bytes). Bitte erneut versuchen.")
             }
 
             _updateStatus.value = UpdateStatus.Downloading(100)
-            kotlinx.coroutines.delay(300)
+            pendingApkFile = apkFile
             _updateStatus.value = UpdateStatus.ReadyToInstall(apkFile)
 
-            // Prompt and trigger System Package Installer
             withContext(Dispatchers.Main) {
                 launchSystemInstallerAndStopApp(apkFile, activity)
             }
         } catch (e: Exception) {
-            _updateStatus.value = UpdateStatus.Error(e.localizedMessage ?: "Download failed")
+            _updateStatus.value = UpdateStatus.Error("Download fehlgeschlagen: ${e.localizedMessage}")
         }
     }
 
     fun launchSystemInstallerAndStopApp(apkFile: File, activity: Activity? = null) {
         try {
+            if (!apkFile.exists() || apkFile.length() < 100_000) {
+                _updateStatus.value = UpdateStatus.Error("Ungültige APK-Datei. Bitte erneut herunterladen.")
+                return
+            }
+
+            pendingApkFile = apkFile
+
             // Check install unknown apps permission on API 26+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 if (!context.packageManager.canRequestPackageInstalls()) {
@@ -224,6 +244,7 @@ class UpdateManager(private val context: Context) {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     }
                     context.startActivity(permissionIntent)
+                    _updateStatus.value = UpdateStatus.Error("Bitte 'Unbekannte Apps installieren' in den Einstellungen aktivieren.")
                     return
                 }
             }
@@ -236,19 +257,35 @@ class UpdateManager(private val context: Context) {
 
             val installIntent = Intent(Intent.ACTION_VIEW).apply {
                 setDataAndType(apkUri, "application/vnd.android.package-archive")
-                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK
+                flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
+            }
+
+            // Grant permissions to all matching installer activities
+            val resolvedActivities = context.packageManager.queryIntentActivities(installIntent, PackageManager.MATCH_DEFAULT_ONLY)
+            for (res in resolvedActivities) {
+                val packageName = res.activityInfo.packageName
+                context.grantUriPermission(packageName, apkUri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
 
             context.startActivity(installIntent)
-
-            // CRITICAL: Stop the app cleanly so the system installer handles the installation
-            activity?.finishAffinity()
+            pendingApkFile = null
         } catch (e: Exception) {
             _updateStatus.value = UpdateStatus.Error("System-Installation fehlgeschlagen: ${e.message}")
         }
     }
 
+    fun resumePendingInstallIfPermitted(activity: Activity? = null) {
+        val file = pendingApkFile
+        if (file != null && file.exists() && file.length() >= 100_000) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O || context.packageManager.canRequestPackageInstalls()) {
+                launchSystemInstallerAndStopApp(file, activity)
+            }
+        }
+    }
+
     fun resetStatus() {
+        pendingApkFile = null
         _updateStatus.value = UpdateStatus.Idle
     }
 }

@@ -52,6 +52,11 @@ class MainActivity : ComponentActivity() {
         handleIntent(intent)
     }
 
+    override fun onResume() {
+        super.onResume()
+        (application as AuraApplication).updateManager.resumePendingInstallIfPermitted(this)
+    }
+
     private fun handleIntent(intent: Intent?) {
         val actionRoute = intent?.getStringExtra("action_route")
         val directMood = intent?.getStringExtra("extra_mood_direct") ?: intent?.getStringExtra("extra_mood_type")
