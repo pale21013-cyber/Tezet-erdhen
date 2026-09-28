@@ -288,19 +288,7 @@ class GitHubUpdateManager(private val context: Context) {
             }
 
             context.startActivity(installIntent)
-            pendingApkFile = null
-
-            // Finish activity and terminate app process so PackageInstaller can update cleanly without process locks
-            val targetActivity = activity ?: (context as? Activity)
-            targetActivity?.finishAffinity()
-            targetActivity?.finishAndRemoveTask()
-
-            android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
-                try {
-                    android.os.Process.killProcess(android.os.Process.myPid())
-                    kotlin.system.exitProcess(0)
-                } catch (_: Exception) {}
-            }, 600)
+            _updateStatus.value = UpdateStatus.ReadyToInstall(apkFile)
         } catch (e: Exception) {
             _updateStatus.value = UpdateStatus.Error("System-Installation fehlgeschlagen: ${e.message}")
         }

@@ -1,8 +1,12 @@
 package com.example.ui
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -203,6 +208,7 @@ fun AuraApp(
                             modifier = Modifier
                                 .weight(1.1f)
                                 .fillMaxHeight()
+                                .imePadding()
                                 .verticalScroll(rememberScrollState()),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(20.dp)
@@ -238,6 +244,7 @@ fun AuraApp(
                             modifier = Modifier
                                 .weight(1.2f)
                                 .fillMaxHeight()
+                                .imePadding()
                                 .verticalScroll(rememberScrollState()),
                             verticalArrangement = Arrangement.spacedBy(20.dp)
                         ) {
@@ -449,115 +456,131 @@ fun AuraApp(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(innerPadding)
+                            .imePadding()
                             .padding(horizontal = 16.dp)
                             .verticalScroll(rememberScrollState()),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        when (uiState.currentTab) {
-                            AppTab.TODAY -> {
-                                // Combined Dashboard: Circular Cycle Wheel + Vertical Thumb Form with Smart Defaults
-                                CycleWheel(
-                                    stats = uiState.cycleStats,
-                                    onTrackClick = { /* focus or scroll form */ },
-                                    language = uiState.language,
-                                    modifier = Modifier.padding(top = 8.dp)
-                                )
+                        AnimatedContent(
+                            targetState = uiState.currentTab,
+                            transitionSpec = {
+                                fadeIn() + slideInHorizontally { width -> if (targetState.ordinal > initialState.ordinal) width / 4 else -width / 4 } togetherWith
+                                        fadeOut() + slideOutHorizontally { width -> if (targetState.ordinal > initialState.ordinal) -width / 4 else width / 4 }
+                            },
+                            label = "tab_transition"
+                        ) { targetTab ->
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                when (targetTab) {
+                                    AppTab.TODAY -> {
+                                        // Combined Dashboard: Circular Cycle Wheel + Vertical Thumb Form with Smart Defaults
+                                        CycleWheel(
+                                            stats = uiState.cycleStats,
+                                            onTrackClick = { /* focus or scroll form */ },
+                                            language = uiState.language,
+                                            modifier = Modifier.padding(top = 8.dp)
+                                        )
 
-                                DailyLogForm(
-                                    selectedDate = uiState.selectedDate,
-                                    currentLog = uiState.selectedDateLog,
-                                    selectedTagIds = uiState.selectedTagIds,
-                                    allTags = uiState.allTags,
-                                    smartDefaults = uiState.smartDefaults,
-                                    onApplySmartDefaults = { viewModel.applySmartDefaults() },
-                                    onFlowIntensityChange = { intensity, color, clots ->
-                                        viewModel.updateFlowIntensity(intensity, color, clots)
-                                    },
-                                    onTabletToggle = { viewModel.toggleTablet(it) },
-                                    onSleepQualityChange = { viewModel.updateSleepQuality(it) },
-                                    onActivityLevelChange = { viewModel.updateActivityLevel(it) },
-                                    onNotesChange = { viewModel.updateNotes(it) },
-                                    onTagToggle = { viewModel.toggleTag(it) },
-                                    onSaveLog = { viewModel.saveCurrentLog() },
-                                    language = uiState.language
-                                )
+                                        DailyLogForm(
+                                            selectedDate = uiState.selectedDate,
+                                            currentLog = uiState.selectedDateLog,
+                                            selectedTagIds = uiState.selectedTagIds,
+                                            allTags = uiState.allTags,
+                                            smartDefaults = uiState.smartDefaults,
+                                            onApplySmartDefaults = { viewModel.applySmartDefaults() },
+                                            onFlowIntensityChange = { intensity, color, clots ->
+                                                viewModel.updateFlowIntensity(intensity, color, clots)
+                                            },
+                                            onTabletToggle = { viewModel.toggleTablet(it) },
+                                            onSleepQualityChange = { viewModel.updateSleepQuality(it) },
+                                            onActivityLevelChange = { viewModel.updateActivityLevel(it) },
+                                            onNotesChange = { viewModel.updateNotes(it) },
+                                            onTagToggle = { viewModel.toggleTag(it) },
+                                            onSaveLog = { viewModel.saveCurrentLog() },
+                                            language = uiState.language
+                                        )
 
-                                Spacer(modifier = Modifier.height(16.dp))
-                            }
-                            AppTab.CALENDAR -> {
-                                SegmentedCalendar(
-                                    selectedDate = uiState.selectedDate,
-                                    cycles = uiState.allCycles,
-                                    logs = uiState.allLogs,
-                                    predictions = uiState.predictions,
-                                    onDateSelect = { viewModel.openCalendarModal(it) },
-                                    language = uiState.language,
-                                    jumpToTodayTrigger = uiState.jumpToTodayTrigger,
-                                    modifier = Modifier.padding(top = 8.dp)
-                                )
-                                // Also show the log form for the selected date!
-                                DailyLogForm(
-                                    selectedDate = uiState.selectedDate,
-                                    currentLog = uiState.selectedDateLog,
-                                    selectedTagIds = uiState.selectedTagIds,
-                                    allTags = uiState.allTags,
-                                    smartDefaults = uiState.smartDefaults,
-                                    onApplySmartDefaults = { viewModel.applySmartDefaults() },
-                                    onFlowIntensityChange = { intensity, color, clots ->
-                                        viewModel.updateFlowIntensity(intensity, color, clots)
-                                    },
-                                    onTabletToggle = { viewModel.toggleTablet(it) },
-                                    onSleepQualityChange = { viewModel.updateSleepQuality(it) },
-                                    onActivityLevelChange = { viewModel.updateActivityLevel(it) },
-                                    onNotesChange = { viewModel.updateNotes(it) },
-                                    onTagToggle = { viewModel.toggleTag(it) },
-                                    onSaveLog = { viewModel.saveCurrentLog() },
-                                    language = uiState.language
-                                )
-                                Spacer(modifier = Modifier.height(16.dp))
-                            }
-                            AppTab.PIXELS -> {
-                                YearInPixels(
-                                    logs = uiState.allLogs,
-                                    onPixelClick = {
-                                        viewModel.openCalendarModal(it)
-                                        viewModel.selectTab(AppTab.CALENDAR)
-                                    },
-                                    language = uiState.language,
-                                    jumpToTodayTrigger = uiState.jumpToTodayTrigger,
-                                    modifier = Modifier.padding(top = 8.dp)
-                                )
-                                Spacer(modifier = Modifier.height(16.dp))
-                            }
-                            AppTab.INSIGHTS -> {
-                                MlInsightsCard(
-                                    stats = uiState.cycleStats,
-                                    predictions = uiState.predictions,
-                                    language = uiState.language,
-                                    modifier = Modifier.padding(top = 8.dp)
-                                )
-                                Spacer(modifier = Modifier.height(16.dp))
-                            }
-                            AppTab.SETTINGS -> {
-                                SettingsSheet(
-                                    currentLanguage = uiState.language,
-                                    onLanguageChange = { viewModel.setLanguage(it) },
-                                    currentThemeSetting = uiState.themeSetting,
-                                    onThemeSettingChange = { viewModel.setThemeSetting(it) },
-                                    onFastMoodLog = { viewModel.logFastMood(it) },
-                                    onResetDemoData = { viewModel.resetDemoData() },
-                                    onReplayOnboarding = { viewModel.replayOnboarding() },
-                                    onExportBackup = { viewModel.shareBackup() },
-                                    onImportBackup = { viewModel.importData(it) },
-                                    targetRepository = uiState.targetRepository,
-                                    onTargetRepositoryChange = { viewModel.setUpdateTargetRepo(it) },
-                                    updateStatus = uiState.updateStatus,
-                                    onCheckForUpdates = { viewModel.checkForUpdates() },
-                                    onDownloadAndInstallUpdate = { viewModel.downloadAndInstallUpdate(context as? Activity) },
-                                    modifier = Modifier.padding(top = 8.dp)
-                                )
-                                Spacer(modifier = Modifier.height(16.dp))
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                    }
+                                    AppTab.CALENDAR -> {
+                                        SegmentedCalendar(
+                                            selectedDate = uiState.selectedDate,
+                                            cycles = uiState.allCycles,
+                                            logs = uiState.allLogs,
+                                            predictions = uiState.predictions,
+                                            onDateSelect = { viewModel.openCalendarModal(it) },
+                                            language = uiState.language,
+                                            jumpToTodayTrigger = uiState.jumpToTodayTrigger,
+                                            modifier = Modifier.padding(top = 8.dp)
+                                        )
+                                        // Also show the log form for the selected date!
+                                        DailyLogForm(
+                                            selectedDate = uiState.selectedDate,
+                                            currentLog = uiState.selectedDateLog,
+                                            selectedTagIds = uiState.selectedTagIds,
+                                            allTags = uiState.allTags,
+                                            smartDefaults = uiState.smartDefaults,
+                                            onApplySmartDefaults = { viewModel.applySmartDefaults() },
+                                            onFlowIntensityChange = { intensity, color, clots ->
+                                                viewModel.updateFlowIntensity(intensity, color, clots)
+                                            },
+                                            onTabletToggle = { viewModel.toggleTablet(it) },
+                                            onSleepQualityChange = { viewModel.updateSleepQuality(it) },
+                                            onActivityLevelChange = { viewModel.updateActivityLevel(it) },
+                                            onNotesChange = { viewModel.updateNotes(it) },
+                                            onTagToggle = { viewModel.toggleTag(it) },
+                                            onSaveLog = { viewModel.saveCurrentLog() },
+                                            language = uiState.language
+                                        )
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                    }
+                                    AppTab.PIXELS -> {
+                                        YearInPixels(
+                                            logs = uiState.allLogs,
+                                            onPixelClick = {
+                                                viewModel.openCalendarModal(it)
+                                                viewModel.selectTab(AppTab.CALENDAR)
+                                            },
+                                            language = uiState.language,
+                                            jumpToTodayTrigger = uiState.jumpToTodayTrigger,
+                                            modifier = Modifier.padding(top = 8.dp)
+                                        )
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                    }
+                                    AppTab.INSIGHTS -> {
+                                        MlInsightsCard(
+                                            stats = uiState.cycleStats,
+                                            predictions = uiState.predictions,
+                                            language = uiState.language,
+                                            modifier = Modifier.padding(top = 8.dp)
+                                        )
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                    }
+                                    AppTab.SETTINGS -> {
+                                        SettingsSheet(
+                                            currentLanguage = uiState.language,
+                                            onLanguageChange = { viewModel.setLanguage(it) },
+                                            currentThemeSetting = uiState.themeSetting,
+                                            onThemeSettingChange = { viewModel.setThemeSetting(it) },
+                                            onFastMoodLog = { viewModel.logFastMood(it) },
+                                            onResetDemoData = { viewModel.resetDemoData() },
+                                            onReplayOnboarding = { viewModel.replayOnboarding() },
+                                            onExportBackup = { viewModel.shareBackup() },
+                                            onImportBackup = { viewModel.importData(it) },
+                                            targetRepository = uiState.targetRepository,
+                                            onTargetRepositoryChange = { viewModel.setUpdateTargetRepo(it) },
+                                            updateStatus = uiState.updateStatus,
+                                            onCheckForUpdates = { viewModel.checkForUpdates() },
+                                            onDownloadAndInstallUpdate = { viewModel.downloadAndInstallUpdate(context as? Activity) },
+                                            modifier = Modifier.padding(top = 8.dp)
+                                        )
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                    }
+                                }
                             }
                         }
                     }

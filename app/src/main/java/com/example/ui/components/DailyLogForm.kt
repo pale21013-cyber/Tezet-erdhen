@@ -1,6 +1,7 @@
 package com.example.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -108,6 +109,7 @@ fun DailyLogForm(
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .animateContentSize()
             .testTag("daily_log_form"),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {

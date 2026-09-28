@@ -76,7 +76,17 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -117,9 +127,35 @@ fun OnboardingScreen(
     modifier: Modifier = Modifier
 ) {
     val strings = getAppStrings(currentLanguage)
+    val context = LocalContext.current
 
     var currentStep by remember { mutableIntStateOf(0) }
-    val totalSteps = 6
+    val totalSteps = 7
+
+    var isNotifGranted by remember {
+        mutableStateOf(
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            } else true
+        )
+    }
+
+    var canInstallUnknownApps by remember {
+        mutableStateOf(
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.packageManager.canRequestPackageInstalls()
+            } else true
+        )
+    }
+
+    val notifPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { granted ->
+        isNotifGranted = granted
+    }
 
     // User Answers
     var selectedGoal by remember { mutableStateOf("track_cycle") }
@@ -1013,9 +1049,170 @@ fun OnboardingScreen(
                             }
 
                             // -------------------------------------------------------------
-                            // Step 5: Summary & Profile Ready
+                            // Step 5: App Capabilities & Permissions Rights
                             // -------------------------------------------------------------
                             5 -> {
+                                Box(
+                                    modifier = Modifier
+                                        .size(100.dp)
+                                        .clip(CircleShape)
+                                        .background(
+                                            Brush.radialGradient(
+                                                listOf(
+                                                    RosePrimary.copy(alpha = 0.25f),
+                                                    Color.Transparent
+                                                )
+                                            )
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Shield,
+                                        contentDescription = "Rights",
+                                        tint = RosePrimary,
+                                        modifier = Modifier.size(48.dp)
+                                    )
+                                }
+
+                                Text(
+                                    text = "⚡ App-Rechte & In-App Updates",
+                                    fontFamily = OutfitDisplayFamily,
+                                    fontSize = 22.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    textAlign = TextAlign.Center
+                                )
+
+                                Text(
+                                    text = "Gewähre der App die nötigen Rechte, damit In-App OTA Updates und Phasen-Benachrichtigungen reibungslos funktionieren.",
+                                    fontSize = 13.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textAlign = TextAlign.Center,
+                                    lineHeight = 18.sp
+                                )
+
+                                Spacer(modifier = Modifier.height(4.dp))
+
+                                // Notification Card
+                                Card(
+                                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                                    shape = RoundedCornerShape(18.dp),
+                                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Text(text = "🔔", fontSize = 20.sp)
+                                            Spacer(modifier = Modifier.width(10.dp))
+                                            Column(modifier = Modifier.weight(1f)) {
+                                                Text(
+                                                    text = "Phasen- & Zyklus-Erinnerungen",
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 14.sp
+                                                )
+                                                Text(
+                                                    text = "Erhalte Push-Nachrichten bei Phasenwechseln & Ernährungstipps",
+                                                    fontSize = 11.5.sp,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                            }
+                                        }
+
+                                        if (!isNotifGranted && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                            Button(
+                                                onClick = {
+                                                    notifPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                                },
+                                                shape = RoundedCornerShape(12.dp),
+                                                colors = ButtonDefaults.buttonColors(containerColor = RosePrimary),
+                                                modifier = Modifier.fillMaxWidth().testTag("onboarding_notif_perm_btn")
+                                            ) {
+                                                Text("Benachrichtigungen erlauben", fontWeight = FontWeight.Bold, fontSize = 12.5.sp)
+                                            }
+                                        } else {
+                                            Surface(
+                                                shape = RoundedCornerShape(10.dp),
+                                                color = Color(0xFFDCFCE7),
+                                                modifier = Modifier.fillMaxWidth()
+                                            ) {
+                                                Text(
+                                                    text = "✓ Benachrichtigungen aktiv",
+                                                    fontSize = 12.sp,
+                                                    fontWeight = FontWeight.Bold,
+                                                    color = Color(0xFF15803D),
+                                                    modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
+                                                    textAlign = TextAlign.Center
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // In-App OTA Update Card
+                                Card(
+                                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                                    shape = RoundedCornerShape(18.dp),
+                                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Text(text = "📦", fontSize = 20.sp)
+                                            Spacer(modifier = Modifier.width(10.dp))
+                                            Column(modifier = Modifier.weight(1f)) {
+                                                Text(
+                                                    text = "Sichere In-App OTA Updates",
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 14.sp
+                                                )
+                                                Text(
+                                                    text = "Ermöglicht direkte App-Aktualisierungen aus GitHub Releases",
+                                                    fontSize = 11.5.sp,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                            }
+                                        }
+
+                                        if (!canInstallUnknownApps) {
+                                            Button(
+                                                onClick = {
+                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                                        val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
+                                                            data = Uri.parse("package:${context.packageName}")
+                                                        }
+                                                        context.startActivity(intent)
+                                                    }
+                                                },
+                                                shape = RoundedCornerShape(12.dp),
+                                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                                                modifier = Modifier.fillMaxWidth().testTag("onboarding_ota_perm_btn")
+                                            ) {
+                                                Text("In-App Updates erlauben", fontWeight = FontWeight.Bold, fontSize = 12.5.sp)
+                                            }
+                                        } else {
+                                            Surface(
+                                                shape = RoundedCornerShape(10.dp),
+                                                color = Color(0xFFDCFCE7),
+                                                modifier = Modifier.fillMaxWidth()
+                                            ) {
+                                                Text(
+                                                    text = "✓ In-App Updates erlaubt",
+                                                    fontSize = 12.sp,
+                                                    fontWeight = FontWeight.Bold,
+                                                    color = Color(0xFF15803D),
+                                                    modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
+                                                    textAlign = TextAlign.Center
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            // -------------------------------------------------------------
+                            // Step 6: Summary & Profile Ready
+                            // -------------------------------------------------------------
+                            6 -> {
                                 Box(
                                     modifier = Modifier
                                         .size(120.dp)
