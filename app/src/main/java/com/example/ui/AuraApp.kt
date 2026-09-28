@@ -66,6 +66,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.localization.AppLanguage
 import com.example.localization.getAppStrings
 import com.example.ui.components.BiometricLockOverlay
+import com.example.ui.components.CalendarDayDetailModal
 import com.example.ui.components.CycleWheel
 import com.example.ui.components.DailyLogForm
 import com.example.ui.components.MlInsightsCard
@@ -73,6 +74,7 @@ import com.example.ui.components.OnboardingScreen
 import com.example.ui.components.SegmentedCalendar
 import com.example.ui.components.SettingsSheet
 import com.example.ui.components.YearInPixels
+import com.example.ui.components.calculateFertilityForDate
 import com.example.ui.theme.RosePrimary
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -257,13 +259,13 @@ fun AuraApp(
                                         language = uiState.language
                                     )
                                 }
-                                AppTab.CALENDAR -> {
+                                 AppTab.CALENDAR -> {
                                     SegmentedCalendar(
                                         selectedDate = uiState.selectedDate,
                                         cycles = uiState.allCycles,
                                         logs = uiState.allLogs,
                                         predictions = uiState.predictions,
-                                        onDateSelect = { viewModel.selectDate(it) },
+                                        onDateSelect = { viewModel.openCalendarModal(it) },
                                         language = uiState.language,
                                         jumpToTodayTrigger = uiState.jumpToTodayTrigger
                                     )
@@ -271,7 +273,10 @@ fun AuraApp(
                                 AppTab.PIXELS -> {
                                     YearInPixels(
                                         logs = uiState.allLogs,
-                                        onPixelClick = { viewModel.selectDate(it) },
+                                        onPixelClick = { 
+                                            viewModel.openCalendarModal(it)
+                                            viewModel.selectTab(AppTab.CALENDAR)
+                                        },
                                         language = uiState.language,
                                         jumpToTodayTrigger = uiState.jumpToTodayTrigger
                                     )
@@ -508,7 +513,7 @@ fun AuraApp(
                                     cycles = uiState.allCycles,
                                     logs = uiState.allLogs,
                                     predictions = uiState.predictions,
-                                    onDateSelect = { viewModel.selectDate(it) },
+                                    onDateSelect = { viewModel.openCalendarModal(it) },
                                     language = uiState.language,
                                     jumpToTodayTrigger = uiState.jumpToTodayTrigger,
                                     modifier = Modifier.padding(top = 8.dp)
@@ -538,7 +543,7 @@ fun AuraApp(
                                 YearInPixels(
                                     logs = uiState.allLogs,
                                     onPixelClick = {
-                                        viewModel.selectDate(it)
+                                        viewModel.openCalendarModal(it)
                                         viewModel.selectTab(AppTab.CALENDAR)
                                     },
                                     language = uiState.language,
@@ -592,6 +597,37 @@ fun AuraApp(
                 errorMessage = uiState.pinError,
                 onBiometricUnlock = { viewModel.unlockWithBiometric() },
                 onPinSubmit = { pin -> viewModel.verifyPin(pin) },
+                language = uiState.language
+            )
+        }
+
+        // Calendar Day Inspector & Edit Modal
+        if (uiState.isCalendarModalVisible) {
+            val selectedDateFertility = remember(uiState.selectedDate, uiState.allCycles) {
+                val parsed = try {
+                    java.time.LocalDate.parse(uiState.selectedDate, java.time.format.DateTimeFormatter.ISO_LOCAL_DATE)
+                } catch (e: Exception) {
+                    java.time.LocalDate.now()
+                }
+                calculateFertilityForDate(parsed, uiState.allCycles)
+            }
+
+            CalendarDayDetailModal(
+                selectedDate = uiState.selectedDate,
+                currentLog = uiState.selectedDateLog,
+                selectedTagIds = uiState.selectedTagIds,
+                allTags = uiState.allTags,
+                fertilityChance = selectedDateFertility,
+                onFlowIntensityChange = { intensity, color, clots ->
+                    viewModel.updateFlowIntensity(intensity, color, clots)
+                },
+                onTabletToggle = { viewModel.toggleTablet(it) },
+                onSleepQualityChange = { viewModel.updateSleepQuality(it) },
+                onActivityLevelChange = { viewModel.updateActivityLevel(it) },
+                onNotesChange = { viewModel.updateNotes(it) },
+                onTagToggle = { viewModel.toggleTag(it) },
+                onSaveLog = { viewModel.saveCurrentLog() },
+                onDismiss = { viewModel.closeCalendarModal() },
                 language = uiState.language
             )
         }

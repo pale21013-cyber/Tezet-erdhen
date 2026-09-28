@@ -58,7 +58,8 @@ data class CycleUiState(
     val language: AppLanguage = AppLanguage.GERMAN,
     val themeSetting: ThemeSetting = ThemeSetting.SYSTEM,
     val updateStatus: UpdateStatus = UpdateStatus.Idle,
-    val jumpToTodayTrigger: Long = 0L
+    val jumpToTodayTrigger: Long = 0L,
+    val isCalendarModalVisible: Boolean = false
 )
 
 class CycleViewModel(
@@ -189,6 +190,15 @@ class CycleViewModel(
     fun selectDate(date: String) {
         _uiState.update { it.copy(selectedDate = date) }
         loadSelectedDateData(date)
+    }
+
+    fun openCalendarModal(date: String) {
+        selectDate(date)
+        _uiState.update { it.copy(isCalendarModalVisible = true) }
+    }
+
+    fun closeCalendarModal() {
+        _uiState.update { it.copy(isCalendarModalVisible = false) }
     }
 
     fun jumpToToday() {

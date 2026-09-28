@@ -61,6 +61,50 @@ enum class DayFertilityChance {
     LOW   // Low chance (sex won't lead to a baby)
 }
 
+fun calculateFertilityForDate(
+    date: LocalDate,
+    cycles: List<CycleEntity>
+): DayFertilityChance {
+    val fmt = DateTimeFormatter.ISO_LOCAL_DATE
+    val cycleStarts = cycles.mapNotNull {
+        try { LocalDate.parse(it.startDate, fmt) } catch (e: Exception) { null }
+    }.sorted()
+    val starts = if (cycleStarts.isNotEmpty()) cycleStarts else listOf(LocalDate.now().minusDays(14))
+    val avgLen = if (starts.size >= 2) {
+        val intervals = (0 until starts.size - 1).map { i ->
+            java.time.temporal.ChronoUnit.DAYS.between(starts[i], starts[i + 1]).toInt()
+        }.filter { it in 18..45 }
+        if (intervals.isNotEmpty()) intervals.average().toInt().coerceIn(21, 38) else 28
+    } else {
+        28
+    }
+
+    val anchor = starts.last()
+    val allStarts = mutableSetOf<LocalDate>()
+    allStarts.addAll(starts)
+
+    var next = anchor
+    while (next.isBefore(date.plusMonths(2))) {
+        allStarts.add(next)
+        next = next.plusDays(avgLen.toLong())
+    }
+    var prev = starts.first()
+    while (prev.isAfter(date.minusMonths(2))) {
+        allStarts.add(prev)
+        prev = prev.minusDays(avgLen.toLong())
+    }
+
+    for (start in allStarts) {
+        val ovulation = start.plusDays((avgLen - 14).toLong())
+        val fertileStart = ovulation.minusDays(5)
+        val fertileEnd = ovulation.plusDays(1)
+
+        if (date == ovulation) return DayFertilityChance.PEAK
+        if (!date.isBefore(fertileStart) && !date.isAfter(fertileEnd)) return DayFertilityChance.HIGH
+    }
+    return DayFertilityChance.LOW
+}
+
 @Composable
 fun SegmentedCalendar(
     selectedDate: String,

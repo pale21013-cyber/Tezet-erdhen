@@ -73,6 +73,21 @@ class MainActivity : ComponentActivity() {
                 viewModel.logFastMood("Energetic")
                 viewModel.selectTab(AppTab.TODAY)
             }
+            "mood_tired" -> {
+                viewModel.logFastMood("Tired")
+                viewModel.selectTab(AppTab.TODAY)
+            }
+            "take_pill" -> {
+                viewModel.toggleTablet(true)
+                viewModel.saveCurrentLog()
+                viewModel.selectTab(AppTab.TODAY)
+            }
+            "baby_chance" -> {
+                viewModel.selectTab(AppTab.CALENDAR)
+            }
+            "calendar" -> {
+                viewModel.selectTab(AppTab.CALENDAR)
+            }
             "quick_mood" -> {
                 viewModel.selectTab(AppTab.TODAY)
             }

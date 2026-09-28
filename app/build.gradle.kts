@@ -13,8 +13,8 @@ android {
   namespace = "com.example"
   compileSdk { version = release(36) { minorApiLevel = 1 } }
 
-  val dynamicVersionCode = project.findProperty("versionCode")?.toString()?.toIntOrNull() ?: 1
-  val dynamicVersionName = project.findProperty("versionName")?.toString() ?: "1.0.0"
+  val dynamicVersionCode = project.findProperty("versionCode")?.toString()?.toIntOrNull() ?: 3
+  val dynamicVersionName = project.findProperty("versionName")?.toString() ?: "1.0.3"
 
   defaultConfig {
     applicationId = "com.aistudio.auracycle.wvxz"

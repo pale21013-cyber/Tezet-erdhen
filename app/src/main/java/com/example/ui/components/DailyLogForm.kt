@@ -166,10 +166,15 @@ fun DailyLogForm(
                         ),
                         shape = RoundedCornerShape(14.dp),
                         modifier = Modifier
-                            .height(36.dp)
+                            .height(38.dp)
                             .testTag("apply_defaults_button")
                     ) {
-                        Text(strings.applyBtn, fontSize = 11.5.sp, fontWeight = FontWeight.Bold)
+                        AuraMarqueeText(
+                            text = strings.applyBtn,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
                     }
                 }
             }
@@ -671,34 +676,15 @@ fun DailyLogForm(
             }
         }
 
-        // Save Button (Thumb Reach) with luxury multi-billion elevation & gradient
-        Button(
+        // Save Button (Thumb Reach) with unified font size and banner marquee overflow
+        AuraPrimaryButton(
+            text = strings.saveLogBtn,
+            icon = Icons.Default.Check,
             onClick = {
                 focusManager.clearFocus()
                 onSaveLog()
             },
-            colors = ButtonDefaults.buttonColors(containerColor = RosePrimary),
-            elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
-            shape = RoundedCornerShape(18.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(54.dp)
-                .testTag("save_log_button")
-        ) {
-            Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = "Save",
-                tint = Color.White,
-                modifier = Modifier.size(20.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = strings.saveLogBtn,
-                fontSize = 15.5.sp,
-                fontWeight = FontWeight.ExtraBold,
-                color = Color.White,
-                letterSpacing = 0.2.sp
-            )
-        }
+            modifier = Modifier.testTag("save_log_button")
+        )
     }
 }

@@ -25,14 +25,45 @@ class AppShortcutHelper(private val context: Context) {
             val language = AppLanguage.fromCode(langCode)
             val strings = getAppStrings(language)
 
+            val pillCount = prefs.getInt("take_pill", 16)
+            val babyCount = prefs.getInt("baby_chance", 14)
             val happyCount = prefs.getInt("mood_happy", 12)
             val calmCount = prefs.getInt("mood_calm", 10)
-            val sensitiveCount = prefs.getInt("mood_sensitive", 9)
-            val energeticCount = prefs.getInt("mood_energetic", 8)
-            val flowCount = prefs.getInt("quick_flow", 7)
+            val flowCount = prefs.getInt("quick_flow", 9)
+            val symptomsCount = prefs.getInt("quick_symptoms", 8)
+            val sensitiveCount = prefs.getInt("mood_sensitive", 7)
+            val energeticCount = prefs.getInt("mood_energetic", 6)
             val cycleCount = prefs.getInt("cycle_status", 5)
 
             val actions = listOf(
+                ShortcutData(
+                    id = "shortcut_pill",
+                    shortLabel = "💊 ${strings.shortcutTakePillLabel}",
+                    longLabel = "${strings.pillTitle}: ${strings.shortcutPillTakenSuccess}",
+                    route = "take_pill",
+                    usageCount = pillCount
+                ),
+                ShortcutData(
+                    id = "shortcut_baby",
+                    shortLabel = "👶 ${strings.shortcutCheckFertilityLabel}",
+                    longLabel = strings.babyChanceHighTitle,
+                    route = "baby_chance",
+                    usageCount = babyCount
+                ),
+                ShortcutData(
+                    id = "shortcut_flow",
+                    shortLabel = "🩸 ${strings.shortcutLogPeriodLabel}",
+                    longLabel = strings.flowTitle,
+                    route = "quick_flow",
+                    usageCount = flowCount
+                ),
+                ShortcutData(
+                    id = "shortcut_symptoms",
+                    shortLabel = "🩺 ${strings.shortcutLogSymptomsLabel}",
+                    longLabel = strings.symptomsTitle,
+                    route = "quick_symptoms",
+                    usageCount = symptomsCount
+                ),
                 ShortcutData(
                     id = "shortcut_mood_happy",
                     shortLabel = "🌸 ${strings.fastMoodHappy}",
@@ -60,13 +91,6 @@ class AppShortcutHelper(private val context: Context) {
                     longLabel = "${strings.fastActionsTitle}: ${strings.fastMoodEnergetic}",
                     route = "mood_energetic",
                     usageCount = energeticCount
-                ),
-                ShortcutData(
-                    id = "shortcut_flow",
-                    shortLabel = "💧 ${strings.tabToday}",
-                    longLabel = strings.flowTitle,
-                    route = "quick_flow",
-                    usageCount = flowCount
                 ),
                 ShortcutData(
                     id = "shortcut_cycle",

@@ -41,4 +41,43 @@
             <extra android:name="action_route" android:value="quick_flow" />
         </intent>
     </shortcut>
+    <shortcut
+        android:shortcutId="shortcut_pill"
+        android:enabled="true"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:shortcutShortLabel="@string/shortcut_pill"
+        android:shortcutLongLabel="@string/shortcut_pill_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.aistudio.auracycle.wvxz"
+            android:targetClass="com.example.MainActivity">
+            <extra android:name="action_route" android:value="take_pill" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:shortcutId="shortcut_symptoms"
+        android:enabled="true"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:shortcutShortLabel="@string/shortcut_symptoms"
+        android:shortcutLongLabel="@string/shortcut_symptoms_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.aistudio.auracycle.wvxz"
+            android:targetClass="com.example.MainActivity">
+            <extra android:name="action_route" android:value="quick_symptoms" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:shortcutId="shortcut_baby"
+        android:enabled="true"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:shortcutShortLabel="@string/shortcut_baby"
+        android:shortcutLongLabel="@string/shortcut_baby_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.aistudio.auracycle.wvxz"
+            android:targetClass="com.example.MainActivity">
+            <extra android:name="action_route" android:value="baby_chance" />
+        </intent>
+    </shortcut>
 </shortcuts>
