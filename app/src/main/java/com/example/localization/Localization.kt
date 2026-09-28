@@ -1000,3 +1000,171 @@ fun getLocalizedCalmingAffirmations(language: AppLanguage): List<String> {
     }
 }
 
+data class PhaseMeaningInfo(
+    val phase: CyclePhase,
+    val title: String,
+    val dayRangeText: String,
+    val colorHex: Long,
+    val emoji: String,
+    val shortMeaning: String,
+    val hormoneSummary: String,
+    val bodySignals: String,
+    val nutritionTip: String,
+    val activityTip: String
+)
+
+fun getLocalizedPhaseMeaning(phase: CyclePhase, language: AppLanguage): PhaseMeaningInfo {
+    return when (language) {
+        AppLanguage.GERMAN -> when (phase) {
+            CyclePhase.MENSTRUAL -> PhaseMeaningInfo(
+                phase = phase,
+                title = "Menstruationsphase (Rot)",
+                dayRangeText = "Ca. Tag 1 - 5 des Zyklus",
+                colorHex = 0xFFF43F5E,
+                emoji = "🩸",
+                shortMeaning = "Der Beginn des Zyklus. Die Gebärmutterschleimhaut erneuert sich. Dein Körper leistet wertvolle Arbeit und verdient jetzt Ruhe, Wärme und Selbstfürsorge.",
+                hormoneSummary = "Östrogen & Progesteron auf Tiefststand",
+                bodySignals = "Blutung, mäßige Krämpfe, erhöhtes Schlafbedürfnis",
+                nutritionTip = "Warme Suppen, Ingwertee & eisenhaltiges Gemüse",
+                activityTip = "Sanftes Dehnen, Spaziergänge & erholsame Pausen"
+            )
+            CyclePhase.FOLLICULAR -> PhaseMeaningInfo(
+                phase = phase,
+                title = "Follikelphase (Lila)",
+                dayRangeText = "Ca. Tag 6 - 13 des Zyklus",
+                colorHex = 0xFFA855F7,
+                emoji = "💜",
+                shortMeaning = "Die Eizellreifung beginnt. Der Östrogenspiegel steigt spürbar an, bringt neue Lebensfreude, Tatdrang und frische Ideen.",
+                hormoneSummary = "Östrogen steigt stetig an",
+                bodySignals = "Mehr Elan, klare Haut, steigende Ausdauer",
+                nutritionTip = "Frisches Obst, Sprossen & ballaststoffreiche Kost",
+                activityTip = "Dynamisches Ausdauertraining & neue Projekte starten"
+            )
+            CyclePhase.OVULATORY -> PhaseMeaningInfo(
+                phase = phase,
+                title = "Eisprung & Fruchtbarkeit (Türkis)",
+                dayRangeText = "Ca. Tag 14 - 16 des Zyklus",
+                colorHex = 0xFF0D9488,
+                emoji = "🩵",
+                shortMeaning = "Das Ei wird freigesetzt – dies ist das fruchtbare Fenster des Zyklus mit der höchsten Empfängniswahrscheinlichkeit.",
+                hormoneSummary = "Östrogenspitze & LH-Anstieg",
+                bodySignals = "Spitzenenergie, flüssiger Zervikalschleim, hohe Attraktivität",
+                nutritionTip = "Beeren, Antioxidantien & gesunde Omega-3-Fette",
+                activityTip = "Intensives Krafttraining, Sport & soziale Kontakte"
+            )
+            CyclePhase.LUTEAL -> PhaseMeaningInfo(
+                phase = phase,
+                title = "Lutealphase (Bernstein)",
+                dayRangeText = "Ca. Tag 17 - 28 des Zyklus",
+                colorHex = 0xFFF59E0B,
+                emoji = "🟠",
+                shortMeaning = "Progesteron übernimmt die Regie, um den Körper vorzubereiten. Das Tempo verlangsamt sich natürlich vor der nächsten Periode.",
+                hormoneSummary = "Progesteron-Dominanz",
+                bodySignals = "Gesteigerter Appetit, Bedürfnis nach Struktur, evtl. PMS",
+                nutritionTip = "Magnesiumhaltige Nüsse, Kürbiskerne & Wurzelgemüse",
+                activityTip = "Pilates, Entspannung & gemütliche Abendroutinen"
+            )
+        }
+        AppLanguage.ALBANIAN -> when (phase) {
+            CyclePhase.MENSTRUAL -> PhaseMeaningInfo(
+                phase = phase,
+                title = "Faza e Menstruacioneve (E Kuqe)",
+                dayRangeText = "Përafërsisht Ditët 1 - 5 të Ciklit",
+                colorHex = 0xFFF43F5E,
+                emoji = "🩸",
+                shortMeaning = "Fillimi i ciklit të ri. Mukoza e mitrës rinovohet. Trupi ka nevojë për qetësi, ngrohtësi dhe kujdes të veçantë.",
+                hormoneSummary = "Estrogjeni & Progesteroni në nivel minimal",
+                bodySignals = "Gjakderdhje, lehtësi për pushim",
+                nutritionTip = "Ushqime të ngrohta, çaj dhe zarzavate me hekur",
+                activityTip = "Ecje të qeta dhe riatdhesim energjie"
+            )
+            CyclePhase.FOLLICULAR -> PhaseMeaningInfo(
+                phase = phase,
+                title = "Faza Follikulare (Vjollcë)",
+                dayRangeText = "Përafërsisht Ditët 6 - 13 të Ciklit",
+                colorHex = 0xFFA855F7,
+                emoji = "💜",
+                shortMeaning = "Veza fillon të piqet. Niveli i estrogjenit rritet, duke sjellë energji të re, kreativitet dhe motivim të lartë.",
+                hormoneSummary = "Rritje e vazhdueshme e estrogjenit",
+                bodySignals = "Energji në rritje, lëkurë e pastër, përqendrim",
+                nutritionTip = "Fruta të freskëta dhe perime plot vitamina",
+                activityTip = "Stërvitje dinamike dhe fokus në ide të reja"
+            )
+            CyclePhase.OVULATORY -> PhaseMeaningInfo(
+                phase = phase,
+                title = "Ovulacioni & Fertiliteti (Turkez)",
+                dayRangeText = "Përafërsisht Ditët 14 - 16 të Ciklit",
+                colorHex = 0xFF0D9488,
+                emoji = "🩵",
+                shortMeaning = "Lirimi i vezës markon dritaren më fertile të ciklit me gjasat më të larta për shtatzëni.",
+                hormoneSummary = "Kulmi i estrogjenit dhe hormonit LH",
+                bodySignals = "Vetëbesim maksimal, energji fizike kulmore",
+                nutritionTip = "Ushqime me fibra dhe yndyra të shëndetshme Omega-3",
+                activityTip = "Aktivitet intensiv fizik dhe sociale"
+            )
+            CyclePhase.LUTEAL -> PhaseMeaningInfo(
+                phase = phase,
+                title = "Faza Luteale (Ngjyrë Qelibari)",
+                dayRangeText = "Përafërsisht Ditët 17 - 28 të Ciklit",
+                colorHex = 0xFFF59E0B,
+                emoji = "🟠",
+                shortMeaning = "Progesteroni dominon për të përgatitur trupin. Ritmi i trupit ngadalësohet natyrshëm para ciklit të ardhshëm.",
+                hormoneSummary = "Dominimi i progesteronit",
+                bodySignals = "Apetit i shtuar, dëshirë për organizim",
+                nutritionTip = "Çokollatë e zezë me magnez dhe fara kungulli",
+                activityTip = "Pilates, stërvitje me peshën e trupit dhe qetësi"
+            )
+        }
+        AppLanguage.ENGLISH -> when (phase) {
+            CyclePhase.MENSTRUAL -> PhaseMeaningInfo(
+                phase = phase,
+                title = "Menstrual Phase (Red)",
+                dayRangeText = "Approx. Days 1 - 5 of Cycle",
+                colorHex = 0xFFF43F5E,
+                emoji = "🩸",
+                shortMeaning = "The start of a new cycle. The uterine lining sheds and renews. Your body deserves gentle rest and warmth.",
+                hormoneSummary = "Estrogen & Progesterone at lowest levels",
+                bodySignals = "Flow, mild cramping, need for restorative sleep",
+                nutritionTip = "Warm broths, ginger tea & iron-rich greens",
+                activityTip = "Gentle stretching, slow walks & cozy self-care"
+            )
+            CyclePhase.FOLLICULAR -> PhaseMeaningInfo(
+                phase = phase,
+                title = "Follicular Phase (Purple)",
+                dayRangeText = "Approx. Days 6 - 13 of Cycle",
+                colorHex = 0xFFA855F7,
+                emoji = "💜",
+                shortMeaning = "Follicles mature in the ovaries. Rising estrogen brings a surge of vitality, mental clarity, and creative motivation.",
+                hormoneSummary = "Estrogen continuously rising",
+                bodySignals = "Rising energy, clear skin, social enthusiasm",
+                nutritionTip = "Fresh berries, sprouted grains & vibrant fruits",
+                activityTip = "Cardio, strength workouts & starting new projects"
+            )
+            CyclePhase.OVULATORY -> PhaseMeaningInfo(
+                phase = phase,
+                title = "Ovulation & Fertile Window (Teal)",
+                dayRangeText = "Approx. Days 14 - 16 of Cycle",
+                colorHex = 0xFF0D9488,
+                emoji = "🩵",
+                shortMeaning = "Egg release occurs during this peak fertile window, offering the highest chance of pregnancy in the cycle.",
+                hormoneSummary = "Peak Estrogen & LH surge",
+                bodySignals = "Peak confidence, high stamina & radiant glow",
+                nutritionTip = "Antioxidant berries, fiber & omega-3 healthy fats",
+                activityTip = "High-intensity workouts & vibrant social activities"
+            )
+            CyclePhase.LUTEAL -> PhaseMeaningInfo(
+                phase = phase,
+                title = "Luteal Phase (Amber)",
+                dayRangeText = "Approx. Days 17 - 28 of Cycle",
+                colorHex = 0xFFF59E0B,
+                emoji = "🟠",
+                shortMeaning = "Progesterone rises to prepare the uterine lining. Body energy naturally winds down into focus and calm organization.",
+                hormoneSummary = "Progesterone dominance",
+                bodySignals = "Appetite changes, desire for quiet, possible PMS",
+                nutritionTip = "Magnesium-rich dark chocolate, seeds & root veggies",
+                activityTip = "Pilates, bodyweight exercise & relaxing evening routines"
+            )
+        }
+    }
+}
+
