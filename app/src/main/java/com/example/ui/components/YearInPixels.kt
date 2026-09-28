@@ -76,6 +76,7 @@ import com.example.localization.AppLanguage
 import com.example.localization.getAppStrings
 import com.example.ui.theme.FollicularPurple
 import com.example.ui.theme.MenstrualRed
+import com.example.ui.theme.OutfitDisplayFamily
 import com.example.ui.theme.RoseDark
 import com.example.ui.theme.RosePrimary
 import kotlinx.coroutines.launch
@@ -649,102 +650,214 @@ fun YearInPixels(
             Card(
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 shape = RoundedCornerShape(24.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)),
+                elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
                 modifier = Modifier.fillMaxWidth().testTag("pixel_matrix_card")
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.padding(18.dp)) {
+                    // Header with title and scroll prompt
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column {
+                            Text(
+                                text = "12-Monats-Matrix $currentYear",
+                                fontFamily = OutfitDisplayFamily,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Text(
+                                text = "← Horizontal wischen für alle Monate →",
+                                fontSize = 11.5.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+
+                        Surface(
+                            shape = RoundedCornerShape(12.dp),
+                            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f))
+                        ) {
+                            Text(
+                                text = "365 Tage",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
                     val monthAbbrs = (1..12).map { monthIdx ->
                         YearMonth.of(currentYear, monthIdx).month.getDisplayName(TextStyle.SHORT, locale).take(3)
                     }
 
+                    // Outer Table: Fixed Sticky Day Column on the left + Horizontally Scrollable 12 Month columns
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .horizontalScroll(matrixScrollState),
-                        horizontalArrangement = Arrangement.Center
+                            .padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.Top
                     ) {
-                        // Day column (1..31)
-                        Column(
-                            modifier = Modifier.padding(end = 6.dp),
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                        // PINNED STICKY DAY COLUMN (1..31) - Stays fixed and always visible!
+                        Surface(
+                            shape = RoundedCornerShape(10.dp),
+                            color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f),
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+                            shadowElevation = 2.dp,
+                            modifier = Modifier.padding(end = 8.dp)
                         ) {
-                            Text(text = " ", fontSize = 11.sp, modifier = Modifier.height(20.dp))
-
-                            for (day in 1..31) {
-                                Box(
-                                    modifier = Modifier.size(width = 18.dp, height = 15.dp),
-                                    contentAlignment = Alignment.CenterEnd
+                            Column(
+                                modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp),
+                                verticalArrangement = Arrangement.spacedBy(5.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                // "Tag / Day" header matching month header height
+                                Surface(
+                                    shape = RoundedCornerShape(6.dp),
+                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                    modifier = Modifier.size(width = 30.dp, height = 28.dp)
                                 ) {
-                                    Text(
-                                        text = "$day",
-                                        fontSize = 9.sp,
-                                        fontWeight = FontWeight.Medium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Text(
+                                            text = "Tag",
+                                            fontSize = 10.sp,
+                                            fontWeight = FontWeight.ExtraBold,
+                                            color = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+                                }
+
+                                for (day in 1..31) {
+                                    val isMilestone = day % 5 == 0
+                                    Surface(
+                                        shape = RoundedCornerShape(5.dp),
+                                        color = if (isMilestone) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f) else Color.Transparent,
+                                        modifier = Modifier.size(width = 30.dp, height = 24.dp)
+                                    ) {
+                                        Box(contentAlignment = Alignment.Center) {
+                                            Text(
+                                                text = "$day",
+                                                fontSize = 10.5.sp,
+                                                fontWeight = if (isMilestone) FontWeight.ExtraBold else FontWeight.Medium,
+                                                color = if (isMilestone) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
 
-                        // 12 Month columns
-                        for (monthIndex in 1..12) {
-                            val ym = YearMonth.of(currentYear, monthIndex)
-                            val daysInThisMonth = ym.lengthOfMonth()
+                        // HORIZONTALLY SCROLLABLE 12 MONTH COLUMNS
+                        Row(
+                            modifier = Modifier
+                                .weight(1f)
+                                .horizontalScroll(matrixScrollState)
+                                .padding(vertical = 4.dp),
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            for (monthIndex in 1..12) {
+                                val ym = YearMonth.of(currentYear, monthIndex)
+                                val daysInThisMonth = ym.lengthOfMonth()
 
-                            Column(
-                                modifier = Modifier.padding(horizontal = 2.5.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(4.dp)
-                            ) {
-                                // Month header label
-                                Text(
-                                    text = monthAbbrs[monthIndex - 1],
-                                    fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.height(20.dp)
-                                )
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.spacedBy(5.dp)
+                                ) {
+                                    // Month header label pill (32.dp x 28.dp)
+                                    Surface(
+                                        shape = RoundedCornerShape(8.dp),
+                                        color = if (monthIndex == LocalDate.now().monthValue && currentYear == LocalDate.now().year)
+                                            MaterialTheme.colorScheme.primaryContainer
+                                        else
+                                            MaterialTheme.colorScheme.surfaceVariant,
+                                        border = BorderStroke(
+                                            1.dp,
+                                            if (monthIndex == LocalDate.now().monthValue && currentYear == LocalDate.now().year)
+                                                MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
+                                            else
+                                                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)
+                                        ),
+                                        modifier = Modifier.size(width = 32.dp, height = 28.dp)
+                                    ) {
+                                        Box(contentAlignment = Alignment.Center) {
+                                            Text(
+                                                text = monthAbbrs[monthIndex - 1],
+                                                fontSize = 11.5.sp,
+                                                fontWeight = FontWeight.ExtraBold,
+                                                color = if (monthIndex == LocalDate.now().monthValue && currentYear == LocalDate.now().year)
+                                                    MaterialTheme.colorScheme.primary
+                                                else
+                                                    MaterialTheme.colorScheme.onSurface
+                                            )
+                                        }
+                                    }
 
-                                // 31 Day pixels
-                                for (day in 1..31) {
-                                    if (day <= daysInThisMonth) {
-                                        val dateStr = String.format("%04d-%02d-%02d", currentYear, monthIndex, day)
-                                        val log = logMap[dateStr]
-                                        val flow = log?.flowIntensity ?: 0
-                                        val isLogged = (log?.isLogged ?: 0) == 1
-                                        val isToday = dateStr == todayStr
-                                        val isInspected = dateStr == inspectedDate
+                                    // 31 Day pixels (32.dp x 24.dp)
+                                    for (day in 1..31) {
+                                        if (day <= daysInThisMonth) {
+                                            val dateStr = String.format("%04d-%02d-%02d", currentYear, monthIndex, day)
+                                            val log = logMap[dateStr]
+                                            val flow = log?.flowIntensity ?: 0
+                                            val isLogged = (log?.isLogged ?: 0) == 1
+                                            val isToday = dateStr == todayStr
+                                            val isInspected = dateStr == inspectedDate
 
-                                        val pixelColor = getPixelColor(flow, isLogged)
-                                        val isBordered = isToday || isInspected
+                                            val pixelColor = getPixelColor(flow, isLogged)
 
-                                        Box(
-                                            modifier = Modifier
-                                                .size(width = 17.dp, height = 15.dp)
-                                                .clip(RoundedCornerShape(4.dp))
-                                                .background(pixelColor)
-                                                .then(
-                                                    if (isBordered) {
-                                                        Modifier.border(
-                                                            width = 1.5.dp,
-                                                            color = if (isInspected) RosePrimary else Color(0xFFF59E0B),
-                                                            shape = RoundedCornerShape(4.dp)
+                                            Surface(
+                                                shape = RoundedCornerShape(6.dp),
+                                                color = pixelColor,
+                                                border = if (isInspected) {
+                                                    BorderStroke(2.dp, RosePrimary)
+                                                } else if (isToday) {
+                                                    BorderStroke(2.dp, Color(0xFFF59E0B))
+                                                } else {
+                                                    BorderStroke(0.6.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f))
+                                                },
+                                                shadowElevation = if (isInspected) 3.dp else 0.dp,
+                                                modifier = Modifier
+                                                    .size(width = 32.dp, height = 24.dp)
+                                                    .clip(RoundedCornerShape(6.dp))
+                                                    .clickable {
+                                                        inspectedDate = dateStr
+                                                    }
+                                                    .testTag("pixel_$dateStr")
+                                            ) {
+                                                Box(contentAlignment = Alignment.Center) {
+                                                    if (isToday) {
+                                                        Box(
+                                                            modifier = Modifier
+                                                                .size(5.dp)
+                                                                .clip(CircleShape)
+                                                                .background(Color(0xFFF59E0B))
                                                         )
-                                                    } else {
-                                                        Modifier.border(
-                                                            width = 0.5.dp,
-                                                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
-                                                            shape = RoundedCornerShape(4.dp)
+                                                    } else if (flow > 0) {
+                                                        Icon(
+                                                            imageVector = Icons.Default.WaterDrop,
+                                                            contentDescription = null,
+                                                            tint = Color.White.copy(alpha = 0.9f),
+                                                            modifier = Modifier.size(11.dp)
                                                         )
                                                     }
-                                                )
-                                                .clickable {
-                                                    inspectedDate = dateStr
                                                 }
-                                                .testTag("pixel_$dateStr")
-                                        )
-                                    } else {
-                                        // Blank placeholder
-                                        Box(modifier = Modifier.size(width = 17.dp, height = 15.dp))
+                                            }
+                                        } else {
+                                            // Blank placeholder for months with < 31 days
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(width = 32.dp, height = 24.dp)
+                                                    .background(
+                                                        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.15f),
+                                                        shape = RoundedCornerShape(6.dp)
+                                                    )
+                                            )
+                                        }
                                     }
                                 }
                             }
