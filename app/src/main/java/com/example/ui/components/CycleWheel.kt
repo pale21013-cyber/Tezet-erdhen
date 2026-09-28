@@ -20,10 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Spa
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -63,7 +60,7 @@ import kotlin.math.sin
 @Composable
 fun CycleWheel(
     stats: CycleStats?,
-    onTrackClick: () -> Unit,
+    onTrackClick: () -> Unit = {},
     language: AppLanguage = AppLanguage.GERMAN,
     modifier: Modifier = Modifier
 ) {
@@ -277,35 +274,6 @@ fun CycleWheel(
                         fontSize = 11.5.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         fontWeight = FontWeight.Bold
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Action button: + Track
-                Button(
-                    onClick = onTrackClick,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    ),
-                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 3.dp),
-                    shape = RoundedCornerShape(22.dp),
-                    modifier = Modifier
-                        .height(36.dp)
-                        .testTag("track_button")
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = strings.trackButton,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(5.dp))
-                    Text(
-                        text = strings.trackButton,
-                        fontSize = 12.5.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        letterSpacing = 0.2.sp
                     )
                 }
             }
