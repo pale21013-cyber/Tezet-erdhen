@@ -111,6 +111,9 @@ class MainActivity : ComponentActivity() {
             "cycle_status" -> {
                 viewModel.selectTab(AppTab.TODAY)
             }
+            "phase_insights" -> {
+                viewModel.selectTab(AppTab.INSIGHTS)
+            }
         }
     }
 }

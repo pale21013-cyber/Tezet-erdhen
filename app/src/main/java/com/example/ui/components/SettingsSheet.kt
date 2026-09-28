@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Shield
@@ -395,6 +396,89 @@ fun SettingsSheet(
                             }
                         }
                     }
+                }
+            }
+        }
+
+        // 3.5. Notification & Background Worker Settings Card
+        Card(
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            shape = RoundedCornerShape(24.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+            modifier = Modifier.fillMaxWidth().testTag("notifications_settings_card")
+        ) {
+            Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Surface(
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        shape = CircleShape,
+                        modifier = Modifier.size(40.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Default.NotificationsActive,
+                                contentDescription = "Notifications",
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = if (currentLanguage == AppLanguage.GERMAN) "Zyklusphasen-Benachrichtigungen" else if (currentLanguage == AppLanguage.ALBANIAN) "Njoftimet e Fazave të Ciklit" else "Cycle Phase Notifications",
+                            fontFamily = OutfitDisplayFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 17.sp,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = if (currentLanguage == AppLanguage.GERMAN) "Automatischer WorkManager-Hintergrunddienst" else if (currentLanguage == AppLanguage.ALBANIAN) "Shërbimi në prapavijë i WorkManager" else "Automatic WorkManager background worker",
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
+                Text(
+                    text = if (currentLanguage == AppLanguage.GERMAN) "Der Hintergrunddienst prüft automatisch deinen Phasenübergang und erinnert dich an deine personalisierten Ernährungs- und Bewegungsempfehlungen." else if (currentLanguage == AppLanguage.ALBANIAN) "Kjo prapavijë kontrollon automatikisht ndryshimin e fazës dhe ju kujton këshillat e ushqimit dhe lëvizjes." else "The background worker automatically checks your phase transition and reminds you of your tailored nutrition & movement recommendations.",
+                    fontSize = 12.sp,
+                    lineHeight = 16.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                val notifPermissionLauncher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.RequestPermission()
+                ) { isGranted ->
+                    if (isGranted) {
+                        com.example.worker.CyclePhaseWorkerScheduler.triggerImmediateCheck(context)
+                    }
+                }
+
+                Button(
+                    onClick = {
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                            notifPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                        } else {
+                            com.example.worker.CyclePhaseWorkerScheduler.triggerImmediateCheck(context)
+                        }
+                    },
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                    modifier = Modifier.fillMaxWidth().testTag("test_notification_btn")
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.NotificationsActive,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = if (currentLanguage == AppLanguage.GERMAN) "Test-Benachrichtigung jetzt auslösen" else if (currentLanguage == AppLanguage.ALBANIAN) "Dërgo njoftim provë tani" else "Trigger Test Notification Now",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 13.5.sp
+                    )
                 }
             }
         }
