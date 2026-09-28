@@ -65,7 +65,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.localization.AppLanguage
 import com.example.localization.getAppStrings
-import com.example.ui.components.BiometricLockOverlay
 import com.example.ui.components.CalendarDayDetailModal
 import com.example.ui.components.CycleWheel
 import com.example.ui.components.DailyLogForm
@@ -294,12 +293,11 @@ fun AuraApp(
                                         onLanguageChange = { viewModel.setLanguage(it) },
                                         currentThemeSetting = uiState.themeSetting,
                                         onThemeSettingChange = { viewModel.setThemeSetting(it) },
-                                        isBiometricEnabled = uiState.isBiometricEnabled,
-                                        onToggleBiometric = { viewModel.setBiometricEnabled(it) },
-                                        onLockApp = { viewModel.lockApp() },
                                         onFastMoodLog = { viewModel.logFastMood(it) },
                                         onResetDemoData = { viewModel.resetDemoData() },
                                         onReplayOnboarding = { viewModel.replayOnboarding() },
+                                        onExportBackup = { viewModel.shareBackup() },
+                                        onImportBackup = { viewModel.importData(it) },
                                         updateStatus = uiState.updateStatus,
                                         onCheckForUpdates = { viewModel.checkForUpdates() },
                                         onDownloadAndInstallUpdate = { viewModel.downloadAndInstallUpdate(context as? Activity) }
@@ -383,86 +381,64 @@ fun AuraApp(
                         )
                     },
                     bottomBar = {
-                        Surface(
-                            color = MaterialTheme.colorScheme.surface,
-                            tonalElevation = 6.dp,
-                            shadowElevation = 8.dp,
-                            border = androidx.compose.foundation.BorderStroke(
-                                width = 1.dp,
-                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                            )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .windowInsetsPadding(WindowInsets.navigationBars)
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                            contentAlignment = Alignment.Center
                         ) {
-                            NavigationBar(
-                                containerColor = MaterialTheme.colorScheme.surface,
+                            Surface(
+                                shape = RoundedCornerShape(32.dp),
+                                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.96f),
+                                tonalElevation = 8.dp,
+                                shadowElevation = 12.dp,
+                                border = androidx.compose.foundation.BorderStroke(
+                                    width = 1.2.dp,
+                                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)
+                                ),
                                 modifier = Modifier
-                                    .windowInsetsPadding(WindowInsets.navigationBars)
-                                    .testTag("bottom_nav")
+                                    .fillMaxWidth()
+                                    .testTag("floating_bottom_bar")
                             ) {
-                                NavigationBarItem(
-                                    selected = uiState.currentTab == AppTab.TODAY,
-                                    onClick = { viewModel.selectTab(AppTab.TODAY) },
-                                    icon = { Icon(Icons.Default.Spa, contentDescription = strings.tabToday, modifier = Modifier.size(22.dp)) },
-                                    label = { Text(strings.tabToday, fontWeight = if (uiState.currentTab == AppTab.TODAY) FontWeight.Bold else FontWeight.Medium) },
-                                    colors = NavigationBarItemDefaults.colors(
-                                        selectedIconColor = RosePrimary,
-                                        selectedTextColor = RosePrimary,
-                                        indicatorColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
-                                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 4.dp, vertical = 6.dp),
+                                    horizontalArrangement = Arrangement.SpaceAround,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    FloatingBottomNavItem(
+                                        selected = uiState.currentTab == AppTab.TODAY,
+                                        onClick = { viewModel.selectTab(AppTab.TODAY) },
+                                        icon = Icons.Default.Spa,
+                                        label = strings.tabToday
                                     )
-                                )
-                                NavigationBarItem(
-                                    selected = uiState.currentTab == AppTab.CALENDAR,
-                                    onClick = { viewModel.selectTab(AppTab.CALENDAR) },
-                                    icon = { Icon(Icons.Default.CalendarMonth, contentDescription = strings.tabCalendar, modifier = Modifier.size(22.dp)) },
-                                    label = { Text(strings.tabCalendar, fontWeight = if (uiState.currentTab == AppTab.CALENDAR) FontWeight.Bold else FontWeight.Medium) },
-                                    colors = NavigationBarItemDefaults.colors(
-                                        selectedIconColor = RosePrimary,
-                                        selectedTextColor = RosePrimary,
-                                        indicatorColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
-                                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                    FloatingBottomNavItem(
+                                        selected = uiState.currentTab == AppTab.CALENDAR,
+                                        onClick = { viewModel.selectTab(AppTab.CALENDAR) },
+                                        icon = Icons.Default.CalendarMonth,
+                                        label = strings.tabCalendar
                                     )
-                                )
-                                NavigationBarItem(
-                                    selected = uiState.currentTab == AppTab.PIXELS,
-                                    onClick = { viewModel.selectTab(AppTab.PIXELS) },
-                                    icon = { Icon(Icons.Default.AutoAwesome, contentDescription = strings.tabPixels, modifier = Modifier.size(22.dp)) },
-                                    label = { Text(strings.tabPixels, fontWeight = if (uiState.currentTab == AppTab.PIXELS) FontWeight.Bold else FontWeight.Medium) },
-                                    colors = NavigationBarItemDefaults.colors(
-                                        selectedIconColor = RosePrimary,
-                                        selectedTextColor = RosePrimary,
-                                        indicatorColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
-                                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                    FloatingBottomNavItem(
+                                        selected = uiState.currentTab == AppTab.PIXELS,
+                                        onClick = { viewModel.selectTab(AppTab.PIXELS) },
+                                        icon = Icons.Default.AutoAwesome,
+                                        label = strings.tabPixels
                                     )
-                                )
-                                NavigationBarItem(
-                                    selected = uiState.currentTab == AppTab.INSIGHTS,
-                                    onClick = { viewModel.selectTab(AppTab.INSIGHTS) },
-                                    icon = { Icon(Icons.Default.SelfImprovement, contentDescription = strings.tabInsights, modifier = Modifier.size(22.dp)) },
-                                    label = { Text(strings.tabInsights, fontWeight = if (uiState.currentTab == AppTab.INSIGHTS) FontWeight.Bold else FontWeight.Medium) },
-                                    colors = NavigationBarItemDefaults.colors(
-                                        selectedIconColor = RosePrimary,
-                                        selectedTextColor = RosePrimary,
-                                        indicatorColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
-                                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                    FloatingBottomNavItem(
+                                        selected = uiState.currentTab == AppTab.INSIGHTS,
+                                        onClick = { viewModel.selectTab(AppTab.INSIGHTS) },
+                                        icon = Icons.Default.SelfImprovement,
+                                        label = strings.tabInsights
                                     )
-                                )
-                                NavigationBarItem(
-                                    selected = uiState.currentTab == AppTab.SETTINGS,
-                                    onClick = { viewModel.selectTab(AppTab.SETTINGS) },
-                                    icon = { Icon(Icons.Default.Settings, contentDescription = strings.tabSettings, modifier = Modifier.size(22.dp)) },
-                                    label = { Text(strings.tabSettings, fontWeight = if (uiState.currentTab == AppTab.SETTINGS) FontWeight.Bold else FontWeight.Medium) },
-                                    colors = NavigationBarItemDefaults.colors(
-                                        selectedIconColor = RosePrimary,
-                                        selectedTextColor = RosePrimary,
-                                        indicatorColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
-                                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+                                    FloatingBottomNavItem(
+                                        selected = uiState.currentTab == AppTab.SETTINGS,
+                                        onClick = { viewModel.selectTab(AppTab.SETTINGS) },
+                                        icon = Icons.Default.Settings,
+                                        label = strings.tabSettings
                                     )
-                                )
+                                }
                             }
                         }
                     }
@@ -567,12 +543,11 @@ fun AuraApp(
                                     onLanguageChange = { viewModel.setLanguage(it) },
                                     currentThemeSetting = uiState.themeSetting,
                                     onThemeSettingChange = { viewModel.setThemeSetting(it) },
-                                    isBiometricEnabled = uiState.isBiometricEnabled,
-                                    onToggleBiometric = { viewModel.setBiometricEnabled(it) },
-                                    onLockApp = { viewModel.lockApp() },
                                     onFastMoodLog = { viewModel.logFastMood(it) },
                                     onResetDemoData = { viewModel.resetDemoData() },
                                     onReplayOnboarding = { viewModel.replayOnboarding() },
+                                    onExportBackup = { viewModel.shareBackup() },
+                                    onImportBackup = { viewModel.importData(it) },
                                     updateStatus = uiState.updateStatus,
                                     onCheckForUpdates = { viewModel.checkForUpdates() },
                                     onDownloadAndInstallUpdate = { viewModel.downloadAndInstallUpdate(context as? Activity) },
@@ -586,20 +561,6 @@ fun AuraApp(
             }
         }
     }
-
-        // Biometric Lock Full-Screen Gate Overlay
-        AnimatedVisibility(
-            visible = uiState.isLocked && uiState.isOnboardingCompleted,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            BiometricLockOverlay(
-                errorMessage = uiState.pinError,
-                onBiometricUnlock = { viewModel.unlockWithBiometric() },
-                onPinSubmit = { pin -> viewModel.verifyPin(pin) },
-                language = uiState.language
-            )
-        }
 
         // Calendar Day Inspector & Edit Modal
         if (uiState.isCalendarModalVisible) {
@@ -629,6 +590,44 @@ fun AuraApp(
                 onSaveLog = { viewModel.saveCurrentLog() },
                 onDismiss = { viewModel.closeCalendarModal() },
                 language = uiState.language
+            )
+        }
+    }
+}
+
+@Composable
+private fun FloatingBottomNavItem(
+    selected: Boolean,
+    onClick: () -> Unit,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    label: String,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        shape = RoundedCornerShape(22.dp),
+        color = if (selected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+        modifier = modifier
+            .clip(RoundedCornerShape(22.dp))
+            .clickable(onClick = onClick)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = label,
+                tint = if (selected) RosePrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(22.dp)
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = label,
+                fontSize = 10.5.sp,
+                fontWeight = if (selected) FontWeight.ExtraBold else FontWeight.Medium,
+                color = if (selected) RosePrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1
             )
         }
     }

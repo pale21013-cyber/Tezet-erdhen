@@ -156,7 +156,7 @@ jobs:
             - **Neuerungen:**
               - 🌸 Feminines Design mit bezaubernden Icons
               - ⚙️ Umfassender Einstellungs-Tab mit Sprache, Design, Schnellaktionen & Updater
-              - 100% Offline-First & Biometrisch geschützt
+              - 🔒 100% Offline-First, JSON-Datensicherung (inkl. LSTM-Modellstatus) & R8-Codeverschleierung
           files: |
             output_artifacts/*.apk
             output_artifacts/update_manifest.json

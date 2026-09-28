@@ -1,21 +1,29 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# ========================================================
+# R8 / ProGuard Aggressive Obfuscation & Shrinking Rules
+# Scrambles class, method, and variable names into single letters
+# ========================================================
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+-repackageclasses 'a'
+-allowaccessmodification
+-overloadaggressively
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Keep Room Database, DAOs and Entities
+-keep class * extends androidx.room.RoomDatabase
+-keep @androidx.room.Entity class * { *; }
+-keep @androidx.room.Dao interface * { *; }
+-keepclassmembers class * extends androidx.room.RoomDatabase { *; }
+-dontwarn androidx.room.paging.**
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Keep Compose internal stability markers
+-keepclassmembers class * {
+    @androidx.compose.runtime.Composable *;
+}
+
+# Keep Application, Activities and Receivers
+-keep public class com.example.AuraApplication
+-keep public class com.example.MainActivity
+-keep public class com.example.widget.AuraCycleWidgetProvider
+
+# Keep FileProvider
+-keep public class androidx.core.content.FileProvider
+

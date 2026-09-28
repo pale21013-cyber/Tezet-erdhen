@@ -62,24 +62,54 @@ import com.example.ui.theme.RosePrimary
 import com.example.ui.theme.ThemeSetting
 import com.example.updater.UpdateStatus
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material.icons.filled.CloudDownload
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.FileDownload
+import androidx.compose.material.icons.filled.FileUpload
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.UploadFile
+import androidx.compose.ui.platform.LocalContext
+import com.example.ui.components.AuraButtonFontSize
+import com.example.ui.components.AuraMarqueeText
+import com.example.ui.components.AuraOutlinedButton
+import com.example.ui.components.AuraPrimaryButton
+
 @Composable
 fun SettingsSheet(
     currentLanguage: AppLanguage,
     onLanguageChange: (AppLanguage) -> Unit,
     currentThemeSetting: ThemeSetting,
     onThemeSettingChange: (ThemeSetting) -> Unit,
-    isBiometricEnabled: Boolean,
-    onToggleBiometric: (Boolean) -> Unit,
-    onLockApp: () -> Unit,
     onFastMoodLog: (String) -> Unit = {},
     onResetDemoData: () -> Unit,
     onReplayOnboarding: () -> Unit = {},
+    onExportBackup: () -> Unit = {},
+    onImportBackup: (String) -> Unit = {},
     updateStatus: UpdateStatus = UpdateStatus.Idle,
     onCheckForUpdates: () -> Unit = {},
     onDownloadAndInstallUpdate: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val strings = getAppStrings(currentLanguage)
+    val context = LocalContext.current
+
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            try {
+                context.contentResolver.openInputStream(uri)?.use { stream ->
+                    val content = stream.bufferedReader().use { it.readText() }
+                    onImportBackup(content)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 
     Column(
         modifier = modifier
@@ -652,36 +682,25 @@ fun SettingsSheet(
             }
         }
 
-        // 6. Biometric Security Controls
+        // 6. Data Backup & Transfer (JSON Export/Import with LSTM state)
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             shape = RoundedCornerShape(24.dp),
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
             elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().testTag("backup_transfer_card")
         ) {
-            Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                Text(
-                    text = strings.biometricGateTitle,
-                    fontFamily = OutfitDisplayFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 17.sp,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+            Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Surface(
                         shape = CircleShape,
                         color = MaterialTheme.colorScheme.primaryContainer,
-                        modifier = Modifier.size(38.dp)
+                        modifier = Modifier.size(40.dp)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Icon(
-                                imageVector = Icons.Default.Fingerprint,
-                                contentDescription = "Biometric Gate",
+                                imageVector = Icons.Default.CloudDownload,
+                                contentDescription = "Backup",
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(22.dp)
                             )
@@ -690,52 +709,43 @@ fun SettingsSheet(
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = strings.biometricToggleTitle,
+                            text = strings.backupSectionTitle,
+                            fontFamily = OutfitDisplayFamily,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp,
+                            fontSize = 17.sp,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = strings.biometricToggleSubtitle,
+                            text = strings.backupSectionSubtitle,
                             fontSize = 11.5.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    Switch(
-                        checked = isBiometricEnabled,
-                        onCheckedChange = onToggleBiometric,
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.White,
-                            checkedTrackColor = MaterialTheme.colorScheme.primary
-                        ),
-                        modifier = Modifier.testTag("biometric_switch")
-                    )
                 }
 
-                Button(
-                    onClick = onLockApp,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                        contentColor = MaterialTheme.colorScheme.primary
-                    ),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
-                    shape = RoundedCornerShape(14.dp),
-                    modifier = Modifier.fillMaxWidth().testTag("lock_now_button")
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Lock,
-                        contentDescription = "Lock Now",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = strings.lockNowBtn,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+                Spacer(modifier = Modifier.height(4.dp))
+
+                // Export Button
+                AuraPrimaryButton(
+                    text = strings.backupExportBtn,
+                    icon = Icons.Default.FileDownload,
+                    onClick = onExportBackup,
+                    modifier = Modifier.testTag("export_backup_button")
+                )
+
+                // Import Button
+                AuraOutlinedButton(
+                    text = strings.backupImportBtn,
+                    icon = Icons.Default.FileUpload,
+                    onClick = {
+                        try {
+                            filePickerLauncher.launch("*/*")
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    },
+                    modifier = Modifier.testTag("import_backup_button")
+                )
             }
         }
 

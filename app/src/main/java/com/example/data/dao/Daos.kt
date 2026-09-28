@@ -33,6 +33,9 @@ interface CycleDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCycle(cycle: CycleEntity): Long
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCycles(cycles: List<CycleEntity>)
+
     @Update
     suspend fun updateCycle(cycle: CycleEntity)
 
@@ -68,6 +71,9 @@ interface DailyLogDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrUpdate(log: DailyLogEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertLogs(logs: List<DailyLogEntity>)
 
     @Delete
     suspend fun deleteLog(log: DailyLogEntity)
@@ -111,6 +117,9 @@ interface TagDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLogTag(dailyLogTag: DailyLogTagEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertLogTags(dailyLogTags: List<DailyLogTagEntity>)
 
     @Query("DELETE FROM daily_log_tags WHERE log_date = :date AND tag_id = :tagId")
     suspend fun removeTagFromDate(date: String, tagId: Long)

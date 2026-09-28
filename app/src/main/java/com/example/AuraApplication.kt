@@ -3,6 +3,7 @@ package com.example
 import android.app.Application
 import com.example.data.AppDatabase
 import com.example.data.CycleRepository
+import com.example.data.backup.DataBackupManager
 import com.example.security.SecurityManager
 import com.example.shortcuts.AppShortcutHelper
 import com.example.updater.UpdateManager
@@ -14,6 +15,7 @@ class AuraApplication : Application() {
     val securityManager by lazy { SecurityManager(this) }
     val shortcutHelper by lazy { AppShortcutHelper(this) }
     val updateManager by lazy { UpdateManager(this) }
+    val backupManager by lazy { DataBackupManager(repository, this) }
 
     override fun onCreate() {
         super.onCreate()

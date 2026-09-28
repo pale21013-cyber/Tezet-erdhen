@@ -63,4 +63,24 @@ class CycleRepository(private val database: AppDatabase) {
         cycleDao.clearAll()
         seedInitialData(database)
     }
+
+    suspend fun restoreBackupData(
+        cycles: List<CycleEntity>,
+        logs: List<DailyLogEntity>,
+        logTags: List<DailyLogTagEntity>,
+        tags: List<TagDefinitionEntity>
+    ) {
+        if (tags.isNotEmpty()) {
+            tagDao.insertTags(tags)
+        }
+        if (cycles.isNotEmpty()) {
+            cycleDao.insertCycles(cycles)
+        }
+        if (logs.isNotEmpty()) {
+            dailyLogDao.insertLogs(logs)
+        }
+        if (logTags.isNotEmpty()) {
+            tagDao.insertLogTags(logTags)
+        }
+    }
 }

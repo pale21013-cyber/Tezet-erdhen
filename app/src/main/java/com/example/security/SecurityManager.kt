@@ -15,18 +15,6 @@ class SecurityManager(context: Context) {
     private val _isOnboardingCompleted = MutableStateFlow(prefs.getBoolean(KEY_ONBOARDING_COMPLETED, false))
     val isOnboardingCompleted: StateFlow<Boolean> = _isOnboardingCompleted.asStateFlow()
 
-    private val _isLocked = MutableStateFlow(
-        if (!prefs.getBoolean(KEY_ONBOARDING_COMPLETED, false)) false
-        else prefs.getBoolean(KEY_BIOMETRIC_ENABLED, true)
-    )
-    val isLocked: StateFlow<Boolean> = _isLocked.asStateFlow()
-
-    private val _isBiometricEnabled = MutableStateFlow(prefs.getBoolean(KEY_BIOMETRIC_ENABLED, true))
-    val isBiometricEnabled: StateFlow<Boolean> = _isBiometricEnabled.asStateFlow()
-
-    private val _currentPin = MutableStateFlow(prefs.getString(KEY_PIN, "1234") ?: "1234")
-    val currentPin: StateFlow<String> = _currentPin.asStateFlow()
-
     // Default to German as requested
     private val initialLanguageCode = prefs.getString(KEY_APP_LANGUAGE, AppLanguage.GERMAN.code) ?: AppLanguage.GERMAN.code
     private val _appLanguage = MutableStateFlow(AppLanguage.fromCode(initialLanguageCode))
@@ -52,43 +40,10 @@ class SecurityManager(context: Context) {
         _appLanguage.value = language
     }
 
-    fun unlockWithBiometric(): Boolean {
-        _isLocked.value = false
-        return true
-    }
-
-    fun verifyPin(enteredPin: String): Boolean {
-        if (enteredPin == _currentPin.value) {
-            _isLocked.value = false
-            return true
-        }
-        return false
-    }
-
-    fun setBiometricEnabled(enabled: Boolean) {
-        prefs.edit().putBoolean(KEY_BIOMETRIC_ENABLED, enabled).apply()
-        _isBiometricEnabled.value = enabled
-        if (!enabled) {
-            _isLocked.value = false
-        }
-    }
-
-    fun setPin(newPin: String) {
-        prefs.edit().putString(KEY_PIN, newPin).apply()
-        _currentPin.value = newPin
-    }
-
-    fun lock() {
-        if (_isBiometricEnabled.value && _isOnboardingCompleted.value) {
-            _isLocked.value = true
-        }
-    }
-
     companion object {
         private const val KEY_ONBOARDING_COMPLETED = "onboarding_completed"
-        private const val KEY_BIOMETRIC_ENABLED = "biometric_enabled"
-        private const val KEY_PIN = "security_pin"
         private const val KEY_APP_LANGUAGE = "app_language"
         private const val KEY_THEME_SETTING = "theme_setting"
     }
 }
+

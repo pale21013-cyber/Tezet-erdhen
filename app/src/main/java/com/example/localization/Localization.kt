@@ -139,17 +139,21 @@ data class StringsBundle(
     val privacyTitle: String,
     val privacySubtitle: String,
     val privacyBulletPoints: String,
-    val biometricGateTitle: String,
-    val biometricToggleTitle: String,
-    val biometricToggleSubtitle: String,
-    val lockNowBtn: String,
+
+    // Backup & Restore
+    val backupSectionTitle: String,
+    val backupSectionSubtitle: String,
+    val backupExportBtn: String,
+    val backupImportBtn: String,
+    val backupImportSuccess: String,
+    val backupImportError: String,
+
     val dataMgmtTitle: String,
     val resetDemoBtn: String,
 
-    // Lock screen
+    // Security & Offline
     val lockScreenTitle: String,
     val lockScreenSubtitle: String,
-    val unlockBiometricBtn: String,
     val pinPrompt: String,
     val pinIncorrectError: String,
 
@@ -333,16 +337,19 @@ val GermanStrings = StringsBundle(
             "• Keine Drittanbieter-Tracker, keine Werbe-SDKs, keine Cloud-Telemetrie.\n" +
             "• Neuronale LSTM-Zeitreihenvorhersagen laufen vollständig lokal auf deinem Gerät.\n" +
             "• App-Shortcuts und Widgets funktionieren komplett ohne Internetverbindung.",
-    biometricGateTitle = "Biometrische Schutzsperre",
-    biometricToggleTitle = "App mit Biometrie sperren",
-    biometricToggleSubtitle = "Fingerabdruck, Gesichtsscan oder PIN beim Öffnen anfordern",
-    lockNowBtn = "App jetzt sperren (Biometrischen Schutz testen)",
+
+    backupSectionTitle = "Datensicherung & Übertragung",
+    backupSectionSubtitle = "Exportiere deine Zyklen, Tageseinträge und LSTM-Modellzustände als JSON oder lade ein bestehendes Backup.",
+    backupExportBtn = "📥 Backup herunterladen & teilen",
+    backupImportBtn = "📂 Backup-Datei wiederherstellen",
+    backupImportSuccess = "✓ Daten und LSTM-Zustand erfolgreich importiert!",
+    backupImportError = "Fehler beim Import: Ungültiges Dateiformat.",
+
     dataMgmtTitle = "Datenverwaltung",
     resetDemoBtn = "Demo-Zyklen zurücksetzen & neu laden",
 
     lockScreenTitle = "Aura Cycle Geschützt",
-    lockScreenSubtitle = "100% Offline & Biometrisch Verschlüsselt",
-    unlockBiometricBtn = "Mit Fingerabdruck / Gesicht entsperren",
+    lockScreenSubtitle = "100% Offline & Lokal Verschlüsselt",
     pinPrompt = "Oder 4-stellige PIN eingeben (Standard: 1234)",
     pinIncorrectError = "Falsche PIN. Bitte erneut versuchen.",
 
@@ -522,16 +529,19 @@ val AlbanianStrings = StringsBundle(
             "• Pa gjurmues të palëve të treta, pa reklama SDK, pa telemetri në cloud.\n" +
             "• Parashikimet e serive kohore LSTM ekzekutohen plotësisht lokalisht në pajisjen tuaj.\n" +
             "• Shkurtoret e aplikacionit dhe mini-programet e ekranit kryesor funksionojnë pa internet.",
-    biometricGateTitle = "Porta Mbrojtëse Biometrike",
-    biometricToggleTitle = "Blloko aplikacionin me biometri",
-    biometricToggleSubtitle = "Kërko shenjën e gishtit, skanimin e fytyrës ose PIN gjatë hapjes",
-    lockNowBtn = "Blloko aplikacionin tani (Testo mbrojtjen biometrike)",
+
+    backupSectionTitle = "Ruajtja & Transferimi i të Dhënave",
+    backupSectionSubtitle = "Eksporto ciklet, regjistrimet ditore dhe modelin LSTM në JSON ose rikthe një backup ekzistues.",
+    backupExportBtn = "📥 Shkarko & Shpërndaj Backup",
+    backupImportBtn = "📂 Rikthe skedarin Backup",
+    backupImportSuccess = "✓ Të dhënat dhe modeli LSTM u rikthyen me sukses!",
+    backupImportError = "Gabim gjatë importit: Skedar i pavlefshëm.",
+
     dataMgmtTitle = "Menaxhimi i të Dhënave",
     resetDemoBtn = "Rivendos & ringarko ciklet provë",
 
     lockScreenTitle = "Aura Cycle E Mbrojtur",
-    lockScreenSubtitle = "100% Jashtë Linje & E Kriptuar Biometrikisht",
-    unlockBiometricBtn = "Zhblloko me Shenjë Gishti / Fytyrë",
+    lockScreenSubtitle = "100% Jashtë Linje & E Kriptuar Lokalisht",
     pinPrompt = "Ose shkruaj PIN-in me 4 shifra (Parazgjedhur: 1234)",
     pinIncorrectError = "PIN i pasaktë. Ju lutem provoni përsëri.",
 
@@ -711,16 +721,19 @@ val EnglishStrings = StringsBundle(
             "• Zero third-party trackers, zero advertising SDKs, zero cloud telemetry.\n" +
             "• Neural LSTM time-series predictions execute 100% locally on your device.\n" +
             "• App shortcuts and Home Screen widgets operate without network connectivity.",
-    biometricGateTitle = "Biometric Protection Gate",
-    biometricToggleTitle = "Lock App with Biometrics",
-    biometricToggleSubtitle = "Require fingerprint, face scan, or PIN upon launch",
-    lockNowBtn = "Lock App Immediately (Test Biometric Gate)",
+
+    backupSectionTitle = "Data Backup & Transfer",
+    backupSectionSubtitle = "Export your cycles, daily entries, and LSTM model state as JSON or restore an existing backup file.",
+    backupExportBtn = "📥 Download & Share Backup",
+    backupImportBtn = "📂 Restore Backup File",
+    backupImportSuccess = "✓ Data and LSTM model state restored successfully!",
+    backupImportError = "Error importing backup: Invalid file format.",
+
     dataMgmtTitle = "Data Management",
     resetDemoBtn = "Reset & Re-seed Historical Demo Cycles",
 
     lockScreenTitle = "Aura Cycle Protected",
-    lockScreenSubtitle = "100% Offline & Biometrically Encrypted",
-    unlockBiometricBtn = "Unlock with Fingerprint / Face",
+    lockScreenSubtitle = "100% Offline & Locally Encrypted",
     pinPrompt = "Or enter 4-digit PIN (Default: 1234)",
     pinIncorrectError = "Incorrect PIN. Try again.",
 

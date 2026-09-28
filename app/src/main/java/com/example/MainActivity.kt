@@ -25,7 +25,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val app = application as AuraApplication
-        val factory = CycleViewModelFactory(app.repository, app.securityManager, app.shortcutHelper, app.updateManager)
+        val factory = CycleViewModelFactory(
+            app.repository,
+            app.securityManager,
+            app.shortcutHelper,
+            app.updateManager,
+            app.backupManager
+        )
         viewModel = ViewModelProvider(this, factory)[CycleViewModel::class.java]
 
         handleIntent(intent)
@@ -101,11 +107,5 @@ class MainActivity : ComponentActivity() {
                 viewModel.selectTab(AppTab.TODAY)
             }
         }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        // Lock app upon leaving if biometric protection is enabled
-        viewModel.lockApp()
     }
 }

@@ -31,6 +31,9 @@ import android.app.Activity
 import com.example.updater.UpdateManager
 import com.example.updater.UpdateStatus
 
+import com.example.data.backup.DataBackupManager
+import kotlinx.coroutines.withContext
+
 enum class AppTab {
     TODAY,
     CALENDAR,
@@ -51,9 +54,6 @@ data class CycleUiState(
     val predictions: List<MlPredictionEntity> = emptyList(),
     val cycleStats: CycleStats? = null,
     val isOnboardingCompleted: Boolean = true,
-    val isLocked: Boolean = true,
-    val isBiometricEnabled: Boolean = true,
-    val pinError: String? = null,
     val saveNotification: String? = null,
     val language: AppLanguage = AppLanguage.GERMAN,
     val themeSetting: ThemeSetting = ThemeSetting.SYSTEM,
@@ -66,7 +66,8 @@ class CycleViewModel(
     private val repository: CycleRepository,
     private val securityManager: SecurityManager,
     private val shortcutHelper: AppShortcutHelper,
-    private val updateManager: UpdateManager
+    private val updateManager: UpdateManager,
+    private val backupManager: DataBackupManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CycleUiState())
@@ -86,18 +87,6 @@ class CycleViewModel(
         viewModelScope.launch {
             securityManager.isOnboardingCompleted.collectLatest { completed ->
                 _uiState.update { it.copy(isOnboardingCompleted = completed) }
-            }
-        }
-
-        // Observe security lock state
-        viewModelScope.launch {
-            securityManager.isLocked.collectLatest { locked ->
-                _uiState.update { it.copy(isLocked = locked) }
-            }
-        }
-        viewModelScope.launch {
-            securityManager.isBiometricEnabled.collectLatest { enabled ->
-                _uiState.update { it.copy(isBiometricEnabled = enabled) }
             }
         }
 
@@ -312,26 +301,34 @@ class CycleViewModel(
         _uiState.update { it.copy(saveNotification = null) }
     }
 
-    fun unlockWithBiometric() {
-        securityManager.unlockWithBiometric()
-    }
-
-    fun verifyPin(pin: String) {
-        val success = securityManager.verifyPin(pin)
-        if (!success) {
-            val strings = getAppStrings(_uiState.value.language)
-            _uiState.update { it.copy(pinError = strings.pinIncorrectError) }
-        } else {
-            _uiState.update { it.copy(pinError = null) }
+    fun exportData(onReady: (String) -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val json = backupManager.exportAllDataToJson(_uiState.value.cycleStats)
+            withContext(Dispatchers.Main) {
+                onReady(json)
+            }
         }
     }
 
-    fun setBiometricEnabled(enabled: Boolean) {
-        securityManager.setBiometricEnabled(enabled)
+    fun shareBackup() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val json = backupManager.exportAllDataToJson(_uiState.value.cycleStats)
+            backupManager.shareBackup(json)
+        }
     }
 
-    fun lockApp() {
-        securityManager.lock()
+    fun importData(jsonContent: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = backupManager.importDataFromJson(jsonContent)
+            if (result.isSuccess) {
+                runMlPipeline()
+                val count = result.getOrNull()?.logsCount ?: 0
+                _uiState.update { it.copy(saveNotification = "✓ $count Tage & LSTM-Modelldaten erfolgreich importiert!") }
+            } else {
+                val err = result.exceptionOrNull()?.localizedMessage ?: "Import fehlgeschlagen"
+                _uiState.update { it.copy(saveNotification = "Fehler: $err") }
+            }
+        }
     }
 
     fun resetDemoData() {
@@ -462,10 +459,11 @@ class CycleViewModelFactory(
     private val repository: CycleRepository,
     private val securityManager: SecurityManager,
     private val shortcutHelper: AppShortcutHelper,
-    private val updateManager: UpdateManager
+    private val updateManager: UpdateManager,
+    private val backupManager: DataBackupManager
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return CycleViewModel(repository, securityManager, shortcutHelper, updateManager) as T
+        return CycleViewModel(repository, securityManager, shortcutHelper, updateManager, backupManager) as T
     }
 }
