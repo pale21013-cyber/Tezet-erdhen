@@ -12,7 +12,13 @@ class SecurityManager(context: Context) {
     private val prefs: SharedPreferences =
         context.getSharedPreferences("aura_security_prefs", Context.MODE_PRIVATE)
 
-    private val _isLocked = MutableStateFlow(prefs.getBoolean(KEY_BIOMETRIC_ENABLED, true))
+    private val _isOnboardingCompleted = MutableStateFlow(prefs.getBoolean(KEY_ONBOARDING_COMPLETED, false))
+    val isOnboardingCompleted: StateFlow<Boolean> = _isOnboardingCompleted.asStateFlow()
+
+    private val _isLocked = MutableStateFlow(
+        if (!prefs.getBoolean(KEY_ONBOARDING_COMPLETED, false)) false
+        else prefs.getBoolean(KEY_BIOMETRIC_ENABLED, true)
+    )
     val isLocked: StateFlow<Boolean> = _isLocked.asStateFlow()
 
     private val _isBiometricEnabled = MutableStateFlow(prefs.getBoolean(KEY_BIOMETRIC_ENABLED, true))
@@ -30,6 +36,11 @@ class SecurityManager(context: Context) {
     private val initialThemeCode = prefs.getString(KEY_THEME_SETTING, ThemeSetting.SYSTEM.code) ?: ThemeSetting.SYSTEM.code
     private val _themeSetting = MutableStateFlow(ThemeSetting.fromCode(initialThemeCode))
     val themeSetting: StateFlow<ThemeSetting> = _themeSetting.asStateFlow()
+
+    fun setOnboardingCompleted(completed: Boolean) {
+        prefs.edit().putBoolean(KEY_ONBOARDING_COMPLETED, completed).apply()
+        _isOnboardingCompleted.value = completed
+    }
 
     fun setThemeSetting(setting: ThemeSetting) {
         prefs.edit().putString(KEY_THEME_SETTING, setting.code).apply()
@@ -68,12 +79,13 @@ class SecurityManager(context: Context) {
     }
 
     fun lock() {
-        if (_isBiometricEnabled.value) {
+        if (_isBiometricEnabled.value && _isOnboardingCompleted.value) {
             _isLocked.value = true
         }
     }
 
     companion object {
+        private const val KEY_ONBOARDING_COMPLETED = "onboarding_completed"
         private const val KEY_BIOMETRIC_ENABLED = "biometric_enabled"
         private const val KEY_PIN = "security_pin"
         private const val KEY_APP_LANGUAGE = "app_language"

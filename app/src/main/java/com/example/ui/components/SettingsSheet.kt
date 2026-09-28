@@ -73,6 +73,7 @@ fun SettingsSheet(
     onLockApp: () -> Unit,
     onFastMoodLog: (String) -> Unit = {},
     onResetDemoData: () -> Unit,
+    onReplayOnboarding: () -> Unit = {},
     updateStatus: UpdateStatus = UpdateStatus.Idle,
     onCheckForUpdates: () -> Unit = {},
     onDownloadAndInstallUpdate: () -> Unit = {},
@@ -771,6 +772,30 @@ fun SettingsSheet(
                     Text(
                         text = strings.resetDemoBtn,
                         color = FollicularPurple,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                Button(
+                    onClick = onReplayOnboarding,
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = RosePrimary
+                    ),
+                    modifier = Modifier.fillMaxWidth().testTag("replay_onboarding_button")
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.AutoAwesome,
+                        contentDescription = "Onboarding",
+                        tint = RosePrimary,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "🌸 ${strings.onboardingWelcomeTitle}",
+                        color = RosePrimary,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold
                     )

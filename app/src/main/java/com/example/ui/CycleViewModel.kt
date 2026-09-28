@@ -50,6 +50,7 @@ data class CycleUiState(
     val allLogs: List<DailyLogEntity> = emptyList(),
     val predictions: List<MlPredictionEntity> = emptyList(),
     val cycleStats: CycleStats? = null,
+    val isOnboardingCompleted: Boolean = true,
     val isLocked: Boolean = true,
     val isBiometricEnabled: Boolean = true,
     val pinError: String? = null,
@@ -79,6 +80,13 @@ class CycleViewModel(
                 _uiState.update { it.copy(updateStatus = status) }
             }
         }
+        // Observe onboarding state
+        viewModelScope.launch {
+            securityManager.isOnboardingCompleted.collectLatest { completed ->
+                _uiState.update { it.copy(isOnboardingCompleted = completed) }
+            }
+        }
+
         // Observe security lock state
         viewModelScope.launch {
             securityManager.isLocked.collectLatest { locked ->
@@ -363,6 +371,64 @@ class CycleViewModel(
         viewModelScope.launch {
             updateManager.downloadAndInstallApk(downloadUrl, activity)
         }
+    }
+
+    fun completeOnboarding(
+        goal: String,
+        lastPeriodDate: String,
+        cycleLength: Int,
+        periodDuration: Int,
+        isRegular: Boolean,
+        selectedTagIds: Set<Long>
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                // If the user specified a last period date, record initial cycle and period logs
+                val parsedDate = try {
+                    LocalDate.parse(lastPeriodDate, DateTimeFormatter.ISO_LOCAL_DATE)
+                } catch (e: Exception) {
+                    LocalDate.now()
+                }
+
+                // Add cycle baseline
+                repository.insertCycle(
+                    CycleEntity(
+                        startDate = parsedDate.format(DateTimeFormatter.ISO_LOCAL_DATE),
+                        endDate = null,
+                        periodIntensity = 2
+                    )
+                )
+
+                // Log period days for the duration
+                for (dayOffset in 0 until periodDuration) {
+                    val logDate = parsedDate.plusDays(dayOffset.toLong())
+                    if (!logDate.isAfter(LocalDate.now())) {
+                        val dateStr = logDate.format(DateTimeFormatter.ISO_LOCAL_DATE)
+                        repository.saveDailyLog(
+                            DailyLogEntity(
+                                logDate = dateStr,
+                                flowIntensity = if (dayOffset == 0 || dayOffset == 1) 3 else 2,
+                                flowColor = "Big Red",
+                                sleepQuality = 4,
+                                activityLevel = 1,
+                                isLogged = 1,
+                                notes = "Logged during Onboarding ($goal)"
+                            ),
+                            selectedTagIds = selectedTagIds.toList()
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                // Safe fallback
+            }
+
+            securityManager.setOnboardingCompleted(true)
+            runMlPipeline()
+        }
+    }
+
+    fun replayOnboarding() {
+        securityManager.setOnboardingCompleted(false)
     }
 
     fun resetUpdateStatus() {

@@ -45,16 +45,16 @@ val DarkBorder = Color(0xFF422C36)
 val DarkBorderSubtle = Color(0xFF311F28)
 
 // High-Contrast Distinguishable Typography Tokens - Light Mode
-// Crisp, ultra-deep dark charcoal rose with contrast ratio > 16:1
-val LightTextPrimary = Color(0xFF140B0F)
-val LightTextSecondary = Color(0xFF47333B)     // Rich slate plum (> 7.5:1)
-val LightTextMuted = Color(0xFF6E565F)         // Heather slate (> 4.8:1)
+// Crisp, ultra-deep dark charcoal rose with contrast ratio > 18:1
+val LightTextPrimary = Color(0xFF0F070A)
+val LightTextSecondary = Color(0xFF38242D)     // Deep slate plum (> 9:1)
+val LightTextMuted = Color(0xFF5C454E)         // Slate heather (> 5.5:1)
 
 // High-Contrast Distinguishable Typography Tokens - Dark Mode
-// Luminous pearl white with contrast ratio > 17:1
-val DarkTextPrimary = Color(0xFFFFF2F5)
-val DarkTextSecondary = Color(0xFFD6C2C9)      // Radiant soft rose mist (> 8.5:1)
-val DarkTextMuted = Color(0xFFA8919A)          // Crisp frosted slate (> 5:1)
+// Luminous pearl white with contrast ratio > 18:1
+val DarkTextPrimary = Color(0xFFFFF5F7)
+val DarkTextSecondary = Color(0xFFE2CED5)      // Radiant soft rose mist (> 9:1)
+val DarkTextMuted = Color(0xFFB8A2AB)          // Crisp frosted slate (> 5.8:1)
 
 // Flow Intensity Colors
 val FlowPink = Color(0xFFF472B6)

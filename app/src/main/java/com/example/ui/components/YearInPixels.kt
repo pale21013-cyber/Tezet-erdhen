@@ -5,6 +5,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,14 +15,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -86,7 +90,7 @@ enum class PixelViewMode {
     MONTH_CARDS
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun YearInPixels(
     logs: List<DailyLogEntity>,
@@ -101,6 +105,7 @@ fun YearInPixels(
     var inspectedDate by remember { mutableStateOf<String?>(null) }
     val coroutineScope = rememberCoroutineScope()
     val matrixScrollState = rememberScrollState()
+    val monthRequesters = remember { (1..12).associateWith { BringIntoViewRequester() } }
 
     val locale = when (language) {
         AppLanguage.GERMAN -> Locale.GERMAN
@@ -191,8 +196,12 @@ fun YearInPixels(
                                 currentYear = now.year
                                 inspectedDate = todayStr
                                 coroutineScope.launch {
-                                    val targetOffset = ((now.monthValue - 1) * 35).coerceAtLeast(0)
-                                    matrixScrollState.animateScrollTo(targetOffset)
+                                    if (viewMode == PixelViewMode.MATRIX) {
+                                        val targetOffset = ((now.monthValue - 1) * 35).coerceAtLeast(0)
+                                        matrixScrollState.animateScrollTo(targetOffset)
+                                    } else {
+                                        monthRequesters[now.monthValue]?.bringIntoView()
+                                    }
                                 }
                             }
                             .testTag("jump_to_today_btn")
@@ -762,12 +771,26 @@ fun YearInPixels(
                         val dateStr = String.format("%04d-%02d-%02d", currentYear, monthIndex, day)
                         (logMap[dateStr]?.flowIntensity ?: 0) > 0
                     }
+                    val requester = monthRequesters[monthIndex]
+                    val isCurrentCalendarMonth = currentYear == LocalDate.now().year && monthIndex == LocalDate.now().monthValue
 
                     Card(
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (isCurrentCalendarMonth && inspectedDate == todayStr)
+                                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.22f)
+                            else
+                                MaterialTheme.colorScheme.surface
+                        ),
                         shape = RoundedCornerShape(18.dp),
+                        border = if (isCurrentCalendarMonth && inspectedDate == todayStr)
+                            BorderStroke(1.5.dp, RosePrimary.copy(alpha = 0.65f))
+                        else
+                            BorderStroke(0.5.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.15f)),
                         elevation = CardDefaults.cardElevation(defaultElevation = 1.5.dp),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .then(if (requester != null) Modifier.bringIntoViewRequester(requester) else Modifier)
+                            .testTag("pixel_month_card_$monthIndex")
                     ) {
                         Column(modifier = Modifier.padding(14.dp)) {
                             Row(
@@ -819,44 +842,93 @@ fun YearInPixels(
 
                             Spacer(modifier = Modifier.height(10.dp))
 
-                            // 7-column calendar row for this month
-                            FlowRow(
+                            val monthWeekDays = when (language) {
+                                AppLanguage.GERMAN -> listOf("Mo", "Di", "Mi", "Do", "Fr", "Sa", "So")
+                                AppLanguage.ALBANIAN -> listOf("Hën", "Mar", "Mër", "Enj", "Pre", "Sht", "Die")
+                                AppLanguage.ENGLISH -> listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+                            }
+
+                            // Weekday Header (7 columns starting with Monday)
+                            Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                                verticalArrangement = Arrangement.spacedBy(6.dp)
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
                             ) {
-                                for (day in 1..daysInMonth) {
-                                    val dateStr = String.format("%04d-%02d-%02d", currentYear, monthIndex, day)
-                                    val log = logMap[dateStr]
-                                    val flow = log?.flowIntensity ?: 0
-                                    val isLogged = (log?.isLogged ?: 0) == 1
-                                    val isToday = dateStr == todayStr
-                                    val isInspected = dateStr == inspectedDate
+                                monthWeekDays.forEach { dayName ->
+                                    Text(
+                                        text = dayName,
+                                        modifier = Modifier.weight(1f),
+                                        textAlign = TextAlign.Center,
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
 
-                                    val pixelColor = getPixelColor(flow, isLogged)
+                            Spacer(modifier = Modifier.height(6.dp))
 
-                                    Surface(
-                                        shape = RoundedCornerShape(8.dp),
-                                        color = pixelColor,
-                                        border = if (isInspected) {
-                                            BorderStroke(1.5.dp, RosePrimary)
-                                        } else if (isToday) {
-                                            BorderStroke(1.5.dp, Color(0xFFF59E0B))
-                                        } else {
-                                            BorderStroke(0.5.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f))
-                                        },
-                                        modifier = Modifier
-                                            .size(34.dp)
-                                            .clip(RoundedCornerShape(8.dp))
-                                            .clickable { inspectedDate = dateStr }
+                            // 7-column calendar grid for this month (Monday as Day 1)
+                            val firstDayOfWeek = ym.atDay(1).dayOfWeek.value // 1 (Mon) .. 7 (Sun)
+                            val leadingEmptyDays = firstDayOfWeek - 1 // 0 for Monday, 6 for Sunday
+                            val totalSlots = leadingEmptyDays + daysInMonth
+                            val numRows = (totalSlots + 6) / 7
+
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                for (rowIndex in 0 until numRows) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.spacedBy(4.dp)
                                     ) {
-                                        Box(contentAlignment = Alignment.Center) {
-                                            Text(
-                                                text = "$day",
-                                                fontSize = 10.5.sp,
-                                                fontWeight = if (flow > 0 || isToday) FontWeight.Bold else FontWeight.Medium,
-                                                color = if (flow > 0) Color.White else MaterialTheme.colorScheme.onSurface
-                                            )
+                                        for (colIndex in 0..6) {
+                                            val slotIndex = rowIndex * 7 + colIndex
+                                            val day = slotIndex - leadingEmptyDays + 1
+
+                                            if (day in 1..daysInMonth) {
+                                                val dateStr = String.format("%04d-%02d-%02d", currentYear, monthIndex, day)
+                                                val log = logMap[dateStr]
+                                                val flow = log?.flowIntensity ?: 0
+                                                val isLogged = (log?.isLogged ?: 0) == 1
+                                                val isToday = dateStr == todayStr
+                                                val isInspected = dateStr == inspectedDate
+
+                                                val pixelColor = getPixelColor(flow, isLogged)
+
+                                                Surface(
+                                                    shape = RoundedCornerShape(8.dp),
+                                                    color = pixelColor,
+                                                    border = if (isInspected) {
+                                                        BorderStroke(2.dp, RosePrimary)
+                                                    } else if (isToday) {
+                                                        BorderStroke(1.5.dp, Color(0xFFF59E0B))
+                                                    } else {
+                                                        BorderStroke(0.5.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
+                                                    },
+                                                    modifier = Modifier
+                                                        .weight(1f)
+                                                        .aspectRatio(1f)
+                                                        .clip(RoundedCornerShape(8.dp))
+                                                        .clickable { inspectedDate = dateStr }
+                                                        .testTag("pixel_day_${dateStr}")
+                                                ) {
+                                                    Box(contentAlignment = Alignment.Center) {
+                                                        Text(
+                                                            text = "$day",
+                                                            fontSize = 11.sp,
+                                                            fontWeight = if (flow > 0 || isToday || isInspected) FontWeight.Bold else FontWeight.Medium,
+                                                            color = if (flow > 0) Color.White else MaterialTheme.colorScheme.onSurface
+                                                        )
+                                                    }
+                                                }
+                                            } else {
+                                                Spacer(
+                                                    modifier = Modifier
+                                                        .weight(1f)
+                                                        .aspectRatio(1f)
+                                                )
+                                            }
                                         }
                                     }
                                 }

@@ -327,7 +327,7 @@ fun BiometricLockOverlay(
 
             Spacer(modifier = Modifier.height(18.dp))
 
-            // Numeric Keypad: High-contrast, tactile circular keys with theme-aware colors
+            // Numeric Keypad: High-contrast, tactile circular keys with distinct colors from background surface
             val keys = listOf(
                 listOf("1", "2", "3"),
                 listOf("4", "5", "6"),
@@ -335,18 +335,25 @@ fun BiometricLockOverlay(
                 listOf("C", "0", "DEL")
             )
 
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 for (row in keys) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(18.dp)) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
                         for (key in row) {
                             val isAction = key == "C" || key == "DEL"
                             Surface(
                                 shape = CircleShape,
-                                color = if (isAction) MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f) else MaterialTheme.colorScheme.surfaceVariant,
-                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.7f)),
-                                shadowElevation = if (isAction) 1.dp else 2.dp,
+                                color = if (isAction)
+                                    MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f)
+                                else
+                                    MaterialTheme.colorScheme.surface,
+                                border = BorderStroke(
+                                    1.2.dp,
+                                    if (isAction) MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
+                                    else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.8f)
+                                ),
+                                shadowElevation = if (isAction) 2.dp else 4.dp,
                                 modifier = Modifier
-                                    .size(62.dp)
+                                    .size(64.dp)
                                     .clip(CircleShape)
                                     .clickable {
                                         when (key) {
@@ -370,13 +377,13 @@ fun BiometricLockOverlay(
                                             imageVector = Icons.AutoMirrored.Filled.Backspace,
                                             contentDescription = "Backspace",
                                             tint = MaterialTheme.colorScheme.primary,
-                                            modifier = Modifier.size(22.dp)
+                                            modifier = Modifier.size(24.dp)
                                         )
                                     } else if (key == "C") {
                                         Text(
                                             text = key,
                                             fontFamily = OutfitDisplayFamily,
-                                            fontSize = 18.sp,
+                                            fontSize = 20.sp,
                                             fontWeight = FontWeight.ExtraBold,
                                             color = MaterialTheme.colorScheme.primary
                                         )
@@ -384,7 +391,7 @@ fun BiometricLockOverlay(
                                         Text(
                                             text = key,
                                             fontFamily = OutfitDisplayFamily,
-                                            fontSize = 24.sp,
+                                            fontSize = 25.sp,
                                             fontWeight = FontWeight.Bold,
                                             color = MaterialTheme.colorScheme.onSurface
                                         )

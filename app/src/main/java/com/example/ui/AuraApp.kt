@@ -66,6 +66,7 @@ import com.example.ui.components.BiometricLockOverlay
 import com.example.ui.components.CycleWheel
 import com.example.ui.components.DailyLogForm
 import com.example.ui.components.MlInsightsCard
+import com.example.ui.components.OnboardingScreen
 import com.example.ui.components.SegmentedCalendar
 import com.example.ui.components.SettingsSheet
 import com.example.ui.components.YearInPixels
@@ -90,9 +91,29 @@ fun AuraApp(
     }
 
     Box(modifier = modifier.fillMaxSize()) {
-        // Main App Scaffold
-        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-            val isExpanded = maxWidth >= 840.dp
+        if (!uiState.isOnboardingCompleted) {
+            // Initial Full-Screen Onboarding Flow
+            OnboardingScreen(
+                currentLanguage = uiState.language,
+                onLanguageChange = { viewModel.setLanguage(it) },
+                currentThemeSetting = uiState.themeSetting,
+                onThemeSettingChange = { viewModel.setThemeSetting(it) },
+                allTags = uiState.allTags,
+                onCompleteOnboarding = { goal, lastPeriodDate, cycleLen, periodDur, isRegular, selectedTags ->
+                    viewModel.completeOnboarding(
+                        goal = goal,
+                        lastPeriodDate = lastPeriodDate,
+                        cycleLength = cycleLen,
+                        periodDuration = periodDur,
+                        isRegular = isRegular,
+                        selectedTagIds = selectedTags
+                    )
+                }
+            )
+        } else {
+            // Main App Scaffold
+            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                val isExpanded = maxWidth >= 840.dp
 
             if (isExpanded) {
                 // Expanded Screen: Tablet / Desktop Canonical Layout (Navigation Rail + Dual Pane)
@@ -252,6 +273,7 @@ fun AuraApp(
                                         onLockApp = { viewModel.lockApp() },
                                         onFastMoodLog = { viewModel.logFastMood(it) },
                                         onResetDemoData = { viewModel.resetDemoData() },
+                                        onReplayOnboarding = { viewModel.replayOnboarding() },
                                         updateStatus = uiState.updateStatus,
                                         onCheckForUpdates = { viewModel.checkForUpdates() },
                                         onDownloadAndInstallUpdate = { viewModel.downloadAndInstallUpdate(context as? Activity) }
@@ -512,6 +534,7 @@ fun AuraApp(
                                     onLockApp = { viewModel.lockApp() },
                                     onFastMoodLog = { viewModel.logFastMood(it) },
                                     onResetDemoData = { viewModel.resetDemoData() },
+                                    onReplayOnboarding = { viewModel.replayOnboarding() },
                                     updateStatus = uiState.updateStatus,
                                     onCheckForUpdates = { viewModel.checkForUpdates() },
                                     onDownloadAndInstallUpdate = { viewModel.downloadAndInstallUpdate(context as? Activity) },
@@ -524,10 +547,11 @@ fun AuraApp(
                 }
             }
         }
+    }
 
         // Biometric Lock Full-Screen Gate Overlay
         AnimatedVisibility(
-            visible = uiState.isLocked,
+            visible = uiState.isLocked && uiState.isOnboardingCompleted,
             enter = fadeIn(),
             exit = fadeOut()
         ) {

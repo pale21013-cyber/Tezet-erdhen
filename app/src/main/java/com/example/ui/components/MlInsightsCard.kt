@@ -77,60 +77,72 @@ fun MlInsightsCard(
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             shape = RoundedCornerShape(24.dp),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)),
             elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(modifier = Modifier.padding(18.dp)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    verticalAlignment = Alignment.Top
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Surface(
-                            color = FollicularPurple.copy(alpha = 0.15f),
-                            shape = CircleShape,
-                            modifier = Modifier.size(40.dp)
-                        ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Icon(
-                                    imageVector = Icons.Default.Psychology,
-                                    contentDescription = "ML",
-                                    tint = FollicularPurple,
-                                    modifier = Modifier.size(22.dp)
-                                )
-                            }
-                        }
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column {
-                            Text(
-                                text = strings.mlTitle,
-                                fontFamily = OutfitDisplayFamily,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 17.sp,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            Text(
-                                text = strings.mlSubtitle,
-                                fontSize = 11.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                    Surface(
+                        color = FollicularPurple.copy(alpha = 0.15f),
+                        shape = CircleShape,
+                        border = BorderStroke(1.dp, FollicularPurple.copy(alpha = 0.3f)),
+                        modifier = Modifier.size(42.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Default.Psychology,
+                                contentDescription = "ML",
+                                tint = FollicularPurple,
+                                modifier = Modifier.size(24.dp)
                             )
                         }
                     }
-
-                    Surface(
-                        color = Color(0xFFDCFCE7),
-                        shape = RoundedCornerShape(14.dp),
-                        border = BorderStroke(1.dp, Color(0xFF86EFAC))
-                    ) {
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "$confidencePct% ${strings.confidenceLabel}",
-                            color = Color(0xFF15803D),
-                            fontSize = 11.5.sp,
+                            text = strings.mlTitle,
+                            fontFamily = OutfitDisplayFamily,
                             fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+                            fontSize = 17.sp,
+                            color = MaterialTheme.colorScheme.onSurface
                         )
+                        Spacer(modifier = Modifier.height(3.dp))
+                        Text(
+                            text = strings.mlSubtitle,
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        // "x % Zuverlässigkeit" in neuer Zeile unterhalb des Modellnamens
+                        Surface(
+                            color = if (androidx.compose.foundation.isSystemInDarkTheme()) Color(0xFF064E3B) else Color(0xFFDCFCE7),
+                            shape = RoundedCornerShape(12.dp),
+                            border = BorderStroke(1.dp, if (androidx.compose.foundation.isSystemInDarkTheme()) Color(0xFF059669) else Color(0xFF86EFAC))
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(6.dp)
+                                        .clip(CircleShape)
+                                        .background(if (androidx.compose.foundation.isSystemInDarkTheme()) Color(0xFF34D399) else Color(0xFF16A34A))
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = "$confidencePct% ${strings.confidenceLabel}",
+                                    color = if (androidx.compose.foundation.isSystemInDarkTheme()) Color(0xFFD1FAE5) else Color(0xFF14532D),
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    letterSpacing = 0.2.sp
+                                )
+                            }
+                        }
                     }
                 }
 
