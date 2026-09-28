@@ -341,6 +341,12 @@ fun MlInsightsCard(
                 GuideItem(strings.energyLabel, phaseAdvice.energy, "✨")
             }
         }
+
+        // New Evidence-Based Nutrition & Movement Suggestion Cards
+        PhaseSuggestionsSection(
+            currentPhase = phase,
+            language = language
+        )
     }
 }
 

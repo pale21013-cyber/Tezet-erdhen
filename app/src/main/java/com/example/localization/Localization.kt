@@ -1168,3 +1168,333 @@ fun getLocalizedPhaseMeaning(phase: CyclePhase, language: AppLanguage): PhaseMea
     }
 }
 
+data class ScientificPhaseGuide(
+    val phase: CyclePhase,
+    val phaseTitle: String,
+    val dayRangeText: String,
+    val emoji: String,
+    val colorHex: Long,
+    val physiologyTitle: String,
+    val hormonesAndPhysiology: String,
+    val moodAndEnergy: String,
+    val nutritionTitle: String,
+    val nutritionHighlights: List<String>,
+    val nutritionDetails: List<Pair<String, String>>,
+    val metabolismFact: String,
+    val activityTitle: String,
+    val activityLevelLabel: String,
+    val activityHighlights: List<String>,
+    val activityDetails: List<Pair<String, String>>
+)
+
+fun getScientificPhaseGuide(phase: CyclePhase, language: AppLanguage): ScientificPhaseGuide {
+    return when (language) {
+        AppLanguage.GERMAN -> when (phase) {
+            CyclePhase.MENSTRUAL -> ScientificPhaseGuide(
+                phase = phase,
+                phaseTitle = "Menstruationsphase",
+                dayRangeText = "Ca. Tag 1–5",
+                emoji = "🩸",
+                colorHex = 0xFFF43F5E,
+                physiologyTitle = "Physiologie & Hormone",
+                hormonesAndPhysiology = "Östrogen & Progesteron auf Tiefststand. Lokale Prostaglandine bewirken Gebärmutterkontraktionen (Krämpfe). Blutverlust von ca. 30–60 ml führt zu Eisenverlust. Magen-Darm-Motilität verlangsamt.",
+                moodAndEnergy = "Niedriges Energielevel, erhöhtes Ruhebedürfnis, Anfälligkeit für Erschöpfung und Krämpfe.",
+                nutritionTitle = "Wissenschaftliche Ernährungsempfehlungen",
+                nutritionHighlights = listOf("Eisen & Vit C", "Magnesium", "Omega-3", "Bekömmlich"),
+                nutritionDetails = listOf(
+                    "Eisen & Vitamin C" to "Pflanzliches & tierisches Eisen (Linsen, Kichererbsen, Kürbiskerne, mageres Fleisch) kombiniert mit Vitamin C (Paprika, Zitrusfrüchte) für maximale Eisenaufnahme.",
+                    "Magnesium" to "Wirkt muskelentspannend und krampflindernd (Dunkle Schokolade, Nüsse, Haferflocken).",
+                    "Omega-3-Fettsäuren" to "Hemmen die Synthese entzündungsfördernder Prostaglandine & reduzieren Schmerzintensität (Leinsamen, Walnüsse, fetter Seefisch).",
+                    "Bekömmlichkeit" to "Warme, leicht verdauliche Speisen (Suppen, Eintöpfe), da die Magen-Darm-Motilität verlangsamt sein kann."
+                ),
+                metabolismFact = "Fokus auf Schmerzlinderung, Regeneration & Eisen-Auffüllung statt Kalorienrestriktion.",
+                activityTitle = "Physiologische Aktivitätsvorschläge",
+                activityLevelLabel = "Sanft & Regenerativ",
+                activityHighlights = listOf("Restorative Yoga", "Sanftes Dehnen", "Spaziergänge", "Schlaf"),
+                activityDetails = listOf(
+                    "Bewegungstyp" to "Sanftes Dehnen, leichtes Mobilisationstraining & entspannte Spaziergänge an frischer Luft.",
+                    "Fokus" to "Schonung des Beckenbodens, Entspannung der Gebärmutter und vorrangige Erholung."
+                )
+            )
+            CyclePhase.FOLLICULAR -> ScientificPhaseGuide(
+                phase = phase,
+                phaseTitle = "Follikelphase",
+                dayRangeText = "Ca. Tag 6–13",
+                emoji = "💜",
+                colorHex = 0xFFA855F7,
+                physiologyTitle = "Physiologie & Hormone",
+                hormonesAndPhysiology = "FSH & Östrogen steigen kontinuierlich an. Östrogen verbessert die Insulinsensitivität und optimiert die Speicherung von Muskelglykogen.",
+                moodAndEnergy = "Steigendes Energielevel, hohe mentale Schärfe, verbesserte Stimmung und höhere Stresstoleranz.",
+                nutritionTitle = "Wissenschaftliche Ernährungsempfehlungen",
+                nutritionHighlights = listOf("Komplexe Carbs", "Präbiotika & Ballaststoffe", "Zink"),
+                nutritionDetails = listOf(
+                    "Komplexe Kohlenhydrate" to "Vollkornprodukte, Hafer und Quinoa werden durch die verbesserte Insulinsensitivität optimal verwertet.",
+                    "Präbiotika & Ballaststoffe" to "Unterstützen die Darmflora (Östrobolom) für den geregelten Abbau & Ausscheidung von überschüssigem Östrogen.",
+                    "Zink" to "Unterstützt die Zellteilung & Eizellreifung (Kürbiskerne, Hülsenfrüchte, Vollkorn)."
+                ),
+                metabolismFact = "Optimale Kohlenhydratverwertung & Muskelglykogenspeicherung durch hohe Insulinsensitivität.",
+                activityTitle = "Physiologische Aktivitätsvorschläge",
+                activityLevelLabel = "Hohe Energie & Kraftaufbau",
+                activityHighlights = listOf("HIIT & Ausdauer", "Krafttraining Peak", "Muskelaufbau", "Neue Ziele"),
+                activityDetails = listOf(
+                    "Bewegungstyp" to "Dynamisches Ausdauertraining, Intervall-Workouts (HIIT) & intensives Krafttraining.",
+                    "Fokus" to "Beste Phase für Muskelaufbau, Kraftzuwachs & neue sportliche Herausforderungen."
+                )
+            )
+            CyclePhase.OVULATORY -> ScientificPhaseGuide(
+                phase = phase,
+                phaseTitle = "Ovulationsphase (Eisprung)",
+                dayRangeText = "Ca. Tag 14",
+                emoji = "🩵",
+                colorHex = 0xFF0D9488,
+                physiologyTitle = "Physiologie & Hormone",
+                hormonesAndPhysiology = "Östrogen erreicht seinen Höchststand, gefolgt von einem steilen LH-Peak und kurzem Testosteronanstieg.",
+                moodAndEnergy = "Höchste Vitalität, gesteigertes Selbstvertrauen, oft temporär gedämpfter Appetit durch den Östrogen-Peak.",
+                nutritionTitle = "Wissenschaftliche Ernährungsempfehlungen",
+                nutritionHighlights = listOf("Antioxidantien", "Leichte Proteine", "Darmgesundheit"),
+                nutritionDetails = listOf(
+                    "Antioxidantien" to "Beeren, grünes Blattgemüse und Nüsse schützen die Zellen vor dem oxidativen Stress beim Eisprung.",
+                    "Leichte Proteine" to "Fisch, Tofu, Eier oder Hülsenfrüchte zur Erhaltung des Sättigungsgefühls."
+                ),
+                metabolismFact = "Östrogenspitze dämpft den Appetit naturally bei maximaler physischer Leistungsfähigkeit.",
+                activityTitle = "Physiologische Aktivitätsvorschläge",
+                activityLevelLabel = "Peak Performance & Vitalität",
+                activityHighlights = listOf("Maximalkraft (PRs)", "Tempoläufe", "Group Fitness", "Power"),
+                activityDetails = listOf(
+                    "Bewegungstyp" to "Maximalkraft (Personal Records), Tempoläufe, schwere Kniebeugen & schweißtreibende Gruppenworkouts.",
+                    "Fokus" to "Höchste physische Ausstrahlung & Kraft; achte auf Gelenkstabilität (Einfluss von Relaxin)."
+                )
+            )
+            CyclePhase.LUTEAL -> ScientificPhaseGuide(
+                phase = phase,
+                phaseTitle = "Lutealphase",
+                dayRangeText = "Ca. Tag 15–28",
+                emoji = "🟠",
+                colorHex = 0xFFF59E0B,
+                physiologyTitle = "Physiologie & Hormone",
+                hormonesAndPhysiology = "Progesteron dominiert. Basaltemperatur steigt um 0,3–0,5 °C. Ruheenergiebedarf (REE) steigt nachweislich um 100–300 kcal/Tag. Insulinsensitivität nimmt leicht ab.",
+                moodAndEnergy = "Progesteron & spätes Absinken beider Hormone senken den Serotoninspiegel -> Reizbarkeit, Stimmungstiefs, PMS & Cravings.",
+                nutritionTitle = "Wissenschaftliche Ernährungsempfehlungen",
+                nutritionHighlights = listOf("+150–250 kcal Plus", "Vit B6 & Magnesium", "Blutzucker-Balance"),
+                nutritionDetails = listOf(
+                    "Kalorienplus einplanen" to "Ein moderates Plus von 150–250 kcal/Tag aus hochwertigen Quellen (Nüsse, Avocado, komplexe Carbs) verhindert Heißhungerattacken.",
+                    "Vitamin B6 & Magnesium" to "Essenziell als Kofaktoren für Serotonin- & Dopaminsynthese. Studien zeigen Linderung von PMS & Reizbarkeit (Kichererbsen, Bananen, Kartoffeln, dunkler Kakao).",
+                    "Blutzuckerstabilisierung" to "Mahlzeiten mit niedrigem glykämischem Index und ausreichend Protein kombinieren."
+                ),
+                metabolismFact = "Grundumsatz steigt um 100-300 kcal/Tag! Ein leichtes Kalorienplus verhindert PMS-Heißhunger.",
+                activityTitle = "Physiologische Aktivitätsvorschläge",
+                activityLevelLabel = "Moderates Training & Entschleunigung",
+                activityHighlights = listOf("Pilates", "Eigengewicht", "Wanderungen", "Entspannung"),
+                activityDetails = listOf(
+                    "Bewegungstyp" to "Pilates, gezieltes Krafttraining mit Eigengewicht, zügige Wanderungen & Entspannungstechniken.",
+                    "Fokus" to "Cortisol senken, Blutzucker stabilisieren & den Körper sanft auf die Regeneration vorbereiten."
+                )
+            )
+        }
+        AppLanguage.ALBANIAN -> when (phase) {
+            CyclePhase.MENSTRUAL -> ScientificPhaseGuide(
+                phase = phase,
+                phaseTitle = "Faza e Menstruacioneve",
+                dayRangeText = "Ditët 1–5",
+                emoji = "🩸",
+                colorHex = 0xFFF43F5E,
+                physiologyTitle = "Fiziologjia & Hormonet",
+                hormonesAndPhysiology = "Estrogjeni & Progesteroni në nivel minimal. Humbja e gjakut sjell humbje të hekurit. Motiliteti i zorrëve ngadalësohet.",
+                moodAndEnergy = "Energji e ulët, nevojë për pushim, prirje për plogështi dhe ngërçe.",
+                nutritionTitle = "Rekomandime Ushqimore Shkencore",
+                nutritionHighlights = listOf("Hekur & Vit C", "Magnez", "Omega-3", "Ushqim i Ngrohtë"),
+                nutritionDetails = listOf(
+                    "Hekur & Vitaminë C" to "Lente, thjerrëza, fara kungulli kombinuar me vitaminë C për përthithje maksimale të hekurit.",
+                    "Magnez" to "Efect ushqyes për qetësimin e muskujve dhe ngërçeve (çokollatë e zezë, tëra, bajame).",
+                    "Omega-3" to "Ulin inflamacionin dhe zbusin dhimbjet (fara liri, arra, peshk).",
+                    "Ushqime të Ngrohta" to "Supa dhe gjellë të ngrohta për tretje më të lehtë."
+                ),
+                metabolismFact = "Fokus në riatdhesim të hekurit dhe qetësim dhimbjesh.",
+                activityTitle = "Aktiviteti Fizik i Sugjeruar",
+                activityLevelLabel = "Butësi & Ripërtëritje",
+                activityHighlights = listOf("Joga e Butë", "Shtriqje", "Ecje të Qeta", "Pushim"),
+                activityDetails = listOf(
+                    "Lloji i Lëvizjes" to "Shtriqje të lehta, ecje në ajër të pastër dhe joga qetësuese.",
+                    "Fokusi" to "Relaksim i trupit dhe pushim rikuperues."
+                )
+            )
+            CyclePhase.FOLLICULAR -> ScientificPhaseGuide(
+                phase = phase,
+                phaseTitle = "Faza Follikulare",
+                dayRangeText = "Ditët 6–13",
+                emoji = "💜",
+                colorHex = 0xFFA855F7,
+                physiologyTitle = "Fiziologjia & Hormonet",
+                hormonesAndPhysiology = "Estrogjeni rritet. Ndjeshmëria ndaj insulinës përmirësohet dhe ruajtja e glikogjenit optimizohet.",
+                moodAndEnergy = "Rritje e energjisë, përqendrim i lartë mendor dhe humor i shkëlqyer.",
+                nutritionTitle = "Rekomandime Ushqimore Shkencore",
+                nutritionHighlights = listOf("Karbohidrate Komplekse", "Prebiotikë", "Zink"),
+                nutritionDetails = listOf(
+                    "Karbohidrate Komplekse" to "Dredhëza, tëra, kuinoa përdoren shkëlqyeshëm nga trupi.",
+                    "Prebiotikë & Fibra" to "Mbrojnë mikrobiomën e zorrëve për degradim optimal të estrogjenit.",
+                    "Zink" to "Mbështet pjekjen e vezës dhe ndarjen qelizore."
+                ),
+                metabolismFact = "Përdorim optimal i karbohidrateve falë ndjeshmërisë së lartë ndaj insulinës.",
+                activityTitle = "Aktiviteti Fizik i Sugjeruar",
+                activityLevelLabel = "Energji e Lartë & Stërvitje",
+                activityHighlights = listOf("HIIT & Kardio", "Peshëngritje", "Rritje Muskujsh"),
+                activityDetails = listOf(
+                    "Lloji i Lëvizjes" to "Stërvitje kardio intensive, HIIT dhe peshëngritje.",
+                    "Fokusi" to "Rritje e forcës fizike dhe sfidim i rekordeve personale."
+                )
+            )
+            CyclePhase.OVULATORY -> ScientificPhaseGuide(
+                phase = phase,
+                phaseTitle = "Faza e Ovulacionit",
+                dayRangeText = "Dita 14",
+                emoji = "🩵",
+                colorHex = 0xFF0D9488,
+                physiologyTitle = "Fiziologjia & Hormonet",
+                hormonesAndPhysiology = "Kulmi i estrogjenit, niveli i lartë i hormonit LH dhe rritje e lehtë e testosteronit.",
+                moodAndEnergy = "Vitalitet maksimal, vetëbesim i lartë, oreks natyrshëm i kontrolluar.",
+                nutritionTitle = "Rekomandime Ushqimore Shkencore",
+                nutritionHighlights = listOf("Antioksidues", "Proteina të Lehta", "Fibra"),
+                nutritionDetails = listOf(
+                    "Antioksidues" to "Fruta mali, perime jeshile dhe arra mbrojnë qelizat.",
+                    "Proteina të Lehta" to "Peshk, vezë, tofut për ngopje të qëndrueshme."
+                ),
+                metabolismFact = "Niveli i lartë i estrogjenit mban oreksin të balancuar gjatë pikës kulmore.",
+                activityTitle = "Aktiviteti Fizik i Sugjeruar",
+                activityLevelLabel = "Performancë Maksimale",
+                activityHighlights = listOf("Forcë Maksimale", "Vrapim i Shpejtë", "Performancë"),
+                activityDetails = listOf(
+                    "Lloji i Lëvizjes" to "Ushtrime me pesha të rënda, vrapim dinamik dhe stërvitje me grup.",
+                    "Fokusi" to "Energji maksimale fizike."
+                )
+            )
+            CyclePhase.LUTEAL -> ScientificPhaseGuide(
+                phase = phase,
+                phaseTitle = "Faza Luteale",
+                dayRangeText = "Ditët 15–28",
+                emoji = "🟠",
+                colorHex = 0xFFF59E0B,
+                physiologyTitle = "Fiziologjia & Hormonet",
+                hormonesAndPhysiology = "Progesteroni dominos. Temperatura e trupit rritet me 0.3-0.5 °C. Metobolizmi bazal (REE) rritet me 100-300 kcal/ditë.",
+                moodAndEnergy = "Rënia e hormoneve ul serotoninën -> prirje për ngacmim, PMS dhe dëshirë për karbohidrate.",
+                nutritionTitle = "Rekomandime Ushqimore Shkencore",
+                nutritionHighlights = listOf("+150–250 kcal Plus", "Vit B6 & Magnez", "Balancë e Sheqerit"),
+                nutritionDetails = listOf(
+                    "Planifikim i Kalorive" to "Shtim me 150–250 kcal/ditë nga yndyra të shëndetshme (arra, avokado) parandalon sulmet e urisë.",
+                    "Vitaminë B6 & Magnez" to "Essenjale për sintezën e serotoninës dhe zbutjen e simptomave të PMS.",
+                    "Stabilizim i Sheqerit" to "Kombinim i proteinave me karbohidrate me indeks të ulët glicemik."
+                ),
+                metabolismFact = "Harxhimi i energjisë rritet me 100-300 kcal/ditë! Calorie plus i lehtë mbron nga PMS.",
+                activityTitle = "Aktiviteti Fizik i Sugjeruar",
+                activityLevelLabel = "Stërvitje Moderuar & Qetësi",
+                activityHighlights = listOf("Pilates", "Pesha të Lehta", "Ecje në Natyrë"),
+                activityDetails = listOf(
+                    "Lloji i Lëvizjes" to "Pilates, stërvitje me peshën e trupit dhe ecje qetësuese.",
+                    "Fokusi" to "Ulj e kortizolit dhe përgatitje për pushim."
+                )
+            )
+        }
+        AppLanguage.ENGLISH -> when (phase) {
+            CyclePhase.MENSTRUAL -> ScientificPhaseGuide(
+                phase = phase,
+                phaseTitle = "Menstrual Phase",
+                dayRangeText = "Approx. Days 1–5",
+                emoji = "🩸",
+                colorHex = 0xFFF43F5E,
+                physiologyTitle = "Physiology & Hormones",
+                hormonesAndPhysiology = "Estrogen & Progesterone at lowest levels. Local prostaglandins cause uterine contractions. Blood loss (30-60 ml) leads to iron loss.",
+                moodAndEnergy = "Low energy level, high need for rest, susceptibility to fatigue and cramps.",
+                nutritionTitle = "Evidence-Based Nutrition Guidance",
+                nutritionHighlights = listOf("Iron & Vit C", "Magnesium", "Omega-3", "Warm Foods"),
+                nutritionDetails = listOf(
+                    "Iron & Vitamin C" to "Plant/animal iron (lentils, chickpeas, pumpkin seeds, lean meat) combined with Vitamin C for max absorption.",
+                    "Magnesium" to "Relaxes muscles & eases cramping (dark chocolate, nuts, oats).",
+                    "Omega-3 Fatty Acids" to "Inhibit inflammatory prostaglandins & reduce pain intensity (flaxseeds, walnuts, oily fish).",
+                    "Digestibility" to "Warm, easily digestible meals (soups, stews) as gut motility slows down."
+                ),
+                metabolismFact = "Focus on pain relief, recovery & replenishing iron rather than calorie restriction.",
+                activityTitle = "Physiological Activity Suggestions",
+                activityLevelLabel = "Gentle & Restorative",
+                activityHighlights = listOf("Restorative Yoga", "Gentle Stretch", "Walks", "Sleep"),
+                activityDetails = listOf(
+                    "Movement Type" to "Gentle stretching, light mobility, and relaxing outdoor walks.",
+                    "Focus" to "Pelvic floor care, uterine relaxation, and prioritizing restorative sleep."
+                )
+            )
+            CyclePhase.FOLLICULAR -> ScientificPhaseGuide(
+                phase = phase,
+                phaseTitle = "Follicular Phase",
+                dayRangeText = "Approx. Days 6–13",
+                emoji = "💜",
+                colorHex = 0xFFA855F7,
+                physiologyTitle = "Physiology & Hormones",
+                hormonesAndPhysiology = "FSH & Estrogen continuously rise. Estrogen improves insulin sensitivity and optimizes muscle glycogen storage.",
+                moodAndEnergy = "Rising energy levels, sharp mental focus, elevated mood, and stress tolerance.",
+                nutritionTitle = "Evidence-Based Nutrition Guidance",
+                nutritionHighlights = listOf("Complex Carbs", "Prebiotics & Fiber", "Zinc"),
+                nutritionDetails = listOf(
+                    "Complex Carbohydrates" to "Whole grains, oats, and quinoa are optimally utilized due to high insulin sensitivity.",
+                    "Prebiotics & Fiber" to "Support gut microbiome (estrobolome) for regulated estrogen breakdown.",
+                    "Zinc" to "Supports cell division & egg follicle maturation (seeds, legumes)."
+                ),
+                metabolismFact = "Optimal carbohydrate utilization & muscle glycogen storage due to high insulin sensitivity.",
+                activityTitle = "Physiological Activity Suggestions",
+                activityLevelLabel = "High Energy & Strength Building",
+                activityHighlights = listOf("HIIT & Cardio", "Strength Peak", "Muscle Growth", "New Goals"),
+                activityDetails = listOf(
+                    "Movement Type" to "Dynamic cardio, interval workouts (HIIT), and heavy strength training.",
+                    "Focus" to "Prime phase for muscle hypertrophy, strength gains, and athletic PRs."
+                )
+            )
+            CyclePhase.OVULATORY -> ScientificPhaseGuide(
+                phase = phase,
+                phaseTitle = "Ovulation Phase",
+                dayRangeText = "Approx. Day 14",
+                emoji = "🩵",
+                colorHex = 0xFF0D9488,
+                physiologyTitle = "Physiology & Hormones",
+                hormonesAndPhysiology = "Estrogen reaches peak level, followed by a sharp LH surge and brief testosterone rise.",
+                moodAndEnergy = "Peak vitality, heightened confidence, temporarily suppressed appetite from estrogen peak.",
+                nutritionTitle = "Evidence-Based Nutrition Guidance",
+                nutritionHighlights = listOf("Antioxidants", "Lean Proteins", "Satiety"),
+                nutritionDetails = listOf(
+                    "Antioxidants" to "Berries, leafy greens, and nuts protect cells against oxidative stress during ovulation.",
+                    "Lean Proteins" to "Fish, tofu, eggs, or legumes for steady, clean satiety."
+                ),
+                metabolismFact = "Estrogen peak naturally suppresses appetite during peak physical stamina.",
+                activityTitle = "Physiological Activity Suggestions",
+                activityLevelLabel = "Peak Performance & Vitality",
+                activityHighlights = listOf("Max Strength (PRs)", "Tempo Runs", "Group Fitness", "Power"),
+                activityDetails = listOf(
+                    "Movement Type" to "Max strength lifts, high-intensity intervals, and power group fitness.",
+                    "Focus" to "Peak physical confidence & stamina; mind joint stability due to relaxin."
+                )
+            )
+            CyclePhase.LUTEAL -> ScientificPhaseGuide(
+                phase = phase,
+                phaseTitle = "Luteal Phase",
+                dayRangeText = "Approx. Days 15–28",
+                emoji = "🟠",
+                colorHex = 0xFFF59E0B,
+                physiologyTitle = "Physiology & Hormones",
+                hormonesAndPhysiology = "Progesterone dominates. Basal body temp rises by 0.3–0.5°C. Resting Energy Expenditure (REE) rises by 100–300 kcal/day.",
+                moodAndEnergy = "Progesterone drop lowers serotonin levels -> irritability, PMS & carbohydrate cravings.",
+                nutritionTitle = "Evidence-Based Nutrition Guidance",
+                nutritionHighlights = listOf("+150–250 kcal Surplus", "Vit B6 & Magnesium", "Blood Sugar Balance"),
+                nutritionDetails = listOf(
+                    "Plan Calorie Surplus" to "A moderate 150–250 kcal/day surplus from quality sources (nuts, avocado, complex carbs) prevents intense cravings.",
+                    "Vitamin B6 & Magnesium" to "Essential cofactors for serotonin & dopamine synthesis. Eases PMS & irritability (chickpeas, bananas, cocoa).",
+                    "Blood Sugar Stability" to "Pair low glycemic index carbohydrates with quality protein."
+                ),
+                metabolismFact = "Resting metabolic rate rises by 100-300 kcal/day! A light calorie surplus prevents PMS binge cravings.",
+                activityTitle = "Physiological Activity Suggestions",
+                activityLevelLabel = "Moderate Training & Recovery",
+                activityHighlights = listOf("Pilates", "Bodyweight", "Nature Walks", "De-stress"),
+                activityDetails = listOf(
+                    "Movement Type" to "Pilates, bodyweight resistance, brisk nature walks, and restorative breathwork.",
+                    "Focus" to "Lowering cortisol, stabilizing blood sugar, and preparing for period recovery."
+                )
+            )
+        }
+    }
+}
+
