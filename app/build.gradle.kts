@@ -37,26 +37,37 @@ android {
     create("debugConfig") {
       val rootDebugKeystore = file("${rootDir}/debug.keystore")
       val base64Keystore = file("${rootDir}/debug.keystore.base64")
-      if (!rootDebugKeystore.exists() && base64Keystore.exists()) {
-        try {
-          val cleanB64 = base64Keystore.readText().replace("\\s".toRegex(), "")
-          val decoded = Base64.getDecoder().decode(cleanB64)
-          rootDebugKeystore.writeBytes(decoded)
-        } catch (_: Exception) {
+      if (!rootDebugKeystore.exists()) {
+        if (base64Keystore.exists()) {
+          try {
+            val cleanB64 = base64Keystore.readText().replace("\\s".toRegex(), "")
+            val decoded = Base64.getDecoder().decode(cleanB64)
+            rootDebugKeystore.writeBytes(decoded)
+          } catch (_: Exception) {
+          }
+        }
+        if (!rootDebugKeystore.exists()) {
+          try {
+            val process = ProcessBuilder(
+              "keytool", "-genkeypair", "-v",
+              "-keystore", rootDebugKeystore.absolutePath,
+              "-storepass", "android",
+              "-alias", "androiddebugkey",
+              "-keypass", "android",
+              "-keyalg", "RSA",
+              "-keysize", "2048",
+              "-validity", "10000",
+              "-dname", "CN=Android Debug,O=Android,C=US"
+            ).start()
+            process.waitFor()
+          } catch (_: Exception) {
+          }
         }
       }
-      if (rootDebugKeystore.exists()) {
-        storeFile = rootDebugKeystore
-        storePassword = "android"
-        keyAlias = "androiddebugkey"
-        keyPassword = "android"
-      } else {
-        val defaultDebug = signingConfigs.getByName("debug")
-        storeFile = defaultDebug.storeFile
-        storePassword = defaultDebug.storePassword
-        keyAlias = defaultDebug.keyAlias
-        keyPassword = defaultDebug.keyPassword
-      }
+      storeFile = rootDebugKeystore
+      storePassword = "android"
+      keyAlias = "androiddebugkey"
+      keyPassword = "android"
     }
   }
 
