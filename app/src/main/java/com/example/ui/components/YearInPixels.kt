@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -35,6 +36,7 @@ import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Medication
 import androidx.compose.material.icons.filled.SelfImprovement
 import androidx.compose.material.icons.filled.Spa
+import androidx.compose.material.icons.filled.Today
 import androidx.compose.material.icons.filled.ViewModule
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.Button
@@ -51,6 +53,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -71,6 +74,7 @@ import com.example.ui.theme.FollicularPurple
 import com.example.ui.theme.MenstrualRed
 import com.example.ui.theme.RoseDark
 import com.example.ui.theme.RosePrimary
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
@@ -95,6 +99,8 @@ fun YearInPixels(
     var currentYear by remember { mutableIntStateOf(selectedYear) }
     var viewMode by remember { mutableStateOf(PixelViewMode.MATRIX) }
     var inspectedDate by remember { mutableStateOf<String?>(null) }
+    val coroutineScope = rememberCoroutineScope()
+    val matrixScrollState = rememberScrollState()
 
     val locale = when (language) {
         AppLanguage.GERMAN -> Locale.GERMAN
@@ -158,60 +164,120 @@ fun YearInPixels(
                             }
                         }
                         Spacer(modifier = Modifier.width(12.dp))
-                        Column {
-                            Text(
-                                text = strings.pixelsTitle,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            Text(
-                                text = strings.pixelsSubtitle,
-                                fontSize = 11.5.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
+                        Text(
+                            text = strings.pixelsTitle,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 20.sp,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            letterSpacing = (-0.3).sp
+                        )
                     }
 
-                    // Year Switcher Pill
+                    // Jump & Highlight Today Button
                     Surface(
                         shape = RoundedCornerShape(16.dp),
-                        color = MaterialTheme.colorScheme.surfaceVariant,
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+                        color = if (inspectedDate == todayStr && currentYear == LocalDate.now().year)
+                            RosePrimary else MaterialTheme.colorScheme.primaryContainer,
+                        border = BorderStroke(
+                            1.dp,
+                            if (inspectedDate == todayStr && currentYear == LocalDate.now().year)
+                                RosePrimary else MaterialTheme.colorScheme.primary.copy(alpha = 0.35f)
+                        ),
+                        shadowElevation = 2.dp,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(16.dp))
+                            .clickable {
+                                val now = LocalDate.now()
+                                currentYear = now.year
+                                inspectedDate = todayStr
+                                coroutineScope.launch {
+                                    val targetOffset = ((now.monthValue - 1) * 35).coerceAtLeast(0)
+                                    matrixScrollState.animateScrollTo(targetOffset)
+                                }
+                            }
+                            .testTag("jump_to_today_btn")
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp)
                         ) {
-                            IconButton(
-                                onClick = { currentYear -= 1 },
-                                modifier = Modifier.size(28.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowBackIos,
-                                    contentDescription = "Previous Year",
-                                    tint = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.size(12.dp)
-                                )
-                            }
-                            Text(
-                                text = "$currentYear",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp,
-                                color = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(horizontal = 6.dp)
+                            Icon(
+                                imageVector = Icons.Default.Today,
+                                contentDescription = "Today",
+                                tint = if (inspectedDate == todayStr && currentYear == LocalDate.now().year)
+                                    Color.White else MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(15.dp)
                             )
-                            IconButton(
-                                onClick = { currentYear += 1 },
-                                modifier = Modifier.size(28.dp)
+                            Spacer(modifier = Modifier.width(5.dp))
+                            Text(
+                                text = strings.todayLabel,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 12.5.sp,
+                                color = if (inspectedDate == todayStr && currentYear == LocalDate.now().year)
+                                    Color.White else MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                // Upgraded Aesthetic Year Selector Pill
+                Surface(
+                    shape = RoundedCornerShape(20.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f),
+                    border = BorderStroke(1.2.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.25f)),
+                    shadowElevation = 1.dp,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp, vertical = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(
+                            onClick = { currentYear -= 1 },
+                            modifier = Modifier.size(34.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBackIos,
+                                contentDescription = "Previous Year",
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(14.dp)
+                            )
+                        }
+
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Surface(
+                                shape = RoundedCornerShape(12.dp),
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.padding(horizontal = 4.dp)
                             ) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-                                    contentDescription = "Next Year",
-                                    tint = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.size(12.dp)
+                                Text(
+                                    text = "$currentYear",
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontSize = 16.sp,
+                                    color = Color.White,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                                 )
                             }
+                        }
+
+                        IconButton(
+                            onClick = { currentYear += 1 },
+                            modifier = Modifier.size(34.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                                contentDescription = "Next Year",
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(14.dp)
+                            )
                         }
                     }
                 }
@@ -582,12 +648,10 @@ fun YearInPixels(
                         YearMonth.of(currentYear, monthIdx).month.getDisplayName(TextStyle.SHORT, locale).take(3)
                     }
 
-                    val scrollState = rememberScrollState()
-
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .horizontalScroll(scrollState),
+                            .horizontalScroll(matrixScrollState),
                         horizontalArrangement = Arrangement.Center
                     ) {
                         // Day column (1..31)
