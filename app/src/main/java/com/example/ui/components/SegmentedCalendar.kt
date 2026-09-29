@@ -33,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.example.ui.util.rememberHapticFeedbackManager
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -117,6 +118,7 @@ fun SegmentedCalendar(
     modifier: Modifier = Modifier
 ) {
     val strings = getAppStrings(language)
+    val hapticManager = rememberHapticFeedbackManager()
     val fmt = DateTimeFormatter.ISO_LOCAL_DATE
     val selectedLocalDate = try {
         LocalDate.parse(selectedDate, fmt)
@@ -376,7 +378,10 @@ fun SegmentedCalendar(
                                             color = cellBorderColor,
                                             shape = RoundedCornerShape(13.dp)
                                         )
-                                        .clickable { onDateSelect(dateStr) }
+                                        .clickable {
+                                            hapticManager.performClick()
+                                            onDateSelect(dateStr)
+                                        }
                                         .testTag("cal_cell_$dateStr"),
                                     contentAlignment = Alignment.Center
                                 ) {

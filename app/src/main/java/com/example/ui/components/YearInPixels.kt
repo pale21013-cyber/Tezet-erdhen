@@ -59,6 +59,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import com.example.ui.util.rememberHapticFeedbackManager
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -102,6 +103,7 @@ fun YearInPixels(
     modifier: Modifier = Modifier
 ) {
     val strings = getAppStrings(language)
+    val hapticManager = rememberHapticFeedbackManager()
     var currentYear by remember { mutableIntStateOf(selectedYear) }
     var viewMode by remember { mutableStateOf(PixelViewMode.MATRIX) }
     var inspectedDate by remember { mutableStateOf<String?>(null) }
@@ -833,13 +835,14 @@ fun YearInPixels(
                                                 } else if (isToday) {
                                                     BorderStroke(2.dp, Color(0xFFF59E0B))
                                                 } else {
-                                                    BorderStroke(0.6.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f))
+                                                    BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
                                                 },
                                                 shadowElevation = if (isInspected) 3.dp else 0.dp,
                                                 modifier = Modifier
                                                     .size(width = 32.dp, height = 24.dp)
                                                     .clip(RoundedCornerShape(6.dp))
                                                     .clickable {
+                                                        hapticManager.performClick()
                                                         inspectedDate = dateStr
                                                     }
                                                     .testTag("pixel_$dateStr")

@@ -46,6 +46,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import com.example.ui.util.rememberHapticFeedbackManager
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -92,6 +93,7 @@ fun DailyLogForm(
     modifier: Modifier = Modifier
 ) {
     val strings = getAppStrings(language)
+    val hapticManager = rememberHapticFeedbackManager()
     val focusManager = LocalFocusManager.current
     val notesFocusRequester = remember { FocusRequester() }
 
@@ -186,7 +188,7 @@ fun DailyLogForm(
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             shape = RoundedCornerShape(24.dp),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+            border = BorderStroke(1.2.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.6f)),
             elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -246,6 +248,7 @@ fun DailyLogForm(
                                     shape = RoundedCornerShape(14.dp)
                                 )
                                 .clickable {
+                                    hapticManager.performClick()
                                     onFlowIntensityChange(optFlow, flowColor, hasClots)
                                 }
                                 .testTag("flow_option_$optFlow"),
@@ -360,7 +363,7 @@ fun DailyLogForm(
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             shape = RoundedCornerShape(24.dp),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+            border = BorderStroke(1.2.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.6f)),
             elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -395,11 +398,14 @@ fun DailyLogForm(
                             color = if (isSelected) chipColor.copy(alpha = 0.18f) else MaterialTheme.colorScheme.surfaceVariant,
                             border = BorderStroke(
                                 width = if (isSelected) 1.8.dp else 1.dp,
-                                color = if (isSelected) chipColor else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)
+                                color = if (isSelected) chipColor else MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
                             ),
                             modifier = Modifier
                                 .clip(RoundedCornerShape(14.dp))
-                                .clickable { onTagToggle(tag.tagId) }
+                                .clickable {
+                                    hapticManager.performToggle()
+                                    onTagToggle(tag.tagId)
+                                }
                                 .testTag("tag_${tag.tagName}")
                         ) {
                             Row(
@@ -432,7 +438,7 @@ fun DailyLogForm(
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             shape = RoundedCornerShape(24.dp),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+            border = BorderStroke(1.2.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.6f)),
             elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -467,11 +473,14 @@ fun DailyLogForm(
                             color = if (isSelected) chipColor.copy(alpha = 0.18f) else MaterialTheme.colorScheme.surfaceVariant,
                             border = BorderStroke(
                                 width = if (isSelected) 1.8.dp else 1.dp,
-                                color = if (isSelected) chipColor else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)
+                                color = if (isSelected) chipColor else MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
                             ),
                             modifier = Modifier
                                 .clip(RoundedCornerShape(14.dp))
-                                .clickable { onTagToggle(tag.tagId) }
+                                .clickable {
+                                    hapticManager.performToggle()
+                                    onTagToggle(tag.tagId)
+                                }
                                 .testTag("tag_${tag.tagName}")
                         ) {
                             Row(
@@ -544,7 +553,10 @@ fun DailyLogForm(
                     }
                     Switch(
                         checked = tabletTaken,
-                        onCheckedChange = onTabletToggle,
+                        onCheckedChange = {
+                            hapticManager.performToggle()
+                            onTabletToggle(it)
+                        },
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = Color.White,
                             checkedTrackColor = MaterialTheme.colorScheme.primary

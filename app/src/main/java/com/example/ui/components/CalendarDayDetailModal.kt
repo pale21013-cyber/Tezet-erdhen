@@ -36,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import com.example.ui.util.rememberHapticFeedbackManager
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -77,6 +78,7 @@ fun CalendarDayDetailModal(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val strings = getAppStrings(language)
+    val hapticManager = rememberHapticFeedbackManager()
 
     val parsedDate = remember(selectedDate) {
         try {
@@ -182,7 +184,10 @@ fun CalendarDayDetailModal(
                 }
 
                 IconButton(
-                    onClick = onDismiss,
+                    onClick = {
+                        hapticManager.performClick()
+                        onDismiss()
+                    },
                     modifier = Modifier.testTag("day_modal_close_button")
                 ) {
                     Icon(
@@ -197,7 +202,7 @@ fun CalendarDayDetailModal(
             Card(
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)),
+                border = BorderStroke(1.2.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {

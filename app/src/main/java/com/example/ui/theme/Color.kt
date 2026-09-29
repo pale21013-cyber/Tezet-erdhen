@@ -34,15 +34,16 @@ val LutealSoftDark = Color(0xFF4D3305)
 val LightBackground = Color(0xFFFAFAFC)
 val LightSurface = Color(0xFFFFFFFF)
 val LightSurfaceElevated = Color(0xFFFFF5F7)
-val LightBorder = Color(0xFFE6D6DA)
-val LightBorderSubtle = Color(0xFFF2E6E9)
+// High-Contrast Border Tokens for Crisp Card & UI Outlines
+val LightBorder = Color(0xFFB898A3)       // Crisp, strong high-contrast rose-slate border
+val LightBorderSubtle = Color(0xFFD4BCC5) // Clear, distinct subtle border
 
 // Neutral Surfaces - Dark (Obsidian Velvet & Rich Titanium)
 val DarkBackground = Color(0xFF0D080A)
 val DarkSurface = Color(0xFF191014)
 val DarkSurfaceElevated = Color(0xFF261820)
-val DarkBorder = Color(0xFF422C36)
-val DarkBorderSubtle = Color(0xFF311F28)
+val DarkBorder = Color(0xFF7A5262)        // Luminous high-contrast dark border
+val DarkBorderSubtle = Color(0xFF5A3948)  // Clear, distinct dark subtle border
 
 // High-Contrast Distinguishable Typography Tokens - Light Mode
 // Crisp, ultra-deep dark charcoal rose with contrast ratio > 18:1
