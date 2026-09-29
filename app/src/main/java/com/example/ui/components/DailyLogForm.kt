@@ -64,6 +64,7 @@ import com.example.data.entities.TagDefinitionEntity
 import com.example.localization.AppLanguage
 import com.example.localization.getAppStrings
 import com.example.localization.getLocalizedTagName
+import com.example.ml.CyclePhase
 import com.example.ui.theme.FlowBigRed
 import com.example.ui.theme.FlowBrown
 import com.example.ui.theme.FlowDarkRed
@@ -81,11 +82,14 @@ fun DailyLogForm(
     selectedTagIds: Set<Long>,
     allTags: List<TagDefinitionEntity>,
     smartDefaults: DailyLogEntity?,
+    currentPhase: CyclePhase = CyclePhase.OVULATORY,
     onApplySmartDefaults: () -> Unit,
     onFlowIntensityChange: (Int, String?, Int) -> Unit,
     onTabletToggle: (Boolean) -> Unit,
     onSleepQualityChange: (Int) -> Unit,
     onActivityLevelChange: (Int) -> Unit,
+    onWaterChange: (Int) -> Unit = {},
+    onJournalChange: (entry: String, prompt: String) -> Unit = { _, _ -> },
     onNotesChange: (String) -> Unit,
     onTagToggle: (Long) -> Unit,
     onSaveLog: () -> Unit,
@@ -689,6 +693,24 @@ fun DailyLogForm(
                 )
             }
         }
+
+        // 5. Cycle-Synced Water Intake Tracker
+        WaterTrackerCard(
+            currentWaterMl = currentLog?.waterMl ?: 0,
+            currentPhase = currentPhase,
+            onWaterChange = onWaterChange,
+            language = language
+        )
+
+        // 6. Contextual Journal & Emotional Reflection
+        JournalReflectionCard(
+            currentEntry = currentLog?.journalEntry ?: "",
+            savedPrompt = currentLog?.journalPrompt ?: "",
+            currentPhase = currentPhase,
+            onEntryChange = onJournalChange,
+            onSaveJournal = onSaveLog,
+            language = language
+        )
 
         // Save Button (Thumb Reach) with unified font size and banner marquee overflow
         AuraPrimaryButton(

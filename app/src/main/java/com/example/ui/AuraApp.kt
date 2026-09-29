@@ -53,10 +53,15 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.example.ui.components.AuraStartupSplashScreen
+import com.example.ui.components.AuraWinkingExitOverlay
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -91,6 +96,17 @@ fun AuraApp(
     val snackbarHostState = remember { SnackbarHostState() }
     val strings = getAppStrings(uiState.language)
     val context = LocalContext.current
+
+    var isSplashScreenVisible by remember { mutableStateOf(true) }
+    var isWinkingExitVisible by remember { mutableStateOf(false) }
+
+    BackHandler(enabled = !isSplashScreenVisible && !isWinkingExitVisible) {
+        if (uiState.currentTab != AppTab.TODAY) {
+            viewModel.selectTab(AppTab.TODAY)
+        } else {
+            isWinkingExitVisible = true
+        }
+    }
 
     val currentMonthName = remember(uiState.language) {
         val currentMonthVal = java.time.LocalDate.now().monthValue
@@ -225,6 +241,7 @@ fun AuraApp(
                                 selectedTagIds = uiState.selectedTagIds,
                                 allTags = uiState.allTags,
                                 smartDefaults = uiState.smartDefaults,
+                                currentPhase = uiState.cycleStats?.currentPhase ?: com.example.ml.CyclePhase.OVULATORY,
                                 onApplySmartDefaults = { viewModel.applySmartDefaults() },
                                 onFlowIntensityChange = { intensity, color, clots ->
                                     viewModel.updateFlowIntensity(intensity, color, clots)
@@ -232,6 +249,8 @@ fun AuraApp(
                                 onTabletToggle = { viewModel.toggleTablet(it) },
                                 onSleepQualityChange = { viewModel.updateSleepQuality(it) },
                                 onActivityLevelChange = { viewModel.updateActivityLevel(it) },
+                                onWaterChange = { viewModel.setWaterMl(it) },
+                                onJournalChange = { entry, prompt -> viewModel.updateJournalEntry(entry, prompt) },
                                 onNotesChange = { viewModel.updateNotes(it) },
                                 onTagToggle = { viewModel.toggleTag(it) },
                                 onSaveLog = { viewModel.saveCurrentLog() },
@@ -359,7 +378,7 @@ fun AuraApp(
                                         border = androidx.compose.foundation.BorderStroke(1.dp, RosePrimary.copy(alpha = 0.4f)),
                                         shadowElevation = 2.dp,
                                         modifier = Modifier
-                                            .padding(end = 14.dp)
+                                            .padding(end = 8.dp)
                                             .clip(RoundedCornerShape(16.dp))
                                             .clickable {
                                                 viewModel.jumpToToday()
@@ -384,6 +403,25 @@ fun AuraApp(
                                                 color = MaterialTheme.colorScheme.onPrimaryContainer
                                             )
                                         }
+                                    }
+                                }
+
+                                // Winking Exit Button
+                                Surface(
+                                    color = MaterialTheme.colorScheme.surfaceVariant,
+                                    shape = CircleShape,
+                                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+                                    modifier = Modifier
+                                        .padding(end = 12.dp)
+                                        .clip(CircleShape)
+                                        .clickable { isWinkingExitVisible = true }
+                                        .testTag("top_bar_exit_button")
+                                ) {
+                                    Box(
+                                        contentAlignment = Alignment.Center,
+                                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp)
+                                    ) {
+                                        Text(text = "😉", fontSize = 16.sp)
                                     }
                                 }
                             }
@@ -491,6 +529,7 @@ fun AuraApp(
                                             selectedTagIds = uiState.selectedTagIds,
                                             allTags = uiState.allTags,
                                             smartDefaults = uiState.smartDefaults,
+                                            currentPhase = uiState.cycleStats?.currentPhase ?: com.example.ml.CyclePhase.OVULATORY,
                                             onApplySmartDefaults = { viewModel.applySmartDefaults() },
                                             onFlowIntensityChange = { intensity, color, clots ->
                                                 viewModel.updateFlowIntensity(intensity, color, clots)
@@ -498,6 +537,8 @@ fun AuraApp(
                                             onTabletToggle = { viewModel.toggleTablet(it) },
                                             onSleepQualityChange = { viewModel.updateSleepQuality(it) },
                                             onActivityLevelChange = { viewModel.updateActivityLevel(it) },
+                                            onWaterChange = { viewModel.setWaterMl(it) },
+                                            onJournalChange = { entry, prompt -> viewModel.updateJournalEntry(entry, prompt) },
                                             onNotesChange = { viewModel.updateNotes(it) },
                                             onTagToggle = { viewModel.toggleTag(it) },
                                             onSaveLog = { viewModel.saveCurrentLog() },
@@ -524,6 +565,7 @@ fun AuraApp(
                                             selectedTagIds = uiState.selectedTagIds,
                                             allTags = uiState.allTags,
                                             smartDefaults = uiState.smartDefaults,
+                                            currentPhase = uiState.cycleStats?.currentPhase ?: com.example.ml.CyclePhase.OVULATORY,
                                             onApplySmartDefaults = { viewModel.applySmartDefaults() },
                                             onFlowIntensityChange = { intensity, color, clots ->
                                                 viewModel.updateFlowIntensity(intensity, color, clots)
@@ -531,6 +573,8 @@ fun AuraApp(
                                             onTabletToggle = { viewModel.toggleTablet(it) },
                                             onSleepQualityChange = { viewModel.updateSleepQuality(it) },
                                             onActivityLevelChange = { viewModel.updateActivityLevel(it) },
+                                            onWaterChange = { viewModel.setWaterMl(it) },
+                                            onJournalChange = { entry, prompt -> viewModel.updateJournalEntry(entry, prompt) },
                                             onNotesChange = { viewModel.updateNotes(it) },
                                             onTagToggle = { viewModel.toggleTag(it) },
                                             onSaveLog = { viewModel.saveCurrentLog() },
@@ -616,6 +660,22 @@ fun AuraApp(
                 onTagToggle = { viewModel.toggleTag(it) },
                 onSaveLog = { viewModel.saveCurrentLog() },
                 onDismiss = { viewModel.closeCalendarModal() },
+                language = uiState.language
+            )
+        }
+
+        // 1. Startup Entrance Splash Animation
+        if (isSplashScreenVisible) {
+            AuraStartupSplashScreen(
+                onSplashFinished = { isSplashScreenVisible = false },
+                language = uiState.language
+            )
+        }
+
+        // 2. Closing / Exit Winking Animation
+        if (isWinkingExitVisible) {
+            AuraWinkingExitOverlay(
+                onAnimationComplete = { (context as? Activity)?.finish() },
                 language = uiState.language
             )
         }

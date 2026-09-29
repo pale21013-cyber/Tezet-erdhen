@@ -267,6 +267,18 @@ class CycleViewModel(
         _uiState.update { it.copy(selectedDateLog = updated) }
     }
 
+    fun setWaterMl(ml: Int) {
+        val current = _uiState.value.selectedDateLog ?: DailyLogEntity(logDate = _uiState.value.selectedDate)
+        val updated = current.copy(waterMl = ml.coerceAtLeast(0), isLogged = 1)
+        _uiState.update { it.copy(selectedDateLog = updated) }
+    }
+
+    fun updateJournalEntry(entry: String, prompt: String) {
+        val current = _uiState.value.selectedDateLog ?: DailyLogEntity(logDate = _uiState.value.selectedDate)
+        val updated = current.copy(journalEntry = entry, journalPrompt = prompt, isLogged = 1)
+        _uiState.update { it.copy(selectedDateLog = updated) }
+    }
+
     fun toggleTag(tagId: Long) {
         val currentTags = _uiState.value.selectedTagIds.toMutableSet()
         if (currentTags.contains(tagId)) {

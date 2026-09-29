@@ -3,10 +3,14 @@ package com.example.ui.components
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AutoGraph
 import androidx.compose.material.icons.filled.Psychology
+import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Spa
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,6 +32,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,6 +56,7 @@ import com.example.localization.getLocalizedPhaseAdvice
 import com.example.ml.CyclePhase
 import com.example.ml.CycleStats
 import com.example.ui.theme.FollicularPurple
+import com.example.ui.theme.LutealAmber
 import com.example.ui.theme.MenstrualRed
 import com.example.ui.theme.OutfitDisplayFamily
 import com.example.ui.theme.OvulationTeal
@@ -342,11 +352,250 @@ fun MlInsightsCard(
             }
         }
 
+        // Dedicated Personalized Nutrition Card for the Statistics Tab
+        PersonalizedNutritionCard(
+            currentPhase = phase,
+            language = language
+        )
+
         // New Evidence-Based Nutrition & Movement Suggestion Cards
         PhaseSuggestionsSection(
             currentPhase = phase,
             language = language
         )
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun PersonalizedNutritionCard(
+    currentPhase: CyclePhase,
+    language: AppLanguage = AppLanguage.GERMAN,
+    modifier: Modifier = Modifier
+) {
+    var selectedNutritionPhase by remember(currentPhase) { mutableStateOf(currentPhase) }
+    val phaseColor = when (selectedNutritionPhase) {
+        CyclePhase.MENSTRUAL -> MenstrualRed
+        CyclePhase.FOLLICULAR -> FollicularPurple
+        CyclePhase.OVULATORY -> OvulationTeal
+        CyclePhase.LUTEAL -> LutealAmber
+    }
+
+    val cardTitle = when (language) {
+        AppLanguage.GERMAN -> "Personalisierte Ernährung"
+        AppLanguage.ENGLISH -> "Personalized Nutrition"
+        AppLanguage.ALBANIAN -> "Ushqimi i Personalizuar"
+    }
+
+    val cardSubtitle = when (language) {
+        AppLanguage.GERMAN -> "Gezielte Nährstoffe angepasst an deine Zyklusphase"
+        AppLanguage.ENGLISH -> "Targeted nutrients tailored to your cycle phase"
+        AppLanguage.ALBANIAN -> "Ushqyesit e synuar sipas fazës sate"
+    }
+
+    val nutritionData = when (selectedNutritionPhase) {
+        CyclePhase.MENSTRUAL -> Triple(
+            if (language == AppLanguage.GERMAN) "🩸 Menstruationsphase: Eisen & Entzündungshemmung" else if (language == AppLanguage.ALBANIAN) "🩸 Faza Menstruale: Hekur & Kundër Inflamacionit" else "🩸 Menstrual Phase: Iron & Anti-Inflammation",
+            listOf("🥩 Eisenreich", "🍊 Vitamin C", "🍵 Magnesium-Tee", "🍫 70%+ Kakao"),
+            listOf(
+                Triple("🥩 Eisenspeicher auffüllen", "Spinat, Linsen, Kichererbsen & Rindfleisch kompensieren den monatlichen Blutverlust.", "🩸"),
+                Triple("🍊 Vitamin-C-Synergie", "Paprika, Zitrusfrüchte & Beeren verdoppeln die pflanzliche Eisenaufnahme im Darm.", "⚡"),
+                Triple("🍵 Krampflindernder Tee", "Ingwer-, Kamillen- & Himbeerblättertee entspannen die Gebärmutter-Muskulatur.", "🫖")
+            )
+        )
+        CyclePhase.FOLLICULAR -> Triple(
+            if (language == AppLanguage.GERMAN) "💜 Follikelphase: Phytoöstrogene & Zellaufbau" else if (language == AppLanguage.ALBANIAN) "💜 Faza Follikulare: Fitoestrogjene & Ndërtim Qelizor" else "💜 Follicular Phase: Phytoestrogens & Cellular Growth",
+            listOf("🌱 Leinsamen", "🥬 Fermentierte Nahrung", "🥑 Mageres Eiweiß", "🫐 Antioxidantien"),
+            listOf(
+                Triple("🌱 Phytoöstrogen-Balance", "Geschrotete Leinsamen & Kürbiskerne unterstützen den steigenden Östrogenspiegel.", "✨"),
+                Triple("🥬 Darmgesundheit & Mikrobiom", "Kimchi, Sauerkraut & Kefir fördern den gesunden Abbau von Östrogen.", "🥗"),
+                Triple("🥑 Leichtes Eiweiß & Fette", "Geflügel, Eier, Avocados & frische Salate schenken nachhaltige Energie.", "🔋")
+            )
+        )
+        CyclePhase.OVULATORY -> Triple(
+            if (language == AppLanguage.GERMAN) "🩵 Eisprungphase: Antioxidantien & Zink" else if (language == AppLanguage.ALBANIAN) "🩵 Faza e Ovulacionit: Antioksidantë & Zink" else "🩵 Ovulatory Phase: Anti-Inflammatory Antioxidants & Zinc",
+            listOf("🫐 Beeren-Kraft", "🦪 Zink & B-Komplex", "🥦 Kreuzblütler", "🌊 Hohe Hydratation"),
+            listOf(
+                Triple("🫐 Antientzündliche Antioxidantien", "Wilde Blaubeeren, Brombeeren & Granatäpfel schützen Eizellen vor oxidativem Stress.", "🫐"),
+                Triple("🦪 Zink & B-Vitamine", "Kürbiskerne, Kichererbsen & Lachs fördern die Eizellqualität und Geweberegeneration.", "🧬"),
+                Triple("🥦 Faserstoffreiches Gemüse", "Brokkoli, Rosenkohl & Spargel unterstützen den Östrogen-Abbau in der Leber.", "🌿")
+            )
+        )
+        CyclePhase.LUTEAL -> Triple(
+            if (language == AppLanguage.GERMAN) "🟠 Lutealphase: Komplexe Kohlenhydrate & B6" else if (language == AppLanguage.ALBANIAN) "🟠 Faza Luteale: Karbohidrate Komplekse & B6" else "🟠 Luteal Phase: Complex Carbs & B6",
+            listOf("🥔 Langsame Kohlenhydrate", "🍌 Vitamin B6", "🌻 Tryptophan", "🥥 Natriumarm"),
+            listOf(
+                Triple("🥔 Stabile Blutzucker-Kurve", "Süßkartoffeln, Haferflocken & Quinoa verhindern Heißhunger & Progesteron-Tiefs.", "🌾"),
+                Triple("🍌 Serotonin & B6-Schub", "Bananen, Walnüsse & Sonnenblumenkerne lindern PMS-Symptome & Stimmungsschwankungen.", "🧠"),
+                Triple("🥥 Kalium & Blähungs-Schutz", "Kokoswasser & Avocados wirken natürlich entwässernd gegen Progesteron-Einlagerungen.", "💧")
+            )
+        )
+    }
+
+    Card(
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        shape = RoundedCornerShape(24.dp),
+        border = BorderStroke(1.2.dp, phaseColor.copy(alpha = 0.5f)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+        modifier = modifier.fillMaxWidth().testTag("personalized_nutrition_card")
+    ) {
+        Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
+            // Header
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Surface(
+                    color = phaseColor.copy(alpha = 0.15f),
+                    shape = CircleShape,
+                    border = BorderStroke(1.dp, phaseColor.copy(alpha = 0.35f)),
+                    modifier = Modifier.size(40.dp)
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Default.Restaurant,
+                            contentDescription = "Nutrition",
+                            tint = phaseColor,
+                            modifier = Modifier.size(22.dp)
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = cardTitle,
+                        fontFamily = OutfitDisplayFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 17.sp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = cardSubtitle,
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+
+            // Phase Selector Buttons with Banner Marquee Scroll
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                val phasesList = listOf(
+                    Triple(CyclePhase.MENSTRUAL, "🩸", MenstrualRed),
+                    Triple(CyclePhase.FOLLICULAR, "💜", FollicularPurple),
+                    Triple(CyclePhase.OVULATORY, "🩵", OvulationTeal),
+                    Triple(CyclePhase.LUTEAL, "🟠", LutealAmber)
+                )
+
+                for ((p, emoji, col) in phasesList) {
+                    val isSelected = p == selectedNutritionPhase
+                    Surface(
+                        shape = RoundedCornerShape(14.dp),
+                        color = if (isSelected) col.copy(alpha = 0.22f) else MaterialTheme.colorScheme.surfaceVariant,
+                        border = BorderStroke(
+                            width = if (isSelected) 1.5.dp else 1.dp,
+                            color = if (isSelected) col else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(14.dp))
+                            .clickable { selectedNutritionPhase = p }
+                            .testTag("nutrition_phase_${p.name.lowercase()}")
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(vertical = 8.dp, horizontal = 2.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(text = emoji, fontSize = 16.sp)
+                            Spacer(modifier = Modifier.height(2.dp))
+                            val phaseLabel = when (p) {
+                                CyclePhase.MENSTRUAL -> if (language == AppLanguage.GERMAN) "Menstruation" else if (language == AppLanguage.ALBANIAN) "Menstruacion" else "Menstrual"
+                                CyclePhase.FOLLICULAR -> if (language == AppLanguage.GERMAN) "Follikel" else if (language == AppLanguage.ALBANIAN) "Follikulare" else "Follicular"
+                                CyclePhase.OVULATORY -> if (language == AppLanguage.GERMAN) "Eisprung" else if (language == AppLanguage.ALBANIAN) "Ovulacioni" else "Ovulatory"
+                                CyclePhase.LUTEAL -> if (language == AppLanguage.GERMAN) "Luteal" else if (language == AppLanguage.ALBANIAN) "Luteale" else "Luteal"
+                            }
+                            Text(
+                                text = phaseLabel,
+                                fontSize = 11.sp,
+                                fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Medium,
+                                color = if (isSelected) col else MaterialTheme.colorScheme.onSurfaceVariant,
+                                maxLines = 1,
+                                modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE)
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Phase Title Banner
+            Surface(
+                shape = RoundedCornerShape(14.dp),
+                color = phaseColor.copy(alpha = 0.12f),
+                border = BorderStroke(1.dp, phaseColor.copy(alpha = 0.3f)),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = nutritionData.first,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = phaseColor,
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+                )
+            }
+
+            // Highlight Tags (Marquee Ticker Banner)
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                for (chip in nutritionData.second) {
+                    Surface(
+                        shape = RoundedCornerShape(10.dp),
+                        color = phaseColor.copy(alpha = 0.15f),
+                        border = BorderStroke(1.dp, phaseColor.copy(alpha = 0.35f))
+                    ) {
+                        Text(
+                            text = chip,
+                            fontSize = 11.5.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = phaseColor,
+                            maxLines = 1,
+                            modifier = Modifier
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                                .basicMarquee(iterations = Int.MAX_VALUE)
+                        )
+                    }
+                }
+            }
+
+            // Dietary Tips Details
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                for ((itemTitle, itemDesc, itemEmoji) in nutritionData.third) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        Text(text = itemEmoji, fontSize = 16.sp, modifier = Modifier.padding(top = 2.dp))
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = itemTitle,
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = itemDesc,
+                                fontSize = 12.sp,
+                                lineHeight = 17.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

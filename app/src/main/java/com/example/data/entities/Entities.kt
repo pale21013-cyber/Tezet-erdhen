@@ -49,6 +49,12 @@ data class DailyLogEntity(
     val sleepQuality: Int = 3, // 1-5 scale
     @ColumnInfo(name = "activity_level")
     val activityLevel: Int = 1, // 0 = inactive, 1 = moderate, 2 = intensive
+    @ColumnInfo(name = "water_ml")
+    val waterMl: Int = 0,
+    @ColumnInfo(name = "journal_entry")
+    val journalEntry: String = "",
+    @ColumnInfo(name = "journal_prompt")
+    val journalPrompt: String = "",
     @ColumnInfo(name = "notes")
     val notes: String = "",
     @ColumnInfo(name = "is_logged")

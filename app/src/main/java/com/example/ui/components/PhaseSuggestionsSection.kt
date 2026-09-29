@@ -2,6 +2,7 @@ package com.example.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -146,11 +147,19 @@ fun PhaseSuggestionsSection(
                             ) {
                                 Text(text = emoji, fontSize = 16.sp)
                                 Spacer(modifier = Modifier.height(2.dp))
+                                val phaseLabel = when (p) {
+                                    CyclePhase.MENSTRUAL -> if (language == AppLanguage.GERMAN) "Menstruation" else if (language == AppLanguage.ALBANIAN) "Menstruacion" else "Menstrual"
+                                    CyclePhase.FOLLICULAR -> if (language == AppLanguage.GERMAN) "Follikel" else if (language == AppLanguage.ALBANIAN) "Follikulare" else "Follicular"
+                                    CyclePhase.OVULATORY -> if (language == AppLanguage.GERMAN) "Eisprung" else if (language == AppLanguage.ALBANIAN) "Ovulacioni" else "Ovulatory"
+                                    CyclePhase.LUTEAL -> if (language == AppLanguage.GERMAN) "Luteal" else if (language == AppLanguage.ALBANIAN) "Luteale" else "Luteal"
+                                }
                                 Text(
-                                    text = p.name.take(3),
+                                    text = phaseLabel,
                                     fontSize = 11.sp,
                                     fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Medium,
-                                    color = if (isSelected) col else MaterialTheme.colorScheme.onSurfaceVariant
+                                    color = if (isSelected) col else MaterialTheme.colorScheme.onSurfaceVariant,
+                                    maxLines = 1,
+                                    modifier = Modifier.basicMarquee(iterations = Int.MAX_VALUE)
                                 )
                             }
                         }

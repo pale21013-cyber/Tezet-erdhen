@@ -28,7 +28,7 @@ import java.time.format.DateTimeFormatter
         DailyLogTagEntity::class,
         MlPredictionEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
