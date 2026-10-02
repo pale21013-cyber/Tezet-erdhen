@@ -30,13 +30,23 @@ val LutealAmber = Color(0xFFF59E0B)
 val LutealSoftLight = Color(0xFFFEF3C7)
 val LutealSoftDark = Color(0xFF4D3305)
 
-// Neutral Surfaces - Light (Crisp Porcelain & Pristine White)
-val LightBackground = Color(0xFFFAFAFC)
+// Neutral Surfaces - Light (Warm Ivory Cream & Soft Organic Paper)
+val LightBackground = Color(0xFFFAF7F2)
 val LightSurface = Color(0xFFFFFFFF)
-val LightSurfaceElevated = Color(0xFFFFF5F7)
+val LightSurfaceElevated = Color(0xFFF7F3EC)
 // High-Contrast Border Tokens for Crisp Card & UI Outlines
-val LightBorder = Color(0xFFB898A3)       // Crisp, strong high-contrast rose-slate border
-val LightBorderSubtle = Color(0xFFD4BCC5) // Clear, distinct subtle border
+val LightBorder = Color(0xFFE5DFD5)       // Warm organic ivory-sand border
+val LightBorderSubtle = Color(0xFFEFEBE4) // Clear, distinct subtle border
+
+// Reference Health Style Colors (Pastel Organic Aesthetic)
+val HealthPastelYellow = Color(0xFFFBE276)
+val HealthPastelGreen = Color(0xFFA4BE80)
+val HealthPastelPink = Color(0xFFF5B6D7)
+val HealthPastelBlue = Color(0xFFB5D0F8)
+val HealthPastelLilac = Color(0xFFD6B5F7)
+val HealthCardPink = Color(0xFFFCE4EF)
+val HealthPitchBlack = Color(0xFF141414)
+val HealthCreamPill = Color(0xFFF3EFE8)
 
 // Neutral Surfaces - Dark (Obsidian Velvet & Rich Titanium)
 val DarkBackground = Color(0xFF0D080A)

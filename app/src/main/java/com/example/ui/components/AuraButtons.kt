@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.ui.theme.HealthPitchBlack
 import com.example.ui.theme.RosePrimary
 
 /**
@@ -113,7 +114,7 @@ fun AuraPrimaryButton(
     modifier: Modifier = Modifier,
     icon: ImageVector? = null,
     enabled: Boolean = true,
-    containerColor: Color = RosePrimary,
+    containerColor: Color = HealthPitchBlack,
     contentColor: Color = Color.White
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -127,12 +128,12 @@ fun AuraPrimaryButton(
             disabledContainerColor = containerColor.copy(alpha = 0.45f),
             disabledContentColor = contentColor.copy(alpha = 0.6f)
         ),
-        elevation = ButtonDefaults.buttonElevation(defaultElevation = 3.dp, pressedElevation = 5.dp),
-        shape = RoundedCornerShape(16.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 13.dp),
+        elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp, pressedElevation = 4.dp),
+        shape = RoundedCornerShape(50),
+        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 13.dp),
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(min = 50.dp)
+            .heightIn(min = 48.dp)
             .bounceClick(scaleDown = 0.95f, interactionSource = interactionSource)
     ) {
         Row(

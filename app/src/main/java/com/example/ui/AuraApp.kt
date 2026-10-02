@@ -31,13 +31,23 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Insights
+import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.SelfImprovement
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Spa
 import androidx.compose.material.icons.filled.WaterDrop
+import com.example.ui.theme.HealthPastelPink
+import com.example.ui.theme.HealthPitchBlack
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -60,8 +70,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.example.ui.components.AuraExitConfirmationDialog
 import com.example.ui.components.AuraStartupSplashScreen
 import com.example.ui.components.AuraWinkingExitOverlay
+import com.example.ui.components.TezetErdhenHeaderTitle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -99,12 +111,13 @@ fun AuraApp(
 
     var isSplashScreenVisible by remember { mutableStateOf(true) }
     var isWinkingExitVisible by remember { mutableStateOf(false) }
+    var showExitConfirmationDialog by remember { mutableStateOf(false) }
 
     BackHandler(enabled = !isSplashScreenVisible && !isWinkingExitVisible) {
         if (uiState.currentTab != AppTab.TODAY) {
             viewModel.selectTab(AppTab.TODAY)
         } else {
-            isWinkingExitVisible = true
+            showExitConfirmationDialog = true
         }
     }
 
@@ -341,37 +354,44 @@ fun AuraApp(
                     snackbarHost = { SnackbarHost(snackbarHostState) },
                     containerColor = MaterialTheme.colorScheme.background,
                     topBar = {
-                        TopAppBar(
-                            colors = TopAppBarDefaults.topAppBarColors(
+                        CenterAlignedTopAppBar(
+                            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                                 containerColor = MaterialTheme.colorScheme.background,
                                 titleContentColor = MaterialTheme.colorScheme.onBackground
                             ),
-                            title = {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Surface(
-                                        shape = CircleShape,
-                                        color = MaterialTheme.colorScheme.primaryContainer,
-                                        modifier = Modifier.size(34.dp)
-                                    ) {
-                                        Box(contentAlignment = Alignment.Center) {
-                                            Text(text = "🌸", fontSize = 17.sp)
+                            navigationIcon = {
+                                Surface(
+                                    shape = CircleShape,
+                                    color = Color.Transparent,
+                                    border = androidx.compose.foundation.BorderStroke(1.2.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.75f)),
+                                    modifier = Modifier
+                                        .padding(start = 12.dp)
+                                        .size(38.dp)
+                                        .clip(CircleShape)
+                                        .clickable {
+                                            if (uiState.currentTab != AppTab.TODAY) {
+                                                viewModel.selectTab(AppTab.TODAY)
+                                            }
                                         }
-                                    }
-                                    Spacer(modifier = Modifier.width(10.dp))
-                                    Column {
-                                        Text(
-                                            text = strings.appName,
-                                            fontWeight = FontWeight.ExtraBold,
-                                            fontSize = 19.sp,
-                                            color = MaterialTheme.colorScheme.onBackground,
-                                            letterSpacing = (-0.3).sp
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                            contentDescription = "Back",
+                                            tint = MaterialTheme.colorScheme.onBackground,
+                                            modifier = Modifier.size(17.dp)
                                         )
                                     }
                                 }
                             },
+                            title = {
+                                TezetErdhenHeaderTitle(
+                                    tint = MaterialTheme.colorScheme.onBackground
+                                )
+                            },
                             actions = {
                                 if (uiState.currentTab == AppTab.CALENDAR || uiState.currentTab == AppTab.PIXELS) {
-                                    // Today-Button showing current month
+                                    // Today-Button (without month)
                                     Surface(
                                         color = MaterialTheme.colorScheme.primaryContainer,
                                         shape = RoundedCornerShape(16.dp),
@@ -397,7 +417,7 @@ fun AuraApp(
                                             )
                                             Spacer(modifier = Modifier.width(6.dp))
                                             Text(
-                                                text = "${strings.tabToday} • $currentMonthName",
+                                                text = strings.tabToday,
                                                 fontSize = 11.5.sp,
                                                 fontWeight = FontWeight.ExtraBold,
                                                 color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -406,22 +426,27 @@ fun AuraApp(
                                     }
                                 }
 
-                                // Winking Exit Button
+                                // Exit Button (Clean Material Icon, no emojis)
                                 Surface(
                                     color = MaterialTheme.colorScheme.surfaceVariant,
                                     shape = CircleShape,
                                     border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
                                     modifier = Modifier
-                                        .padding(end = 12.dp)
+                                        .padding(end = 14.dp)
                                         .clip(CircleShape)
-                                        .clickable { isWinkingExitVisible = true }
+                                        .clickable { showExitConfirmationDialog = true }
                                         .testTag("top_bar_exit_button")
                                 ) {
                                     Box(
                                         contentAlignment = Alignment.Center,
                                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp)
                                     ) {
-                                        Text(text = "😉", fontSize = 16.sp)
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Filled.ExitToApp,
+                                            contentDescription = "Exit App",
+                                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            modifier = Modifier.size(16.dp)
+                                        )
                                     }
                                 }
                             }
@@ -437,13 +462,9 @@ fun AuraApp(
                         ) {
                             Surface(
                                 shape = RoundedCornerShape(32.dp),
-                                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.96f),
+                                color = HealthPitchBlack,
                                 tonalElevation = 8.dp,
-                                shadowElevation = 12.dp,
-                                border = androidx.compose.foundation.BorderStroke(
-                                    width = 1.2.dp,
-                                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.55f)
-                                ),
+                                shadowElevation = 16.dp,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .testTag("floating_bottom_bar")
@@ -451,39 +472,63 @@ fun AuraApp(
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(horizontal = 4.dp, vertical = 6.dp),
+                                        .padding(horizontal = 8.dp, vertical = 6.dp),
                                     horizontalArrangement = Arrangement.SpaceAround,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    FloatingBottomNavItem(
+                                    // 1. Heart (Today / Dashboard)
+                                    DockNavItem(
                                         selected = uiState.currentTab == AppTab.TODAY,
                                         onClick = { viewModel.selectTab(AppTab.TODAY) },
-                                        icon = Icons.Default.Spa,
-                                        label = strings.tabToday
+                                        icon = if (uiState.currentTab == AppTab.TODAY) Icons.Filled.Favorite else Icons.Default.FavoriteBorder,
+                                        contentDescription = strings.tabToday
                                     )
-                                    FloatingBottomNavItem(
+
+                                    // 2. Calendar
+                                    DockNavItem(
                                         selected = uiState.currentTab == AppTab.CALENDAR,
                                         onClick = { viewModel.selectTab(AppTab.CALENDAR) },
                                         icon = Icons.Default.CalendarMonth,
-                                        label = strings.tabCalendar
+                                        contentDescription = strings.tabCalendar
                                     )
-                                    FloatingBottomNavItem(
-                                        selected = uiState.currentTab == AppTab.PIXELS,
-                                        onClick = { viewModel.selectTab(AppTab.PIXELS) },
-                                        icon = Icons.Default.AutoAwesome,
-                                        label = strings.tabPixels
-                                    )
-                                    FloatingBottomNavItem(
+
+                                    // Center Scooped Pink Circular Plus Button
+                                    Surface(
+                                        shape = CircleShape,
+                                        color = HealthPastelPink,
+                                        shadowElevation = 6.dp,
+                                        modifier = Modifier
+                                            .size(50.dp)
+                                            .clip(CircleShape)
+                                            .clickable {
+                                                viewModel.openCalendarModal(uiState.selectedDate)
+                                            }
+                                            .testTag("dock_center_add_button")
+                                    ) {
+                                        Box(contentAlignment = Alignment.Center) {
+                                            Icon(
+                                                imageVector = Icons.Default.Add,
+                                                contentDescription = "Quick Log",
+                                                tint = HealthPitchBlack,
+                                                modifier = Modifier.size(28.dp)
+                                            )
+                                        }
+                                    }
+
+                                    // 3. Insights / ML Intelligence
+                                    DockNavItem(
                                         selected = uiState.currentTab == AppTab.INSIGHTS,
                                         onClick = { viewModel.selectTab(AppTab.INSIGHTS) },
-                                        icon = Icons.Default.SelfImprovement,
-                                        label = strings.tabInsights
+                                        icon = if (uiState.currentTab == AppTab.INSIGHTS) Icons.Default.Insights else Icons.Default.AutoAwesome,
+                                        contentDescription = strings.tabInsights
                                     )
-                                    FloatingBottomNavItem(
+
+                                    // 4. Security & Settings
+                                    DockNavItem(
                                         selected = uiState.currentTab == AppTab.SETTINGS,
                                         onClick = { viewModel.selectTab(AppTab.SETTINGS) },
-                                        icon = Icons.Default.Settings,
-                                        label = strings.tabSettings
+                                        icon = if (uiState.currentTab == AppTab.SETTINGS) Icons.Default.Security else Icons.Default.Settings,
+                                        contentDescription = strings.tabSettings
                                     )
                                 }
                             }
@@ -664,6 +709,20 @@ fun AuraApp(
             )
         }
 
+        // Exit Confirmation Dialog
+        if (showExitConfirmationDialog) {
+            AuraExitConfirmationDialog(
+                onConfirmExit = {
+                    showExitConfirmationDialog = false
+                    isWinkingExitVisible = true
+                },
+                onDismiss = {
+                    showExitConfirmationDialog = false
+                },
+                language = uiState.language
+            )
+        }
+
         // 1. Startup Entrance Splash Animation
         if (isSplashScreenVisible) {
             AuraStartupSplashScreen(
@@ -683,39 +742,35 @@ fun AuraApp(
 }
 
 @Composable
-private fun FloatingBottomNavItem(
+private fun DockNavItem(
     selected: Boolean,
     onClick: () -> Unit,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
-    label: String,
+    contentDescription: String,
     modifier: Modifier = Modifier
 ) {
-    Surface(
-        shape = RoundedCornerShape(22.dp),
-        color = if (selected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
         modifier = modifier
-            .clip(RoundedCornerShape(22.dp))
+            .clip(CircleShape)
             .clickable(onClick = onClick)
+            .padding(horizontal = 14.dp, vertical = 6.dp)
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = label,
-                tint = if (selected) RosePrimary else MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(22.dp)
-            )
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = label,
-                fontSize = 10.5.sp,
-                fontWeight = if (selected) FontWeight.ExtraBold else FontWeight.Medium,
-                color = if (selected) RosePrimary else MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1
-            )
-        }
+        Icon(
+            imageVector = icon,
+            contentDescription = contentDescription,
+            tint = if (selected) Color.White else Color.White.copy(alpha = 0.5f),
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        // Small active underline indicator bar
+        Box(
+            modifier = Modifier
+                .width(16.dp)
+                .height(2.5.dp)
+                .clip(RoundedCornerShape(50))
+                .background(if (selected) Color.White else Color.Transparent)
+        )
     }
 }

@@ -219,7 +219,7 @@ data class StringsBundle(
 )
 
 val GermanStrings = StringsBundle(
-    appName = "Aura Cycle",
+    appName = "Tezet erdhen",
     tabToday = "Heute",
     tabCalendar = "Kalender",
     tabPixels = "Pixel",
@@ -411,7 +411,7 @@ val GermanStrings = StringsBundle(
 )
 
 val AlbanianStrings = StringsBundle(
-    appName = "Aura Cycle",
+    appName = "Tezet erdhen",
     tabToday = "Sot",
     tabCalendar = "Kalendari",
     tabPixels = "Pikselat",
@@ -603,7 +603,7 @@ val AlbanianStrings = StringsBundle(
 )
 
 val EnglishStrings = StringsBundle(
-    appName = "Aura Cycle",
+    appName = "Tezet erdhen",
     tabToday = "Today",
     tabCalendar = "Calendar",
     tabPixels = "Pixels",

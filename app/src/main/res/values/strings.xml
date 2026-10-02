@@ -1,12 +1,12 @@
 <resources>
-    <string name="app_name">Aura Cycle</string>
+    <string name="app_name">Tezet erdhen</string>
     <string name="tab_today">Today</string>
     <string name="tab_calendar">Calendar</string>
     <string name="tab_pixels">Year in Pixels</string>
     <string name="tab_insights">ML Insights</string>
     <string name="tab_settings">Security</string>
     
-    <string name="widget_title">Aura Cycle</string>
+    <string name="widget_title">Tezet erdhen</string>
     <string name="widget_quick_log">Quick Log</string>
     <string name="shortcut_mood">Log Mood</string>
     <string name="shortcut_mood_long">Quick Log Mood and Emotions</string>

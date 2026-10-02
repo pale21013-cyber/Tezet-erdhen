@@ -22,6 +22,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "Aura Cycle"
+rootProject.name = "Tezet erdhen"
 
 include(":app")
