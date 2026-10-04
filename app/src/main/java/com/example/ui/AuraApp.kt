@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -267,7 +268,8 @@ fun AuraApp(
                                 onNotesChange = { viewModel.updateNotes(it) },
                                 onTagToggle = { viewModel.toggleTag(it) },
                                 onSaveLog = { viewModel.saveCurrentLog() },
-                                language = uiState.language
+                                language = uiState.language,
+                                persona = uiState.appPersona
                             )
                         }
 
@@ -294,7 +296,8 @@ fun AuraApp(
                                     MlInsightsCard(
                                         stats = uiState.cycleStats,
                                         predictions = uiState.predictions,
-                                        language = uiState.language
+                                        language = uiState.language,
+                                        persona = uiState.appPersona
                                     )
                                 }
                                  AppTab.CALENDAR -> {
@@ -323,7 +326,8 @@ fun AuraApp(
                                     MlInsightsCard(
                                         stats = uiState.cycleStats,
                                         predictions = uiState.predictions,
-                                        language = uiState.language
+                                        language = uiState.language,
+                                        persona = uiState.appPersona
                                     )
                                 }
                                 AppTab.SETTINGS -> {
@@ -332,6 +336,8 @@ fun AuraApp(
                                         onLanguageChange = { viewModel.setLanguage(it) },
                                         currentThemeSetting = uiState.themeSetting,
                                         onThemeSettingChange = { viewModel.setThemeSetting(it) },
+                                        currentPersona = uiState.appPersona,
+                                        onPersonaChange = { viewModel.setPersona(it) },
                                         onFastMoodLog = { viewModel.logFastMood(it) },
                                         onResetDemoData = { viewModel.resetDemoData() },
                                         onReplayOnboarding = { viewModel.replayOnboarding() },
@@ -467,13 +473,14 @@ fun AuraApp(
                                 shadowElevation = 16.dp,
                                 modifier = Modifier
                                     .fillMaxWidth()
+                                    .widthIn(max = 460.dp)
                                     .testTag("floating_bottom_bar")
                             ) {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(horizontal = 8.dp, vertical = 6.dp),
-                                    horizontalArrangement = Arrangement.SpaceAround,
+                                        .padding(horizontal = 6.dp, vertical = 8.dp),
+                                    horizontalArrangement = Arrangement.SpaceEvenly,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     // 1. Heart (Today / Dashboard)
@@ -587,7 +594,8 @@ fun AuraApp(
                                             onNotesChange = { viewModel.updateNotes(it) },
                                             onTagToggle = { viewModel.toggleTag(it) },
                                             onSaveLog = { viewModel.saveCurrentLog() },
-                                            language = uiState.language
+                                            language = uiState.language,
+                                            persona = uiState.appPersona
                                         )
 
                                         Spacer(modifier = Modifier.height(16.dp))
@@ -623,7 +631,8 @@ fun AuraApp(
                                             onNotesChange = { viewModel.updateNotes(it) },
                                             onTagToggle = { viewModel.toggleTag(it) },
                                             onSaveLog = { viewModel.saveCurrentLog() },
-                                            language = uiState.language
+                                            language = uiState.language,
+                                            persona = uiState.appPersona
                                         )
                                         Spacer(modifier = Modifier.height(16.dp))
                                     }
@@ -655,6 +664,8 @@ fun AuraApp(
                                             onLanguageChange = { viewModel.setLanguage(it) },
                                             currentThemeSetting = uiState.themeSetting,
                                             onThemeSettingChange = { viewModel.setThemeSetting(it) },
+                                            currentPersona = uiState.appPersona,
+                                            onPersonaChange = { viewModel.setPersona(it) },
                                             onFastMoodLog = { viewModel.logFastMood(it) },
                                             onResetDemoData = { viewModel.resetDemoData() },
                                             onReplayOnboarding = { viewModel.replayOnboarding() },
@@ -705,7 +716,8 @@ fun AuraApp(
                 onTagToggle = { viewModel.toggleTag(it) },
                 onSaveLog = { viewModel.saveCurrentLog() },
                 onDismiss = { viewModel.closeCalendarModal() },
-                language = uiState.language
+                language = uiState.language,
+                persona = uiState.appPersona
             )
         }
 
@@ -755,7 +767,7 @@ private fun DockNavItem(
         modifier = modifier
             .clip(CircleShape)
             .clickable(onClick = onClick)
-            .padding(horizontal = 14.dp, vertical = 6.dp)
+            .padding(horizontal = 8.dp, vertical = 6.dp)
     ) {
         Icon(
             imageVector = icon,

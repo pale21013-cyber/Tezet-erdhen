@@ -9,6 +9,7 @@ import com.example.data.entities.DailyLogEntity
 import com.example.data.entities.MlPredictionEntity
 import com.example.data.entities.TagDefinitionEntity
 import com.example.localization.AppLanguage
+import com.example.localization.AppPersona
 import com.example.localization.getAppStrings
 import com.example.localization.getLocalizedPhaseName
 import com.example.ml.CycleFeaturePipeline
@@ -57,6 +58,7 @@ data class CycleUiState(
     val saveNotification: String? = null,
     val language: AppLanguage = AppLanguage.GERMAN,
     val themeSetting: ThemeSetting = ThemeSetting.SYSTEM,
+    val appPersona: AppPersona = AppPersona.LOVING,
     val updateStatus: UpdateStatus = UpdateStatus.Idle,
     val targetRepository: String = "pale21013-cyber/Tezet-erdhen",
     val jumpToTodayTrigger: Long = 0L,
@@ -105,6 +107,13 @@ class CycleViewModel(
             }
         }
 
+        // Observe app persona
+        viewModelScope.launch {
+            securityManager.appPersona.collectLatest { persona ->
+                _uiState.update { it.copy(appPersona = persona) }
+            }
+        }
+
         // Observe tags
         viewModelScope.launch {
             repository.allTags.collectLatest { tags ->
@@ -138,6 +147,10 @@ class CycleViewModel(
 
     fun setThemeSetting(themeSetting: ThemeSetting) {
         securityManager.setThemeSetting(themeSetting)
+    }
+
+    fun setPersona(persona: AppPersona) {
+        securityManager.setPersona(persona)
     }
 
     fun logFastMood(moodName: String) {

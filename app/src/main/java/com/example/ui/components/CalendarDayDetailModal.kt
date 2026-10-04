@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.sp
 import com.example.data.entities.DailyLogEntity
 import com.example.data.entities.TagDefinitionEntity
 import com.example.localization.AppLanguage
+import com.example.localization.AppPersona
 import com.example.localization.getAppStrings
 import com.example.localization.getLocalizedTagName
 import com.example.ui.theme.FollicularPurple
@@ -74,7 +75,8 @@ fun CalendarDayDetailModal(
     onTagToggle: (Long) -> Unit,
     onSaveLog: () -> Unit,
     onDismiss: () -> Unit,
-    language: AppLanguage = AppLanguage.GERMAN
+    language: AppLanguage = AppLanguage.GERMAN,
+    persona: AppPersona = AppPersona.LOVING
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val strings = getAppStrings(language)
@@ -403,7 +405,8 @@ fun CalendarDayDetailModal(
                             onSaveLog()
                             onDismiss()
                         },
-                        language = language
+                        language = language,
+                        persona = persona
                     )
                 }
             }

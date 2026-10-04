@@ -51,8 +51,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.data.entities.MlPredictionEntity
 import com.example.localization.AppLanguage
+import com.example.localization.AppPersona
 import com.example.localization.getAppStrings
 import com.example.localization.getLocalizedPhaseAdvice
+import com.example.localization.getLocalizedPhaseName
+import com.example.localization.getPersonaMessage
 import com.example.ml.CyclePhase
 import com.example.ml.CycleStats
 import com.example.ui.theme.FollicularPurple
@@ -67,6 +70,7 @@ fun MlInsightsCard(
     stats: CycleStats?,
     predictions: List<MlPredictionEntity>,
     language: AppLanguage = AppLanguage.GERMAN,
+    persona: AppPersona = AppPersona.LOVING,
     modifier: Modifier = Modifier
 ) {
     val strings = getAppStrings(language)
@@ -76,6 +80,7 @@ fun MlInsightsCard(
     val phase = stats?.currentPhase ?: CyclePhase.OVULATORY
 
     val phaseAdvice = getLocalizedPhaseAdvice(phase, language)
+    val personaMessage = getPersonaMessage(persona, phase, language)
 
     Column(
         modifier = modifier
@@ -83,6 +88,36 @@ fun MlInsightsCard(
             .testTag("ml_insights_card"),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        // Persona AI Greeting Banner Card
+        Card(
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f)),
+            shape = RoundedCornerShape(20.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)),
+            modifier = Modifier.fillMaxWidth().testTag("persona_banner_card")
+        ) {
+            Row(
+                modifier = Modifier.padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = persona.icon, fontSize = 30.sp)
+                Spacer(modifier = Modifier.width(14.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "${persona.getLocalizedName(language)} AI • ${getLocalizedPhaseName(phase, language)}",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = personaMessage,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+        }
         // ML Engine Status Header
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),

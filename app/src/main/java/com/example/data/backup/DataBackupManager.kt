@@ -226,13 +226,13 @@ class DataBackupManager(
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 type = "application/json"
                 putExtra(Intent.EXTRA_STREAM, uri)
-                putExtra(Intent.EXTRA_SUBJECT, "Aura Cycle Backup & LSTM Daten")
-                putExtra(Intent.EXTRA_TEXT, "Aura Cycle Backup inklusive Tageseinträgen, Zyklen & LSTM-Modelldaten.")
+                putExtra(Intent.EXTRA_SUBJECT, "Tezet erdhen Backup & LSTM Daten")
+                putExtra(Intent.EXTRA_TEXT, "Tezet erdhen Backup inklusive Tageseinträgen, Zyklen & LSTM-Modelldaten.")
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
 
-            val chooser = Intent.createChooser(shareIntent, "Aura Cycle Backup teilen / speichern").apply {
+            val chooser = Intent.createChooser(shareIntent, "Tezet erdhen Backup teilen / speichern").apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             context.startActivity(chooser)

@@ -352,75 +352,7 @@ fun CycleWheel(
             }
         }
 
-        // --- 2. ACTION ROW: BLACK PILL "Plan check-up" + CIRCULAR BUTTONS ---
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            // Main Black Pill Button ("Plan check-up") with proper vector icon
-            Surface(
-                shape = RoundedCornerShape(50),
-                color = HealthPitchBlack,
-                shadowElevation = 4.dp,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(50))
-                    .clickable { onTrackClick() }
-                    .testTag("action_plan_checkup")
-            ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 18.dp, vertical = 11.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.CalendarMonth,
-                        contentDescription = null,
-                        tint = Color.White,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = when (language) {
-                            AppLanguage.GERMAN -> "Check-up planen"
-                            AppLanguage.ALBANIAN -> "Planifiko vizitë"
-                            AppLanguage.ENGLISH -> "Plan check-up"
-                        },
-                        color = Color.White,
-                        fontSize = 13.5.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
 
-            Spacer(modifier = Modifier.width(12.dp))
-
-            // 1. Circular Button: Stethoscope / Vitals 🩺 (Vector Icon)
-            CircularActionButton(
-                icon = Icons.Default.MedicalServices,
-                contentDescription = "Vitals",
-                onClick = { onTrackClick() }
-            )
-
-            Spacer(modifier = Modifier.width(10.dp))
-
-            // 2. Circular Button: Document / Reports 📄 (Vector Icon)
-            CircularActionButton(
-                icon = Icons.Default.Description,
-                contentDescription = "Reports",
-                onClick = { onTrackClick() }
-            )
-
-            Spacer(modifier = Modifier.width(10.dp))
-
-            // 3. Circular Button: Send / Share ✈️ (Vector Icon)
-            CircularActionButton(
-                icon = Icons.AutoMirrored.Filled.Send,
-                contentDescription = "Share",
-                onClick = { onTrackClick() }
-            )
-        }
 
         // --- INTERACTIVE PHASE LEGEND CHIPS ROW (Click any phase to open its info modal) ---
         Row(
@@ -703,35 +635,7 @@ private fun BadgeIcon(
     }
 }
 
-/**
- * Secondary circular icon action button underneath the hero ring with proper vector icons
- */
-@Composable
-private fun CircularActionButton(
-    icon: ImageVector,
-    contentDescription: String,
-    onClick: () -> Unit
-) {
-    Surface(
-        shape = CircleShape,
-        color = HealthCreamPill,
-        border = BorderStroke(1.2.dp, Color(0xFFE2DDD5)),
-        shadowElevation = 2.dp,
-        modifier = Modifier
-            .size(46.dp)
-            .clip(CircleShape)
-            .clickable(onClick = onClick)
-    ) {
-        Box(contentAlignment = Alignment.Center) {
-            Icon(
-                imageVector = icon,
-                contentDescription = contentDescription,
-                tint = HealthPitchBlack,
-                modifier = Modifier.size(20.dp)
-            )
-        }
-    }
-}
+
 
 /**
  * Health system progress row with circular icon, title, rounded progress bar and score

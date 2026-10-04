@@ -348,7 +348,7 @@ val GermanStrings = StringsBundle(
     dataMgmtTitle = "Datenverwaltung",
     resetDemoBtn = "Demo-Zyklen zurücksetzen & neu laden",
 
-    lockScreenTitle = "Aura Cycle Geschützt",
+    lockScreenTitle = "Tezet erdhen Geschützt",
     lockScreenSubtitle = "100% Offline & Lokal Verschlüsselt",
     pinPrompt = "Oder 4-stellige PIN eingeben (Standard: 1234)",
     pinIncorrectError = "Falsche PIN. Bitte erneut versuchen.",
@@ -540,7 +540,7 @@ val AlbanianStrings = StringsBundle(
     dataMgmtTitle = "Menaxhimi i të Dhënave",
     resetDemoBtn = "Rivendos & ringarko ciklet provë",
 
-    lockScreenTitle = "Aura Cycle E Mbrojtur",
+    lockScreenTitle = "Tezet erdhen E Mbrojtur",
     lockScreenSubtitle = "100% Jashtë Linje & E Kriptuar Lokalisht",
     pinPrompt = "Ose shkruaj PIN-in me 4 shifra (Parazgjedhur: 1234)",
     pinIncorrectError = "PIN i pasaktë. Ju lutem provoni përsëri.",
@@ -732,7 +732,7 @@ val EnglishStrings = StringsBundle(
     dataMgmtTitle = "Data Management",
     resetDemoBtn = "Reset & Re-seed Historical Demo Cycles",
 
-    lockScreenTitle = "Aura Cycle Protected",
+    lockScreenTitle = "Tezet erdhen Protected",
     lockScreenSubtitle = "100% Offline & Locally Encrypted",
     pinPrompt = "Or enter 4-digit PIN (Default: 1234)",
     pinIncorrectError = "Incorrect PIN. Try again.",
@@ -1494,6 +1494,211 @@ fun getScientificPhaseGuide(phase: CyclePhase, language: AppLanguage): Scientifi
                     "Focus" to "Lowering cortisol, stabilizing blood sugar, and preparing for period recovery."
                 )
             )
+        }
+    }
+}
+
+enum class AppPersona(
+    val code: String,
+    val icon: String,
+    val nameDe: String,
+    val nameSq: String,
+    val nameEn: String,
+    val subtitleDe: String,
+    val subtitleSq: String,
+    val subtitleEn: String
+) {
+    LOVING(
+        code = "loving",
+        icon = "🌸",
+        nameDe = "Liebevoll",
+        nameSq = "E dashur",
+        nameEn = "Loving",
+        subtitleDe = "Warm, einfühlsam & unterstützend",
+        subtitleSq = "E ngrohtë, e ndjeshme & mbështetëse",
+        subtitleEn = "Warm, caring & supportive"
+    ),
+    SARCASTIC(
+        code = "sarcastic",
+        icon = "🥂",
+        nameDe = "Sarkastisch",
+        nameSq = "Sarkastike",
+        nameEn = "Sarcastic",
+        subtitleDe = "Witzig, direkt & unerschrocken",
+        subtitleSq = "Witty, direkte & pa doreza",
+        subtitleEn = "Witty, blunt & unapologetic"
+    ),
+    LOGICAL(
+        code = "logical",
+        icon = "📊",
+        nameDe = "Logisch",
+        nameSq = "Logike",
+        nameEn = "Logical",
+        subtitleDe = "Klinisch, präzise & datenbasiert",
+        subtitleSq = "Klinike, e saktë & e bazuar në të dhëna",
+        subtitleEn = "Clinical, precise & data-driven"
+    ),
+    FUNNY(
+        code = "funny",
+        icon = "🤪",
+        nameDe = "Humorvoll",
+        nameSq = "Humoristike",
+        nameEn = "Funny",
+        subtitleDe = "Locker, spritzig & spaßig",
+        subtitleSq = "E lirëshme, gazmore & argëtuese",
+        subtitleEn = "Playful, energetic & jovial"
+    );
+
+    fun getLocalizedName(lang: AppLanguage): String = when (lang) {
+        AppLanguage.GERMAN -> nameDe
+        AppLanguage.ALBANIAN -> nameSq
+        AppLanguage.ENGLISH -> nameEn
+    }
+
+    fun getLocalizedSubtitle(lang: AppLanguage): String = when (lang) {
+        AppLanguage.GERMAN -> subtitleDe
+        AppLanguage.ALBANIAN -> subtitleSq
+        AppLanguage.ENGLISH -> subtitleEn
+    }
+
+    companion object {
+        fun fromCode(code: String): AppPersona {
+            return entries.find { it.code.equals(code, ignoreCase = true) } ?: LOVING
+        }
+    }
+}
+
+fun getPersonaMessage(persona: AppPersona, phase: CyclePhase, language: AppLanguage): String {
+    return when (persona) {
+        AppPersona.LOVING -> when (language) {
+            AppLanguage.GERMAN -> when (phase) {
+                CyclePhase.MENSTRUAL -> "Du machst das großartig. Gönn dir heute ganz viel Ruhe, warme Suppe und eine Wärmflasche 🌸."
+                CyclePhase.FOLLICULAR -> "Deine Energie steigt wunderschön an! Genieße die kreativen Schübe und frischen Ideen ✨."
+                CyclePhase.OVULATORY -> "Du strahlst von innen heraus! Eine wunderbare Zeit für soziale Momente und Selbstvertrauen 💕."
+                CyclePhase.LUTEAL -> "Höre jetzt besonders sanft auf deinen Körper. Mach es dir gemütlich und pass gut auf dich auf ☕."
+            }
+            AppLanguage.ALBANIAN -> when (phase) {
+                CyclePhase.MENSTRUAL -> "Je duke bërë një punë të mrekullueshme. Kujdesu për veten sot, çaj i ngrohtë dhe qetësi 🌸."
+                CyclePhase.FOLLICULAR -> "Energjia jote po rritet bukur! Shijo idetë e reja dhe shpërthimin e kreativitetit ✨."
+                CyclePhase.OVULATORY -> "Po shkëlqen nga brenda! Kohë e mrekullueshme për shoqëri dhe vetëbesim 💕."
+                CyclePhase.LUTEAL -> "Dëgjo trupin tënd me shumë kujdes tani. Krijo një ambient të rehatshëm dhe relaksues ☕."
+            }
+            AppLanguage.ENGLISH -> when (phase) {
+                CyclePhase.MENSTRUAL -> "You're doing amazing. Give yourself permission to rest deeply today, sip warm tea and cuddle up 🌸."
+                CyclePhase.FOLLICULAR -> "Your energy is blossoming beautifully! Enjoy the fresh creative sparks and vitality ✨."
+                CyclePhase.OVULATORY -> "You're glowing from within! A wonderful time for social connection and confidence 💕."
+                CyclePhase.LUTEAL -> "Listen extra gently to your body right now. Create a cozy, nurturing sanctuary for yourself ☕."
+            }
+        }
+        AppPersona.SARCASTIC -> when (language) {
+            AppLanguage.GERMAN -> when (phase) {
+                CyclePhase.MENSTRUAL -> "Oh look, cramps again. Shocking. Grab a heating pad, eat chocolate, and cancel all plans."
+                CyclePhase.FOLLICULAR -> "Hormone are cooperating for once. Try not to break anything with your sudden bursts of productivity."
+                CyclePhase.OVULATORY -> "Confidence peak reached. Everyone else should probably step out of your way today."
+                CyclePhase.LUTEAL -> "Ah yes, the emotional rollercoaster phase where everything is mildly annoying. Good luck."
+            }
+            AppLanguage.ALBANIAN -> when (phase) {
+                CyclePhase.MENSTRUAL -> "Oh, përsëri ngërçe. Çfarë surprize. Merr një mbështetëse të ngrohtë dhe anulo çdo plan."
+                CyclePhase.FOLLICULAR -> "Hormonet po bashkëpunojnë për një herë. Kujdes mos prish ndonjë gjë me kaq shumë energji."
+                CyclePhase.OVULATORY -> "Kulmi i vetëbesimit u arrit. Të gjithë të bëjnë rrugë sot."
+                CyclePhase.LUTEAL -> "Faza e dramës emocionale ku çdo gjë të duket nervozuese. Fat të mbarë."
+            }
+            AppLanguage.ENGLISH -> when (phase) {
+                CyclePhase.MENSTRUAL -> "Oh look, cramps again. Shocking. Grab a heating pad, eat your body weight in chocolate, and cancel everything."
+                CyclePhase.FOLLICULAR -> "Hormones are cooperating for once. Try not to conquer the world with your sudden bursts of productivity."
+                CyclePhase.OVULATORY -> "Peak confidence unlocked. Everyone else should probably step out of your way today."
+                CyclePhase.LUTEAL -> "Ah yes, the wonderful phase where everything is mildly annoying and snacks are mandatory. Good luck."
+            }
+        }
+        AppPersona.LOGICAL -> when (language) {
+            AppLanguage.GERMAN -> when (phase) {
+                CyclePhase.MENSTRUAL -> "Biometrischer Status: Menstruationsphase. Endometriale Gewebeabstoßung im Gange. Empfohlen: Hydratation, Eisenaufnahme, Ruhe."
+                CyclePhase.FOLLICULAR -> "Biometrischer Status: Follikelphase. Östrogenspiegel im Anstieg. Steigerung der körperlichen Belastbarkeit um 15%."
+                CyclePhase.OVULATORY -> "Biometrischer Status: Ovulationsphase. LH-Peak verifiziert. Maximale kardiovaskuläre Leistungsfähigkeit."
+                CyclePhase.LUTEAL -> "Biometrischer Status: Lutealphase. Progesterondominanz aktiv. Kalorienbedarf erhöht um ~200 kcal. Fokus auf Schlafqualität."
+            }
+            AppLanguage.ALBANIAN -> when (phase) {
+                CyclePhase.MENSTRUAL -> "Gjendja biometrike: Faza menstruale. Proçesi i pastrimit endometrial aktiv. Rekomandohet hidrateim dhe hekur."
+                CyclePhase.FOLLICULAR -> "Gjendja biometrike: Faza folikulare. Rritje e estrogjenit dhe kapacitetit fizik."
+                CyclePhase.OVULATORY -> "Gjendja biometrike: Faza ovulatore. Kulmi i performancës kardiovaskulare."
+                CyclePhase.LUTEAL -> "Gjendja biometrike: Faza luteale. Dominim i progesteronit. Nevoja kalorike +200 kcal."
+            }
+            AppLanguage.ENGLISH -> when (phase) {
+                CyclePhase.MENSTRUAL -> "Biometric status: Menstrual phase. Endometrial shedding in progress. Recommended: Hydration, iron intake, rest."
+                CyclePhase.FOLLICULAR -> "Biometric status: Follicular phase. Estrogen rising. Physical endurance capacity increased by ~15%."
+                CyclePhase.OVULATORY -> "Biometric status: Ovulatory phase. LH surge verified. Peak cardiovascular performance metrics."
+                CyclePhase.LUTEAL -> "Biometric status: Progesterone dominance active. Caloric baseline elevated by ~200 kcal. Prioritize sleep."
+            }
+        }
+        AppPersona.FUNNY -> when (language) {
+            AppLanguage.GERMAN -> when (phase) {
+                CyclePhase.MENSTRUAL -> "Deine Gebärmutter veranstaltet heute ein Heavy-Metal-Konzert. Ohren zu und Schokolade rein!"
+                CyclePhase.FOLLICULAR -> "Du bist gerade unaufhaltskauf — äh, unaufhaltsam! Zeit, die Weltherrschaft zu planen 🚀."
+                CyclePhase.OVULATORY -> "Du könntest heute Bäume ausreißen oder zumindest jeden in einem Debattierclub zerstören."
+                CyclePhase.LUTEAL -> "Plot Twist: Deine Gefühle sind heute die Hauptattraktion im Kino. Popcorn bereitstellen 🍿."
+            }
+            AppLanguage.ALBANIAN -> when (phase) {
+                CyclePhase.MENSTRUAL -> "Mitra juaj po luan muzikë rock sot. Vëzhgoni veten me shumë çokollatë!"
+                CyclePhase.FOLLICULAR -> "Je bërë si bateri e re sot! Koha për të pushtuar botën 🚀."
+                CyclePhase.OVULATORY -> "Energji maksimale! Mund të mposhtësh këdo në çdo debat sot."
+                CyclePhase.LUTEAL -> "Ngjarja e ditës: Emocionet e tua janë kryefjala. Përgatit popcorn 🍿."
+            }
+            AppLanguage.ENGLISH -> when (phase) {
+                CyclePhase.MENSTRUAL -> "Your uterus is hosting an uninvited metal concert today. Earplugs in, chocolate weaponized!"
+                CyclePhase.FOLLICULAR -> "You are basically running on high-grade rocket fuel right now. Time to conquer things 🚀."
+                CyclePhase.OVULATORY -> "You could arm-wrestle a grizzly bear today and win. Use your superpowers wisely."
+                CyclePhase.LUTEAL -> "Plot twist: Your emotions are the main headliner at the cinema today. Grab massive amounts of popcorn 🍿."
+            }
+        }
+    }
+}
+
+fun getPersonaPromptBadge(persona: AppPersona, language: AppLanguage): String {
+    return when (persona) {
+        AppPersona.LOVING -> when (language) {
+            AppLanguage.GERMAN -> "🌸 Liebevoller Impuls"
+            AppLanguage.ENGLISH -> "🌸 Gentle Prompt"
+            AppLanguage.ALBANIAN -> "🌸 Impuls i Butë"
+        }
+        AppPersona.SARCASTIC -> when (language) {
+            AppLanguage.GERMAN -> "🥂 Sarkastischer Gedanke"
+            AppLanguage.ENGLISH -> "🥂 Witty Reality Check"
+            AppLanguage.ALBANIAN -> "🥂 Mendim Sarkastik"
+        }
+        AppPersona.LOGICAL -> when (language) {
+            AppLanguage.GERMAN -> "📊 Analytischer Reflexionspunkt"
+            AppLanguage.ENGLISH -> "📊 Analytical Focus Point"
+            AppLanguage.ALBANIAN -> "📊 Pikë Analitike"
+        }
+        AppPersona.FUNNY -> when (language) {
+            AppLanguage.GERMAN -> "🤪 Heitere Tagesfrage"
+            AppLanguage.ENGLISH -> "🤪 Fun Daily Question"
+            AppLanguage.ALBANIAN -> "🤪 Pyetje Gazmore"
+        }
+    }
+}
+
+fun getPersonaPlaceholder(persona: AppPersona, language: AppLanguage): String {
+    return when (persona) {
+        AppPersona.LOVING -> when (language) {
+            AppLanguage.GERMAN -> "Schreibe hier ganz sanft auf, was dein Herz und dein Körper dir heute sagen..."
+            AppLanguage.ENGLISH -> "Gently write down what your heart and body are feeling today..."
+            AppLanguage.ALBANIAN -> "Shkruaj me butësi çfarë po ndjen zemra dhe trupi yt sot..."
+        }
+        AppPersona.SARCASTIC -> when (language) {
+            AppLanguage.GERMAN -> "Lass deinen ungefilterten Gedanken freien Lauf – niemand verurteilt dich hier..."
+            AppLanguage.ENGLISH -> "Unfiltered thoughts go here – no judgments, zero censorship..."
+            AppLanguage.ALBANIAN -> "Shkruaj mendimet e pafiltruara – askush nuk të gjykon këtu..."
+        }
+        AppPersona.LOGICAL -> when (language) {
+            AppLanguage.GERMAN -> "Dokumentiere relevante Beobachtungen, biologische Muster oder Maßnahmen..."
+            AppLanguage.ENGLISH -> "Document key observations, biological patterns, and action items..."
+            AppLanguage.ALBANIAN -> "Dokumento vëzhgimet kyçe, modelet dhe veprimet e ditës..."
+        }
+        AppPersona.FUNNY -> when (language) {
+            AppLanguage.GERMAN -> "Hau in die Tasten: Anekdoten, Launen oder der tägliche Wahnsinn..."
+            AppLanguage.ENGLISH -> "Type away: daily comedy, wild moods, or whatever is happening..."
+            AppLanguage.ALBANIAN -> "Shkruaj këtu: humore, teka të çuditshme apo aventurat e ditës..."
         }
     }
 }

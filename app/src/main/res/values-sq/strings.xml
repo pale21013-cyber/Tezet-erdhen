@@ -1,12 +1,12 @@
 <resources>
-    <string name="app_name">Aura Cycle</string>
+    <string name="app_name">Tezet erdhen</string>
     <string name="tab_today">Sot</string>
     <string name="tab_calendar">Kalendari</string>
     <string name="tab_pixels">Viti në Piksela</string>
     <string name="tab_insights">Statistikat ML</string>
     <string name="tab_settings">Siguria</string>
     
-    <string name="widget_title">Aura Cycle</string>
+    <string name="widget_title">Tezet erdhen</string>
     <string name="widget_quick_log">Regjistrim i Shpejtë</string>
     <string name="shortcut_mood">Regjistro Humorin</string>
     <string name="shortcut_mood_long">Regjistro Ndjenjat dhe Emocionet</string>

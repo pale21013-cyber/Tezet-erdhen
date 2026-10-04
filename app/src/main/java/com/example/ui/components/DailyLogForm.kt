@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.sp
 import com.example.data.entities.DailyLogEntity
 import com.example.data.entities.TagDefinitionEntity
 import com.example.localization.AppLanguage
+import com.example.localization.AppPersona
 import com.example.localization.getAppStrings
 import com.example.localization.getLocalizedTagName
 import com.example.ml.CyclePhase
@@ -94,6 +95,7 @@ fun DailyLogForm(
     onTagToggle: (Long) -> Unit,
     onSaveLog: () -> Unit,
     language: AppLanguage = AppLanguage.GERMAN,
+    persona: AppPersona = AppPersona.LOVING,
     modifier: Modifier = Modifier
 ) {
     val strings = getAppStrings(language)
@@ -709,7 +711,8 @@ fun DailyLogForm(
             currentPhase = currentPhase,
             onEntryChange = onJournalChange,
             onSaveJournal = onSaveLog,
-            language = language
+            language = language,
+            persona = persona
         )
 
         // Save Button (Thumb Reach) with unified font size and banner marquee overflow

@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Palette
+import androidx.compose.material.icons.filled.Psychology
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Spa
@@ -57,6 +58,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.BuildConfig
 import com.example.localization.AppLanguage
+import com.example.localization.AppPersona
 import com.example.localization.getAppStrings
 import com.example.ui.theme.FollicularPurple
 import com.example.ui.theme.OutfitDisplayFamily
@@ -95,6 +97,8 @@ fun SettingsSheet(
     onLanguageChange: (AppLanguage) -> Unit,
     currentThemeSetting: ThemeSetting,
     onThemeSettingChange: (ThemeSetting) -> Unit,
+    currentPersona: AppPersona = AppPersona.LOVING,
+    onPersonaChange: (AppPersona) -> Unit = {},
     onFastMoodLog: (String) -> Unit = {},
     onResetDemoData: () -> Unit,
     onReplayOnboarding: () -> Unit = {},
@@ -250,7 +254,110 @@ fun SettingsSheet(
             }
         }
 
-        // 2. Theme & Appearance Card (High Contrast Light / Dark / System)
+        // 2. AI Persona / Tone Card
+        Card(
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            shape = RoundedCornerShape(24.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)),
+            elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
+            modifier = Modifier.fillMaxWidth().testTag("persona_selector_card")
+        ) {
+            Column(modifier = Modifier.padding(18.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Surface(
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        shape = CircleShape,
+                        modifier = Modifier.size(40.dp)
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Default.Psychology,
+                                contentDescription = "Persona",
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column {
+                        Text(
+                            text = when (currentLanguage) {
+                                AppLanguage.GERMAN -> "App-Persönlichkeit & Tonfall"
+                                AppLanguage.ALBANIAN -> "Personaliteti & Tonvraja e Aplikacionit"
+                                AppLanguage.ENGLISH -> "App Persona & Tone"
+                            },
+                            fontFamily = OutfitDisplayFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 17.sp,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = when (currentLanguage) {
+                                AppLanguage.GERMAN -> "Formt Einblicke & Nachrichten nach deinem Geschmack"
+                                AppLanguage.ALBANIAN -> "Formëson mesazhet dhe këshillat sipas shijes tënde"
+                                AppLanguage.ENGLISH -> "Shapes daily insights and advice tone"
+                            },
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    for (persona in AppPersona.entries) {
+                        val isSelected = persona == currentPersona
+                        Surface(
+                            shape = RoundedCornerShape(16.dp),
+                            color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(16.dp))
+                                .border(
+                                    width = if (isSelected) 2.dp else 1.dp,
+                                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f),
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                                .clickable { onPersonaChange(persona) }
+                                .testTag("persona_option_${persona.code}")
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(14.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(text = persona.icon, fontSize = 24.sp)
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = persona.getLocalizedName(currentLanguage),
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                                    )
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(
+                                        text = persona.getLocalizedSubtitle(currentLanguage),
+                                        fontSize = 11.5.sp,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                                if (isSelected) {
+                                    Icon(
+                                        imageVector = Icons.Default.Check,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // 3. Theme & Appearance Card (High Contrast Light / Dark / System)
         Card(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             shape = RoundedCornerShape(24.dp),

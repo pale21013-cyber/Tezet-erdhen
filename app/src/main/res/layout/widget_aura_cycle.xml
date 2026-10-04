@@ -21,7 +21,7 @@
             android:id="@+id/widget_title_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Aura Cycle"
+            android:text="@string/widget_title"
             android:textStyle="bold"
             android:textColor="#E11D48"
             android:textSize="14sp" />
