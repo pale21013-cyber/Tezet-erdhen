@@ -1703,3 +1703,28 @@ fun getPersonaPlaceholder(persona: AppPersona, language: AppLanguage): String {
     }
 }
 
+fun getPersonaSaveMessage(persona: AppPersona, language: AppLanguage): String {
+    return when (persona) {
+        AppPersona.LOVING -> when (language) {
+            AppLanguage.GERMAN -> "Wunderschön! Dein Tagebucheintrag wurde mit ganz viel Liebe gespeichert 🌸."
+            AppLanguage.ENGLISH -> "Wonderful! Your journal entry was saved with love 🌸."
+            AppLanguage.ALBANIAN -> "E mrekullueshme! Shënimi yt u ruajt me dashuri 🌸."
+        }
+        AppPersona.SARCASTIC -> when (language) {
+            AppLanguage.GERMAN -> "Eintrag gespeichert. Versuche heute, nichts kaputt zu machen 🥂."
+            AppLanguage.ENGLISH -> "Entry saved. Try not to break anything today 🥂."
+            AppLanguage.ALBANIAN -> "Shënimi u ruajt. Fat në këtë ditë 🥂."
+        }
+        AppPersona.LOGICAL -> when (language) {
+            AppLanguage.GERMAN -> "Biometrischer Datensatz erfolgreich persistiert. Synchronisation abgeschlossen 📊."
+            AppLanguage.ENGLISH -> "Biometric log successfully persisted. Synchronization complete 📊."
+            AppLanguage.ALBANIAN -> "Të dhënat biometrike u ruajtën me sukses 📊."
+        }
+        AppPersona.FUNNY -> when (language) {
+            AppLanguage.GERMAN -> "Boom! Tagebuch-Eintrag im System verankert. Die Weltherrschaft rückt näher 🚀."
+            AppLanguage.ENGLISH -> "Boom! Journal entry anchored in orbit. World domination is one step closer 🚀."
+            AppLanguage.ALBANIAN -> "Boom! Shënimi u ruajt. Pushtimi i botës po afron 🚀."
+        }
+    }
+}
+

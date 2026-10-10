@@ -12,6 +12,7 @@ import com.example.localization.AppLanguage
 import com.example.localization.AppPersona
 import com.example.localization.getAppStrings
 import com.example.localization.getLocalizedPhaseName
+import com.example.localization.getPersonaSaveMessage
 import com.example.ml.CycleFeaturePipeline
 import com.example.ml.CycleStats
 import com.example.ml.LocalPredictorEngine
@@ -314,12 +315,14 @@ class CycleViewModel(
         val date = _uiState.value.selectedDate
         val log = (_uiState.value.selectedDateLog ?: DailyLogEntity(logDate = date)).copy(isLogged = 1)
         val tags = _uiState.value.selectedTagIds.toList()
+        val persona = _uiState.value.appPersona
+        val lang = _uiState.value.language
 
         viewModelScope.launch(Dispatchers.IO) {
             repository.saveDailyLog(log, tags)
             runMlPipeline()
-            val strings = getAppStrings(_uiState.value.language)
-            _uiState.update { it.copy(saveNotification = strings.saveSuccessMsg) }
+            val msg = getPersonaSaveMessage(persona, lang)
+            _uiState.update { it.copy(saveNotification = msg) }
         }
     }
 
