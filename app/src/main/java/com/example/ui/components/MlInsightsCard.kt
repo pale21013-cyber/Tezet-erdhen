@@ -631,6 +631,7 @@ fun PersonalizedNutritionCard(
                 }
             }
         }
+        CoreAnimationTechniquesCard(language = language)
     }
 }
 
